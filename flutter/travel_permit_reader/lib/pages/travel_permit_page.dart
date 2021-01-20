@@ -17,10 +17,10 @@ class TravelPermitPage extends StatefulWidget {
 }
 
 class _TravelPermitPageState extends State<TravelPermitPage> {
-  ParticipantModel selectedParticipant;
+  TypedParticipant selectedParticipant;
   int selectedParticipantIndex;
 
-  void selectParticipant(ParticipantModel selectedParticipant, int index) {
+  void selectParticipant(TypedParticipant selectedParticipant, int index) {
     setState(() {
       this.selectedParticipant = selectedParticipant;
       selectedParticipantIndex = index;
@@ -40,11 +40,17 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
           ));
     }
 
-    var participants = <ParticipantModel>[
-      widget.model.escort,
-      widget.model.underage,
-      widget.model.requiredGuardian,
-      widget.model.optionalGuardian,
+    var participants = <TypedParticipant>[
+      if (widget.model.escort != null)
+        TypedParticipant(widget.model.escort, ParticipantTypes.escort),
+      if (widget.model.underage != null)
+        TypedParticipant(widget.model.underage, ParticipantTypes.underage),
+      if (widget.model.requiredGuardian != null)
+        TypedParticipant(
+            widget.model.requiredGuardian, ParticipantTypes.guardian1),
+      if (widget.model.optionalGuardian != null)
+        TypedParticipant(
+            widget.model.optionalGuardian, ParticipantTypes.guardian2),
     ];
 
     return WillPopScope(
@@ -79,8 +85,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
               backgroundColor: Colors.white,
             ),
             color: Color(0xFFF5F5F5),
-            imageLocation: 'assets/img/bg_global_grey.svg',
-            imageFit: BoxFit.fitHeight,
+            imagePath: 'assets/img/bg_global_grey.svg',
             body: Padding(
               padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: Column(children: [
@@ -138,10 +143,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
 }
 
 class SummaryCard extends StatelessWidget {
-  final ParticipantModel model;
+  final TypedParticipant model;
   final bool isOffline;
   final int index;
-  final Function(ParticipantModel model, int index) onTap;
+  final Function(TypedParticipant model, int index) onTap;
 
   const SummaryCard(
       {Key key, this.model, this.onTap, this.isOffline, this.index})
@@ -168,7 +173,7 @@ class SummaryCard extends StatelessWidget {
   }
 
   String get _documentTypeDescription {
-    switch (model.documentType) {
+    switch (model.participant.documentType) {
       case BioDocumentTypes.idCard:
         return 'RG';
       case BioDocumentTypes.professionalCard:
@@ -257,12 +262,12 @@ class SummaryCard extends StatelessWidget {
                         ]),
                     _getDivider(),
                     SizedBox(height: 2),
-                    Text(model.name,
+                    Text(model.participant.name,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w500)),
                     SizedBox(height: 5),
                     Text(
-                        '$_documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})',
+                        '$_documentTypeDescription: ${model.participant.documentNumber} (${model.participant.documentIssuer})',
                         textAlign: TextAlign.left,
                         style: TextStyle(
                             fontSize: 14,
@@ -290,23 +295,23 @@ class SummaryCard extends StatelessWidget {
 class DetailsCard extends SummaryCard {
   const DetailsCard(
       {Key key,
-      ParticipantModel model,
+      TypedParticipant model,
       int index,
-      Function(ParticipantModel model, int index) onTap})
+      Function(TypedParticipant model, int index) onTap})
       : super(key: key, model: model, onTap: onTap, index: index);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> details = [
       _getLabelText('Nome'),
-      _getDetailText(model.name),
-      if (!StringExt.isNullOrEmpty(model.identifier)) _getPicture(),
+      _getDetailText(model.participant.name),
+      if (!StringExt.isNullOrEmpty(model.participant.identifier)) _getPicture(),
       _getDivider(),
     ];
-    if (!StringExt.isNullOrEmpty(model.identifier)) {
+    if (!StringExt.isNullOrEmpty(model.participant.identifier)) {
       details.addAll([
         _getLabelText('Id'),
-        _getDetailText(model.identifier),
+        _getDetailText(model.participant.identifier),
         _getDivider(),
       ]);
     }
@@ -314,7 +319,7 @@ class DetailsCard extends SummaryCard {
     details.addAll([
       _getLabelText(_documentTypeDescription),
       _getDetailText(
-          '${model.documentNumber} (${model.documentIssuer})\nEmitido em ${model.issueDate.toDateString()}'),
+          '${model.participant.documentNumber} (${model.participant.documentIssuer})\nEmitido em ${model.participant.issueDate.toDateString()}'),
       _getDivider(),
     ]);
 
@@ -457,7 +462,7 @@ class DetailsCard extends SummaryCard {
 
   Widget _getPicture() {
     String imgname;
-    switch (model.identifier) {
+    switch (model.participant.identifier) {
       case '09197689890':
         imgname = 'homer';
         break;

@@ -52,11 +52,15 @@ class PageUtil {
   }
 }
 
+//-------------------------------------------------------------------
+
 class ButtonAction {
   final String text;
   final Function onPressed;
   const ButtonAction(this.text, [this.onPressed]);
 }
+
+//-------------------------------------------------------------------
 
 extension StringExt on String {
   static bool isNullOrEmpty(String str) {
@@ -64,6 +68,10 @@ extension StringExt on String {
   }
 }
 
+//-------------------------------------------------------------------
+
 extension DateTimeExt on DateTime {
   String toDateString() => DateFormat('dd/MM/yyy').format(this);
 }
+
+//-------------------------------------------------------------------

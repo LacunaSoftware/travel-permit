@@ -92,6 +92,15 @@ extension BioDocumentTypesExt on BioDocumentTypes {
 
 //-------------------------------------------------------------------
 
+enum ParticipantTypes {
+  guardian1,
+  guardian2,
+  escort,
+  underage,
+}
+
+//-------------------------------------------------------------------
+
 class _EnumCommonParser {
   static T parse<T>(String value, T defaultValue, Map<String, T> parseMap) {
     var type = parseMap.values.firstWhere(

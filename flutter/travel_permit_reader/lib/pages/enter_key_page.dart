@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:travel_permit_reader/pages/background.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
-
-import 'home_page.dart';
 
 class EnterKeyPage extends StatefulWidget {
   @override
@@ -24,25 +23,13 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
 
     final maskFormatter = new MaskTextInputFormatter(
         mask: '#####-#####-#####-#####', filter: {"#": RegExp(r'[A-Z0-9]')});
-    var titleSection = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: Text(
-        "Digite o código localizado acima do QR code",
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.7,
-          color: Color(0xFF007FBC),
-        ),
-      ),
-    );
+
     var codeFieldSection = TextFormField(
       focusNode: focusnode,
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 16),
       decoration: InputDecoration(
-          labelText: 'Código', hintText: 'XXXXX-XXXXX-XXXXX-XXXXX'),
+          labelText: 'Código', hintText: '00000-00000-00000-00000'),
       keyboardType: TextInputType.text,
       inputFormatters: [new UpperCaseTextFormatter(), maskFormatter],
       validator: (value) {
@@ -56,7 +43,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
       },
     );
 
-    var submitButtonSection = Padding(
+    final submitButtonSection = Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: RaisedButton(
         onPressed: () {
@@ -77,33 +64,49 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
         ),
       ),
     );
-    return AppBarScaffold(
-      resizeToAvoidBottomInset: false,
-      color: Color(0xFFF5F5F5),
-      imageLocation: "assets/img/bg_global_grey.svg",
-      imageFit: BoxFit.none,
-      body: Stack(
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(
-              left: 50,
-              right: 50,
-            ),
-            width: PageUtil.getScreenWidth(context),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  titleSection,
-                  codeFieldSection,
-                  submitButtonSection,
+    return BackgroundScaffold(
+        color: Color(0xFFF5F5F5),
+        imagePath: "assets/img/bg_global_grey.svg",
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.black54,
+                  ),
                 ],
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0),
+                child: Text(
+                  "Digite o código localizado acima do QR code",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.7,
+                    color: Color(0xFF007FBC),
+                  ),
+                ),
+              ),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    codeFieldSection,
+                    submitButtonSection,
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
 

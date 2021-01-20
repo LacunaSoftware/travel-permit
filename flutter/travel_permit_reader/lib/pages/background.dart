@@ -3,44 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class BackgroundScaffold extends StatelessWidget {
-  const BackgroundScaffold({
-    this.body,
-    this.color,
-    this.imageLocation,
-    this.imageFit,
-    this.appBar,
-    this.resizeToAvoidBottomInset = true,
-  });
+  const BackgroundScaffold(
+      {this.body, this.color, this.imagePath, this.appBar});
 
   final Widget body;
   final Color color;
-  final String imageLocation;
-  final BoxFit imageFit;
-  final Widget appBar;
-  final bool resizeToAvoidBottomInset;
+  final String imagePath;
+  final AppBar appBar;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: this.resizeToAvoidBottomInset,
-      backgroundColor: this.color,
-      appBar: this.appBar,
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
-        child: Stack(
-          children: <Widget>[
-            Container(
-              child: SvgPicture.asset(
-                this.imageLocation,
-                fit: this.imageFit,
-              ),
+      resizeToAvoidBottomInset: true,
+      backgroundColor: color,
+      appBar: appBar,
+      body: imagePath == null
+          ? body
+          : Stack(
+              children: <Widget>[
+                Container(
+                  child: SvgPicture.asset(
+                    imagePath,
+                    fit: BoxFit.none,
+                  ),
+                ),
+                this.body
+              ],
             ),
-            this.body
-          ],
-        ),
-      ),
     );
   }
 }

@@ -285,3 +285,12 @@ class UnderageModel extends ParticipantModel {
     );
   }
 }
+
+//-------------------------------------------------------------------
+
+class TypedParticipant {
+  final ParticipantModel participant;
+  final ParticipantTypes type;
+
+  TypedParticipant(this.participant, this.type);
+}
