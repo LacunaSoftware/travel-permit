@@ -1,10 +1,11 @@
 import 'package:travel_permit_reader/api/enums.dart';
-import 'package:travel_permit_reader/tp_exception.dart';
+import 'package:travel_permit_reader/util/page_util.dart';
 import 'package:travel_permit_reader/util/qrcode_data.dart';
 
 class TravelPermitModel {
   final String key;
   final DateTime expirationDate;
+  final TravelPermitTypes type;
   final GuardianModel requiredGuardian;
   final GuardianModel optionalGuardian;
   final AdultModel escort;
@@ -14,6 +15,7 @@ class TravelPermitModel {
   TravelPermitModel._({
     this.key,
     this.expirationDate,
+    this.type,
     this.requiredGuardian,
     this.optionalGuardian,
     this.escort,
@@ -26,6 +28,7 @@ class TravelPermitModel {
         isOffline: false,
         key: key,
         expirationDate: DateTime.parse(json['expirationDate']),
+        type: TravelPermitTypesExt.fromString(json['type']),
         requiredGuardian: GuardianModel.fromJson(json['requiredGuardian']),
         optionalGuardian: GuardianModel.fromJson(json['optionalGuardian']),
         escort: AdultModel.fromJson(json['escort']),
@@ -37,37 +40,50 @@ class TravelPermitModel {
       isOffline: true,
       key: data.documentKey,
       expirationDate: DateTime.parse(data.expirationDate),
-      requiredGuardian: GuardianModel._(
-          name: data.requiredGuardianName,
-          documentNumber: data.requiredGuardianDocumentNumber,
-          documentIssuer: data.requiredGuardianDocumentIssuer,
-          documentType: EnumParser.documentTypesFromString(
-              data.requiredGuardianDocumentType),
-          guardianship: EnumParser.guardianTypesFromString(
-              data.requiredGuardianGuardianship)),
-      optionalGuardian: GuardianModel._(
-          name: data.optionalGuardianName,
-          documentNumber: data.optionalGuardianDocumentNumber,
-          documentIssuer: data.optionalGuardianDocumentIssuer,
-          documentType: EnumParser.documentTypesFromString(
-              data.optionalGuardianDocumentType),
-          guardianship: EnumParser.guardianTypesFromString(
-              data.optionalGuardianGuardianship)),
-      escort: AdultModel._(
-        name: data.escortName,
-        documentNumber: data.escortDocumentNumber,
-        documentIssuer: data.escortDocumentIssuer,
-        documentType:
-            EnumParser.documentTypesFromString(data.escortDocumentType),
-      ),
-      underage: UnderageModel._(
-          name: data.underageName,
-          documentNumber: data.underageDocumentNumber,
-          documentIssuer: data.underageDocumentIssuer,
-          documentType:
-              EnumParser.documentTypesFromString(data.underageDocumentType),
-          birthDate: DateTime.parse(data.underageBirthDate),
-          bioGender: EnumParser.gendersFromString(data.underageBioGender)),
+      type: TravelPermitTypesExt.fromString(data.travelPermitType),
+      //-------------------------------------------------------------------
+      requiredGuardian: StringExt.isNullOrEmpty(data.requiredGuardianName)
+          ? null
+          : GuardianModel._(
+              name: data.requiredGuardianName,
+              documentNumber: data.requiredGuardianDocumentNumber,
+              documentIssuer: data.requiredGuardianDocumentIssuer,
+              documentType: BioDocumentTypesExt.fromString(
+                  data.requiredGuardianDocumentType),
+              guardianship: LegalGuardianTypesExt.fromString(
+                  data.requiredGuardianGuardianship)),
+      //-------------------------------------------------------------------
+      optionalGuardian: StringExt.isNullOrEmpty(data.optionalGuardianName)
+          ? null
+          : GuardianModel._(
+              name: data.optionalGuardianName,
+              documentNumber: data.optionalGuardianDocumentNumber,
+              documentIssuer: data.optionalGuardianDocumentIssuer,
+              documentType: BioDocumentTypesExt.fromString(
+                  data.optionalGuardianDocumentType),
+              guardianship: LegalGuardianTypesExt.fromString(
+                  data.optionalGuardianGuardianship)),
+      //-------------------------------------------------------------------
+      escort: StringExt.isNullOrEmpty(data.escortName)
+          ? null
+          : AdultModel._(
+              name: data.escortName,
+              documentNumber: data.escortDocumentNumber,
+              documentIssuer: data.escortDocumentIssuer,
+              documentType:
+                  BioDocumentTypesExt.fromString(data.escortDocumentType),
+            ),
+      //-------------------------------------------------------------------
+      underage: StringExt.isNullOrEmpty(data.underageName)
+          ? null
+          : UnderageModel._(
+              name: data.underageName,
+              documentNumber: data.underageDocumentNumber,
+              documentIssuer: data.underageDocumentIssuer,
+              documentType:
+                  BioDocumentTypesExt.fromString(data.underageDocumentType),
+              birthDate: DateTime.parse(data.underageBirthDate),
+              bioGender: BioGendersExt.fromString(data.underageBioGender)),
     );
   }
 }
@@ -139,7 +155,7 @@ class AdultModel extends ParticipantModel {
       identifier: json['identifier'],
       name: json['name'],
       documentNumber: json['documentNumber'],
-      documentType: EnumParser.documentTypesFromString(json['documentType']),
+      documentType: BioDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
       addressCity: json['addressCity'],
@@ -203,11 +219,11 @@ class GuardianModel extends AdultModel {
       return null;
     }
     return GuardianModel._(
-      guardianship: EnumParser.guardianTypesFromString(json['guardianship']),
+      guardianship: LegalGuardianTypesExt.fromString(json['guardianship']),
       identifier: json['identifier'],
       name: json['name'],
       documentNumber: json['documentNumber'],
-      documentType: EnumParser.documentTypesFromString(json['documentType']),
+      documentType: BioDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
       addressCity: json['addressCity'],
@@ -259,10 +275,10 @@ class UnderageModel extends ParticipantModel {
       identifier: json['identifier'],
       name: json['name'],
       documentNumber: json['documentNumber'],
-      documentType: EnumParser.documentTypesFromString(json['documentType']),
+      documentType: BioDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
-      bioGender: EnumParser.gendersFromString(json['gender']),
+      bioGender: BioGendersExt.fromString(json['gender']),
       birthDate: DateTime.parse(json['birthDate']),
       cityOfBirth: json['cityOfBirth'],
       stateOfBirth: json['stateOfBirth'],

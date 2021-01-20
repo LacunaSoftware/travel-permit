@@ -8,6 +8,7 @@ class QRCodeData {
   final int version;
   final String documentKey;
   final String expirationDate;
+  final String travelPermitType;
   final String requiredGuardianName;
   final String requiredGuardianDocumentNumber;
   final String requiredGuardianDocumentIssuer;
@@ -36,6 +37,7 @@ class QRCodeData {
       {this.version,
       this.documentKey,
       this.expirationDate,
+      this.travelPermitType,
       this.requiredGuardianName,
       this.requiredGuardianDocumentNumber,
       this.requiredGuardianDocumentIssuer,
@@ -76,7 +78,7 @@ class QRCodeData {
           TPErrorCodes.qrCodeUnknownVersion);
     }
 
-    if (version == 1 && segments.length != 25) {
+    if (version == 1 && segments.length != 26) {
       throw TPException(
           'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
     }
@@ -88,6 +90,7 @@ class QRCodeData {
         version: version,
         documentKey: segments[index++],
         expirationDate: segments[index++],
+        travelPermitType: _decodeField(segments[index++]),
         requiredGuardianName: _decodeField(segments[index++]),
         requiredGuardianDocumentNumber: _decodeField(segments[index++]),
         requiredGuardianDocumentIssuer: _decodeField(segments[index++]),
