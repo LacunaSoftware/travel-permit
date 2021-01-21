@@ -109,6 +109,6 @@ class _EnumCommonParser {
     if (type != defaultValue) {
       return type;
     }
-    return parseMap[value.toLowerCase()] ?? defaultValue;
+    return parseMap[(value ?? '').toLowerCase()] ?? defaultValue;
   }
 }
