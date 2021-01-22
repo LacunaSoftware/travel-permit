@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:travel_permit_reader/pages/background.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 
 class EnterKeyPage extends StatefulWidget {

@@ -1,4 +1,5 @@
 import 'package:travel_permit_reader/api/enums.dart';
+import 'package:travel_permit_reader/tp_exception.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 import 'package:travel_permit_reader/util/qrcode_data.dart';
 
@@ -97,6 +98,7 @@ abstract class ParticipantModel {
   final BioDocumentTypes documentType;
   final String documentIssuer;
   final DateTime issueDate;
+  final String photoUrl;
 
   ParticipantModel._(
       {this.identifier,
@@ -104,7 +106,8 @@ abstract class ParticipantModel {
       this.documentNumber,
       this.documentType,
       this.documentIssuer,
-      this.issueDate});
+      this.issueDate,
+      this.photoUrl});
 }
 
 //-------------------------------------------------------------------
@@ -128,6 +131,7 @@ class AdultModel extends ParticipantModel {
       documentType,
       documentIssuer,
       issueDate,
+      photoUrl,
       this.addressCity,
       this.addressState,
       this.zipCode,
@@ -145,6 +149,7 @@ class AdultModel extends ParticipantModel {
           documentType: documentType,
           documentIssuer: documentIssuer,
           issueDate: issueDate,
+          photoUrl: photoUrl,
         );
 
   factory AdultModel.fromJson(Map<String, dynamic> json) {
@@ -158,6 +163,7 @@ class AdultModel extends ParticipantModel {
       documentType: BioDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
+      photoUrl: json['pictureLocation'],
       addressCity: json['addressCity'],
       addressState: json['addressState'],
       zipCode: json['zipCode'],
@@ -177,25 +183,26 @@ class AdultModel extends ParticipantModel {
 class GuardianModel extends AdultModel {
   final LegalGuardianTypes guardianship;
 
-  GuardianModel._(
-      {this.guardianship,
-      addressCity,
-      addressState,
-      zipCode,
-      streetAddress,
-      addressNumber,
-      additionalAddressInfo,
-      neighborhood,
-      phoneNumber,
-      email,
-      bioId,
-      identifier,
-      name,
-      documentNumber,
-      documentType,
-      documentIssuer,
-      issueDate})
-      : super._(
+  GuardianModel._({
+    this.guardianship,
+    addressCity,
+    addressState,
+    zipCode,
+    streetAddress,
+    addressNumber,
+    additionalAddressInfo,
+    neighborhood,
+    phoneNumber,
+    email,
+    bioId,
+    identifier,
+    name,
+    documentNumber,
+    documentType,
+    documentIssuer,
+    issueDate,
+    photoUrl,
+  }) : super._(
           addressCity: addressCity,
           addressState: addressState,
           zipCode: zipCode,
@@ -212,6 +219,7 @@ class GuardianModel extends AdultModel {
           documentType: documentType,
           documentIssuer: documentIssuer,
           issueDate: issueDate,
+          photoUrl: photoUrl,
         );
 
   factory GuardianModel.fromJson(Map<String, dynamic> json) {
@@ -226,6 +234,7 @@ class GuardianModel extends AdultModel {
       documentType: BioDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
+      photoUrl: json['pictureLocation'],
       addressCity: json['addressCity'],
       addressState: json['addressState'],
       zipCode: json['zipCode'],
@@ -255,6 +264,7 @@ class UnderageModel extends ParticipantModel {
       documentType,
       documentIssuer,
       issueDate,
+      photoUrl,
       this.bioGender,
       this.birthDate,
       this.cityOfBirth,
@@ -265,7 +275,8 @@ class UnderageModel extends ParticipantModel {
             documentNumber: documentNumber,
             documentType: documentType,
             documentIssuer: documentIssuer,
-            issueDate: issueDate);
+            issueDate: issueDate,
+            photoUrl: photoUrl);
 
   factory UnderageModel.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -278,11 +289,31 @@ class UnderageModel extends ParticipantModel {
       documentType: BioDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
+      photoUrl: json['pictureLocation'],
       bioGender: BioGendersExt.fromString(json['gender']),
       birthDate: DateTime.parse(json['birthDate']),
       cityOfBirth: json['cityOfBirth'],
       stateOfBirth: json['stateOfBirth'],
     );
+  }
+}
+
+//-------------------------------------------------------------------
+
+class CnbErrorModel {
+  final String message;
+  final CnbErrorCodes code;
+  CnbErrorModel._({this.message, this.code});
+  factory CnbErrorModel.fromJson(Map<String, dynamic> json) {
+    try {
+      if (json == null) {
+        throw TPException('Null parameter: json');
+      }
+      return CnbErrorModel._(
+          message: json['message'],
+          code: CnbErrorCodesExt.fromString(json['code']));
+    } catch (ex) {}
+    return null;
   }
 }
 

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
-import 'package:travel_permit_reader/pages/background.dart';
 import 'package:travel_permit_reader/pages/participant_details_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 
@@ -36,7 +35,6 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     ];
 
     return BackgroundScaffold(
-        color: Color(0xFFF5F5F5),
         imagePath: 'assets/img/bg_global_grey.svg',
         body: Padding(
           padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
@@ -47,14 +45,11 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(Icons.arrow_back),
-                  color: Colors.black54,
+                  color: AppTheme.defaultFgColor,
                 ),
                 Text(
                   'Autorização de viagem',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.blue,
-                  ),
+                  style: AppTheme.barTiteStyle,
                 ),
                 Padding(
                     padding: EdgeInsets.only(right: 12),
@@ -62,8 +57,8 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                         widget.model.isOffline ? Icons.wifi_off : Icons.wifi,
                         size: 30,
                         color: widget.model.isOffline
-                            ? Colors.redAccent
-                            : Colors.blue)),
+                            ? AppTheme.alertColor
+                            : AppTheme.primaryFgColor)),
               ],
             ),
             _buildPermitValidityState(),
@@ -81,9 +76,9 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
   }
 
   Widget _buildPermitValidityState() {
-    final expired = DateTime.now().isAfter(widget.model.expirationDate);
+    final isExpired = DateTime.now().isAfter(widget.model.expirationDate);
     return Card(
-      color: expired ? Color(0xFFFF4444) : Color(0xFF00C851),
+      color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
       elevation: 4,
       child: Padding(
         padding: EdgeInsets.all(10),
@@ -91,7 +86,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
           Padding(
               padding: EdgeInsets.only(right: 10),
               child: Icon(
-                expired ? Icons.event_busy : Icons.event_available,
+                isExpired ? Icons.event_busy : Icons.event_available,
                 size: 25,
                 color: Colors.white,
               )),
@@ -102,7 +97,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                   fontWeight: FontWeight.w400,
                   color: Colors.white),
               children: <TextSpan>[
-                new TextSpan(text: expired ? 'Expirou em ' : 'Vigente até '),
+                new TextSpan(text: isExpired ? 'Expirou em ' : 'Vigente até '),
                 new TextSpan(
                     text:
                         '${widget.model.expirationDate.toLocal().toDateString()}',
@@ -174,6 +169,9 @@ class SummaryCard extends StatelessWidget {
   }
 
   String get bioGenderDescription {
+    if (model is! UnderageModel) {
+      return '';
+    }
     switch ((model as UnderageModel).bioGender) {
       case BioGenders.female:
         return 'Feminino';
@@ -188,7 +186,7 @@ class SummaryCard extends StatelessWidget {
     return isOffline
         ? Container(child: child)
         : InkWell(
-            splashColor: Colors.blue.withAlpha(50),
+            splashColor: AppTheme.primaryFgColor.withAlpha(50),
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -225,42 +223,30 @@ class SummaryCard extends StatelessWidget {
                                     child: Icon(
                                       participantIcon,
                                       size: 30,
-                                      color: Colors.black54,
+                                      color: AppTheme.defaultFgColor,
                                     )),
                                 Text(
                                   participantDescription.toUpperCase(),
-                                  style: TextStyle(fontSize: 12),
+                                  style: AppTheme.headline2Style,
                                 )
                               ]),
-                              isOffline
-                                  ? Text('')
-                                  : Icon(
-                                      Icons.more_vert,
-                                      size: 20,
-                                      color: Colors.lightBlue,
-                                    )
+                              if (isOffline)
+                                Icon(Icons.more_vert,
+                                    size: 20, color: AppTheme.primaryFgColor)
                             ]),
                         getDivider(),
                         SizedBox(height: 2),
-                        Text(model.name,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w500)),
+                        Text(model.name, style: AppTheme.bodyStyle),
                         SizedBox(height: 5),
                         Text(
                             '$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})',
                             textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black45)),
+                            style: AppTheme.body2Sytle),
                         if (underage?.birthDate != null)
                           Text(
                               'Nascimento: ${underage.birthDate.toDateString()} ${underage?.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}',
                               textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black45)),
+                              style: AppTheme.body2Sytle),
                       ],
                     )))));
   }

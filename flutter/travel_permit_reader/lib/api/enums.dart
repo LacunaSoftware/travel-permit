@@ -92,6 +92,24 @@ extension BioDocumentTypesExt on BioDocumentTypes {
 
 //-------------------------------------------------------------------
 
+enum CnbErrorCodes {
+  documentInvalidKey,
+  documentIsDeleted,
+  travelPermitNotEnabled,
+  travelPermitInfoMissing,
+  travelPermitNotConcluded,
+  documentIsNotTravelPermit,
+  unknown,
+}
+
+extension CnbErrorCodesExt on CnbErrorCodes {
+  static CnbErrorCodes fromString(String value) {
+    return _EnumCommonParser.parse(value, CnbErrorCodes.unknown, {});
+  }
+}
+
+//-------------------------------------------------------------------
+
 enum ParticipantTypes {
   guardian1,
   guardian2,

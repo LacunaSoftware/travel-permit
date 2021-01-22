@@ -1,5 +1,44 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+
+class AppTheme {
+  static const Color primaryBgColor = Color(0xFFF5F5F5);
+  static const Color accentBgColor = Colors.blue;
+  static const Color accentFgColor = Colors.white;
+  static const Color primaryFgColor = Colors.blue;
+  static const Color defaultFgColor = Colors.black54;
+  static const Color alertColor = Color(0xFFFF4444);
+  static const Color successColor = Color(0xFF00C851);
+
+  static const TextStyle headlineStyle = TextStyle(
+      fontSize: 15,
+      letterSpacing: 0.5,
+      fontWeight: FontWeight.w400,
+      color: defaultFgColor);
+  static const TextStyle headline2Style = TextStyle(fontSize: 12);
+
+  static const TextStyle bodyStyle =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+  static const TextStyle body2Sytle = TextStyle(
+      fontSize: 14, fontWeight: FontWeight.w500, color: defaultFgColor);
+
+  static const TextStyle barTiteStyle =
+      TextStyle(fontSize: 20, color: primaryFgColor);
+
+  static ThemeData getTheme() {
+    return ThemeData(
+        primaryColor: primaryBgColor,
+        accentColor: accentBgColor,
+        textTheme: TextTheme(
+          headline1: headlineStyle,
+        ));
+  }
+}
+
+//-------------------------------------------------------------------
 
 class PageUtil {
   static double getScreenWidth(BuildContext context,
@@ -49,6 +88,43 @@ class PageUtil {
             bt.onPressed();
           }
         });
+  }
+}
+
+//-------------------------------------------------------------------
+
+class BackgroundScaffold extends StatelessWidget {
+  const BackgroundScaffold(
+      {this.body,
+      this.color = AppTheme.primaryBgColor,
+      this.imagePath,
+      this.appBar});
+
+  final Widget body;
+  final Color color;
+  final String imagePath;
+  final AppBar appBar;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: color,
+      appBar: appBar,
+      body: imagePath == null
+          ? body
+          : Stack(
+              children: <Widget>[
+                Container(
+                  child: SvgPicture.asset(
+                    imagePath,
+                    fit: BoxFit.none,
+                  ),
+                ),
+                this.body
+              ],
+            ),
+    );
   }
 }
 

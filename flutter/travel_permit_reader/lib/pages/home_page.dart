@@ -5,8 +5,8 @@ import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/pages/travel_permit_page.dart';
+import 'package:travel_permit_reader/tp_exception.dart';
 import 'package:travel_permit_reader/util/qrcode_data.dart';
-import 'package:travel_permit_reader/pages/background.dart';
 import 'package:travel_permit_reader/pages/enter_key_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 import 'package:travel_permit_reader/util/permission_util.dart';
@@ -38,8 +38,10 @@ class HomePage extends StatelessWidget {
       try {
         model = await CnbClient('https://assinatura-hml.e-notariado.org.br/')
             .getTravelPermitInfo(data.documentKey);
-      } catch (ex) {
-        print('Error requesting document details: $ex');
+      } on TPException catch (ex) {
+        ex.code == TPErrorCodes.cnbClientResponseError
+            ? PageUtil.showAppDialog(context, 'Erro', ex.message)
+            : print('Error requesting document details: $ex');
       }
 
       model = model ?? TravelPermitModel.fromQRCode(data);
@@ -54,16 +56,16 @@ class HomePage extends StatelessWidget {
   }
 
   Future _launchEnterKey(BuildContext context) async {
-    final documentKey = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EnterKeyPage(),
-        ));
-    if (StringExt.isNullOrEmpty(documentKey)) {
-      return;
-    }
     final progress = ProgressHUD.of(context);
     try {
+      final documentKey = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EnterKeyPage(),
+          ));
+      if (StringExt.isNullOrEmpty(documentKey)) {
+        return;
+      }
       progress.show();
       final model =
           await CnbClient('https://assinatura-hml.e-notariado.org.br/')
@@ -72,9 +74,12 @@ class HomePage extends StatelessWidget {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
     } catch (ex) {
-      print('Error requesting document details: $ex');
-      PageUtil.showAppDialog(context, 'Erro',
-          'Não foi possível retornar detalhes do documento: $ex');
+      PageUtil.showAppDialog(
+          context,
+          'Erro',
+          ex is TPException && ex.code == TPErrorCodes.cnbClientResponseError
+              ? ex.message
+              : 'Error requesting document details: $ex');
     } finally {
       progress.dismiss();
     }
@@ -183,7 +188,7 @@ class ValidationButton extends StatelessWidget {
       color: Colors.white,
       onPressed: this.action,
       child: Container(
-        height: 135, // Considering padding value.
+        height: 135,
         width: 105,
         padding: EdgeInsets.only(top: 15, bottom: 15),
         child: Stack(

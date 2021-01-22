@@ -10,6 +10,9 @@ class ParticipantDetailsPage extends SummaryCard {
       : super(key: key, typedParticipant: typedParticipant);
 
   String get guardianshipDescription {
+    if (model is! GuardianModel) {
+      return '';
+    }
     switch ((model as GuardianModel).guardianship) {
       case LegalGuardianTypes.father:
         return 'Pai';
@@ -61,8 +64,7 @@ class ParticipantDetailsPage extends SummaryCard {
 
     details.add(SizedBox(height: 30));
 
-    return Scaffold(
-        backgroundColor: Color(0xFFF5F5F5),
+    return BackgroundScaffold(
         body: Padding(
             padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
             child: SingleChildScrollView(
@@ -74,8 +76,7 @@ class ParticipantDetailsPage extends SummaryCard {
                     IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: Icon(Icons.arrow_back),
-                      color: Colors.black54,
-                      iconSize: 30,
+                      color: AppTheme.defaultFgColor,
                     ),
                   ],
                 ),
@@ -104,6 +105,7 @@ class ParticipantDetailsPage extends SummaryCard {
       ]);
     }
 
+    // Address
     if ([
       adult.streetAddress,
       adult.addressNumber,
@@ -163,19 +165,13 @@ class ParticipantDetailsPage extends SummaryCard {
   Widget getLabelText(String label) {
     return Padding(
         padding: EdgeInsets.only(top: 5, bottom: 5),
-        child: Text(label.toUpperCase(),
-            style: TextStyle(
-                fontSize: 15,
-                letterSpacing: 0.5,
-                fontWeight: FontWeight.w400,
-                color: Colors.black45)));
+        child: Text(label.toUpperCase(), style: AppTheme.headlineStyle));
   }
 
   Widget getDetailsText(String detail) {
     return Padding(
         padding: EdgeInsets.only(left: 10, bottom: 2),
-        child: Text(detail ?? '',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)));
+        child: Text(detail ?? '', style: AppTheme.bodyStyle));
   }
 
   Widget getPicture() {
