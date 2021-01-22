@@ -5,12 +5,12 @@ import 'package:pointycastle/ecc/api.dart';
 import 'package:pointycastle/export.dart';
 
 class CryptoUtil {
-  static ECDomainParameters _ecDomain = ECCurve_brainpoolp256r1();
+  static ECDomainParameters _ecDomain = ECCurve_secp256r1();
 
   static ECPublicKey publicKey = ECPublicKey(
       _ecDomain.curve.createPoint(
-          BigIntExt.fromBase64('BPHg64gQD2OxY5CO2LQhap/HXetTzGIgcqYp7NuCrio='),
-          BigIntExt.fromBase64('aSznx7RGG0mJQlnI6mRW3ItrU5587wYBVnKHkhx7+20=')),
+          BigIntExt.fromBase64('e7yZX1L9JolR7zIaA2I/QIEdnj2C8jy3DKpSILqoD4o='),
+          BigIntExt.fromBase64('IbGzOdj4ikD81oQHgmT7ohHxj8KfZ7M5y45cHryuBzg=')),
       _ecDomain);
 
   static bool verifyEcdsaSignature(

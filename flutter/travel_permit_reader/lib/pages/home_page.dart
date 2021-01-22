@@ -39,9 +39,10 @@ class HomePage extends StatelessWidget {
         model = await CnbClient('https://assinatura-hml.e-notariado.org.br/')
             .getTravelPermitInfo(data.documentKey);
       } on TPException catch (ex) {
-        ex.code == TPErrorCodes.cnbClientResponseError
-            ? PageUtil.showAppDialog(context, 'Erro', ex.message)
-            : print('Error requesting document details: $ex');
+        if (ex.code == TPErrorCodes.cnbClientResponseError) {
+          PageUtil.showAppDialog(context, 'Erro', ex.message);
+        }
+        print('Error requesting document details: $ex');
       }
 
       model = model ?? TravelPermitModel.fromQRCode(data);

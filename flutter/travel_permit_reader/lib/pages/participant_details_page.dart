@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_permit_reader/api/enums.dart';
@@ -30,36 +31,36 @@ class ParticipantDetailsPage extends SummaryCard {
   @override
   Widget build(BuildContext context) {
     List<Widget> details = [
-      getLabelText('Nome'),
-      getDetailsText(model.name),
-      if (!StringExt.isNullOrEmpty(model.identifier)) getPicture(),
-      getDivider(),
+      buildLabelText('Nome'),
+      buildDetailsText(model.name),
+      buildPicture(),
+      buildDivider(),
     ];
     if (!StringExt.isNullOrEmpty(model.identifier)) {
       details.addAll([
-        getLabelText('Id'),
-        getDetailsText(model.identifier),
-        getDivider(),
+        buildLabelText('Id'),
+        buildDetailsText(model.identifier),
+        buildDivider(),
       ]);
     }
 
     details.addAll([
-      getLabelText(documentTypeDescription),
-      getDetailsText(
+      buildLabelText(documentTypeDescription),
+      buildDetailsText(
           '${model.documentNumber} (${model.documentIssuer})\nEmitido em ${model.issueDate.toDateString()}'),
-      getDivider(),
+      buildDivider(),
     ]);
 
     if (model is GuardianModel) {
-      details.addAll(getGuardianDetails());
+      details.addAll(buildGuardianDetails());
     }
 
     if (model is AdultModel) {
-      details.addAll(getAdultDetails());
+      details.addAll(buildAdultDetails());
     }
 
     if (model is UnderageModel) {
-      details.addAll(getUnderageDetails());
+      details.addAll(buildUnderageDetails());
     }
 
     details.add(SizedBox(height: 30));
@@ -85,23 +86,23 @@ class ParticipantDetailsPage extends SummaryCard {
             ))));
   }
 
-  List<Widget> getAdultDetails() {
+  List<Widget> buildAdultDetails() {
     final adult = model as AdultModel;
     List<Widget> details = [];
 
     if (!StringExt.isNullOrEmpty(adult.email)) {
       details.addAll([
-        getLabelText('Email'),
-        getDetailsText(adult.email),
-        getDivider(),
+        buildLabelText('Email'),
+        buildDetailsText(adult.email),
+        buildDivider(),
       ]);
     }
 
     if (!StringExt.isNullOrEmpty(adult.phoneNumber)) {
       details.addAll([
-        getLabelText('Telefone'),
-        getDetailsText(adult.phoneNumber),
-        getDivider(),
+        buildLabelText('Telefone'),
+        buildDetailsText(adult.phoneNumber),
+        buildDivider(),
       ]);
     }
 
@@ -115,8 +116,8 @@ class ParticipantDetailsPage extends SummaryCard {
       adult.addressState
     ].any((s) => !StringExt.isNullOrEmpty(s))) {
       details.addAll([
-        getLabelText('Endereço'),
-        getDetailsText('${adult.streetAddress} ${adult.addressNumber}' +
+        buildLabelText('Endereço'),
+        buildDetailsText('${adult.streetAddress} ${adult.addressNumber}' +
             '${!StringExt.isNullOrEmpty(adult.additionalAddressInfo) ? '\n' + adult.additionalAddressInfo : ''}' +
             '${!StringExt.isNullOrEmpty(adult.neighborhood) ? '\n' + adult.neighborhood : ''}' +
             '${!StringExt.isNullOrEmpty(adult.addressCity + adult.addressState) ? '\n' + adult.addressCity + ' - ' + adult.addressState : ''}'),
@@ -126,23 +127,23 @@ class ParticipantDetailsPage extends SummaryCard {
     return details;
   }
 
-  List<Widget> getGuardianDetails() {
+  List<Widget> buildGuardianDetails() {
     return [
-      getLabelText('Tipo de responsável'),
-      getDetailsText(guardianshipDescription),
-      getDivider(),
+      buildLabelText('Tipo de responsável'),
+      buildDetailsText(guardianshipDescription),
+      buildDivider(),
     ];
   }
 
-  List<Widget> getUnderageDetails() {
+  List<Widget> buildUnderageDetails() {
     final underage = model as UnderageModel;
     List<Widget> details = [];
 
     if (underage.bioGender != null) {
       details.addAll([
-        getLabelText('Gênero Biológico'),
-        getDetailsText(bioGenderDescription),
-        getDivider(),
+        buildLabelText('Gênero Biológico'),
+        buildDetailsText(bioGenderDescription),
+        buildDivider(),
       ]);
     }
 
@@ -150,63 +151,54 @@ class ParticipantDetailsPage extends SummaryCard {
         [underage.cityOfBirth, underage.stateOfBirth]
             .any((s) => !StringExt.isNullOrEmpty(s))) {
       details.addAll([
-        getLabelText('Nascimento'),
-        getDetailsText('${underage.birthDate.toDateString()}' +
+        buildLabelText('Nascimento'),
+        buildDetailsText('${underage.birthDate.toDateString()}' +
             (!StringExt.isNullOrEmpty(
                     underage.cityOfBirth + underage.stateOfBirth)
                 ? '\n${underage.cityOfBirth} - ${underage.stateOfBirth}'
                 : '')),
-        getDivider(),
+        buildDivider(),
       ]);
     }
     return details;
   }
 
-  Widget getLabelText(String label) {
+  Widget buildLabelText(String label) {
     return Padding(
         padding: EdgeInsets.only(top: 5, bottom: 5),
         child: Text(label.toUpperCase(), style: AppTheme.headlineStyle));
   }
 
-  Widget getDetailsText(String detail) {
+  Widget buildDetailsText(String detail) {
     return Padding(
         padding: EdgeInsets.only(left: 10, bottom: 2),
         child: Text(detail ?? '', style: AppTheme.bodyStyle));
   }
 
-  Widget getPicture() {
-    String imgname;
-    switch (model.identifier) {
-      case '09197689890':
-        imgname = 'homer';
-        break;
-      case '30619285966':
-        imgname = 'marge';
-        break;
-      case '97627993300':
-        imgname = 'bart';
-        break;
-      case '51846064163':
-        imgname = 'flanders';
-        break;
-      default:
-        imgname = null;
-    }
-    if (imgname == null) {
-      return Container();
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 10, bottom: 5),
-          child: Image.asset(
-            "assets/img/$imgname.png",
-            height: 150,
+  Widget buildPicture() {
+    return Padding(
+        padding: const EdgeInsets.only(top: 10, bottom: 5),
+        child: Container(
+          height: 150,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              StringExt.isNullOrEmpty(model.photoUrl)
+                  ? Image.asset(
+                      "assets/img/participant-placeholder.png",
+                      fit: BoxFit.contain,
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: model.photoUrl,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          Icon(Icons.error, size: 50),
+                    )
+            ],
           ),
-        ),
-      ],
-    );
+        ));
   }
 }

@@ -38,6 +38,7 @@ dependencies:
   http: ^0.12.2
   path: ^1.7.0
   intl: ^0.16.1
+  cached_network_image: ^2.5.0
 
 dev_dependencies:
   flutter_test:
