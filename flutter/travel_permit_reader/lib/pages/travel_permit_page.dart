@@ -20,7 +20,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
   String get typeDescription {
     switch (widget.model.type) {
       case TravelPermitTypes.domestic:
-        return 'Viagens Domésticas';
+        return 'Viagens Nacionais';
       case TravelPermitTypes.international:
         return 'Viagens Internacionais';
       default:

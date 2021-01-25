@@ -106,21 +106,27 @@ class ParticipantDetailsPage extends SummaryCard {
       ]);
     }
 
-    // Address
+    details.addAll(buildAddress());
+
+    return details;
+  }
+
+  List<Widget> buildAddress() {
+    List<Widget> details = [];
     if ([
-      adult.streetAddress,
-      adult.addressNumber,
-      adult.additionalAddressInfo,
-      adult.neighborhood,
-      adult.addressCity,
-      adult.addressState
+      model.streetAddress,
+      model.addressNumber,
+      model.additionalAddressInfo,
+      model.neighborhood,
+      model.addressCity,
+      model.addressState
     ].any((s) => !StringExt.isNullOrEmpty(s))) {
       details.addAll([
         buildLabelText('Endereço'),
-        buildDetailsText('${adult.streetAddress} ${adult.addressNumber}' +
-            '${!StringExt.isNullOrEmpty(adult.additionalAddressInfo) ? '\n' + adult.additionalAddressInfo : ''}' +
-            '${!StringExt.isNullOrEmpty(adult.neighborhood) ? '\n' + adult.neighborhood : ''}' +
-            '${!StringExt.isNullOrEmpty(adult.addressCity + adult.addressState) ? '\n' + adult.addressCity + ' - ' + adult.addressState : ''}'),
+        buildDetailsText('${model.streetAddress} ${model.addressNumber}' +
+            '${!StringExt.isNullOrEmpty(model.additionalAddressInfo) ? '\n' + model.additionalAddressInfo : ''}' +
+            '${!StringExt.isNullOrEmpty(model.neighborhood) ? '\n' + model.neighborhood : ''}' +
+            '${!StringExt.isNullOrEmpty(model.addressCity + model.addressState) ? '\n' + model.addressCity + ' - ' + model.addressState : ''}'),
       ]);
     }
 
@@ -160,6 +166,9 @@ class ParticipantDetailsPage extends SummaryCard {
         buildDivider(),
       ]);
     }
+
+    details.addAll(buildAddress());
+
     return details;
   }
 

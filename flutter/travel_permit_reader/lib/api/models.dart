@@ -99,20 +99,6 @@ abstract class ParticipantModel {
   final String documentIssuer;
   final DateTime issueDate;
   final String photoUrl;
-
-  ParticipantModel._(
-      {this.identifier,
-      this.name,
-      this.documentNumber,
-      this.documentType,
-      this.documentIssuer,
-      this.issueDate,
-      this.photoUrl});
-}
-
-//-------------------------------------------------------------------
-
-class AdultModel extends ParticipantModel {
   final String addressCity;
   final String addressState;
   final String zipCode;
@@ -120,29 +106,49 @@ class AdultModel extends ParticipantModel {
   final String addressNumber;
   final String additionalAddressInfo;
   final String neighborhood;
+
+  ParticipantModel._({
+    this.identifier,
+    this.name,
+    this.documentNumber,
+    this.documentType,
+    this.documentIssuer,
+    this.issueDate,
+    this.photoUrl,
+    this.addressCity,
+    this.addressState,
+    this.zipCode,
+    this.streetAddress,
+    this.addressNumber,
+    this.additionalAddressInfo,
+    this.neighborhood,
+  });
+}
+
+//-------------------------------------------------------------------
+
+class AdultModel extends ParticipantModel {
   final String phoneNumber;
   final String email;
-  final String bioId;
 
-  AdultModel._(
-      {identifier,
-      name,
-      documentNumber,
-      documentType,
-      documentIssuer,
-      issueDate,
-      photoUrl,
-      this.addressCity,
-      this.addressState,
-      this.zipCode,
-      this.streetAddress,
-      this.addressNumber,
-      this.additionalAddressInfo,
-      this.neighborhood,
-      this.phoneNumber,
-      this.email,
-      this.bioId})
-      : super._(
+  AdultModel._({
+    this.phoneNumber,
+    this.email,
+    identifier,
+    name,
+    documentNumber,
+    documentType,
+    documentIssuer,
+    issueDate,
+    photoUrl,
+    addressCity,
+    addressState,
+    zipCode,
+    streetAddress,
+    addressNumber,
+    additionalAddressInfo,
+    neighborhood,
+  }) : super._(
           identifier: identifier,
           name: name,
           documentNumber: documentNumber,
@@ -150,6 +156,13 @@ class AdultModel extends ParticipantModel {
           documentIssuer: documentIssuer,
           issueDate: issueDate,
           photoUrl: photoUrl,
+          addressCity: addressCity,
+          addressState: addressState,
+          zipCode: zipCode,
+          streetAddress: streetAddress,
+          addressNumber: addressNumber,
+          additionalAddressInfo: additionalAddressInfo,
+          neighborhood: neighborhood,
         );
 
   factory AdultModel.fromJson(Map<String, dynamic> json) {
@@ -173,7 +186,6 @@ class AdultModel extends ParticipantModel {
       neighborhood: json['neighborhood'],
       phoneNumber: json['phoneNumber'],
       email: json['email'],
-      bioId: json['bioId'],
     );
   }
 }
@@ -212,7 +224,6 @@ class GuardianModel extends AdultModel {
           neighborhood: neighborhood,
           phoneNumber: phoneNumber,
           email: email,
-          bioId: bioId,
           identifier: identifier,
           name: name,
           documentNumber: documentNumber,
@@ -257,26 +268,41 @@ class UnderageModel extends ParticipantModel {
   final String cityOfBirth;
   final String stateOfBirth;
 
-  UnderageModel._(
-      {identifier,
-      name,
-      documentNumber,
-      documentType,
-      documentIssuer,
-      issueDate,
-      photoUrl,
-      this.bioGender,
-      this.birthDate,
-      this.cityOfBirth,
-      this.stateOfBirth})
-      : super._(
-            identifier: identifier,
-            name: name,
-            documentNumber: documentNumber,
-            documentType: documentType,
-            documentIssuer: documentIssuer,
-            issueDate: issueDate,
-            photoUrl: photoUrl);
+  UnderageModel._({
+    this.bioGender,
+    this.birthDate,
+    this.cityOfBirth,
+    this.stateOfBirth,
+    identifier,
+    name,
+    documentNumber,
+    documentType,
+    documentIssuer,
+    issueDate,
+    photoUrl,
+    addressCity,
+    addressState,
+    zipCode,
+    streetAddress,
+    addressNumber,
+    additionalAddressInfo,
+    neighborhood,
+  }) : super._(
+          identifier: identifier,
+          name: name,
+          documentNumber: documentNumber,
+          documentType: documentType,
+          documentIssuer: documentIssuer,
+          issueDate: issueDate,
+          photoUrl: photoUrl,
+          addressCity: addressCity,
+          addressState: addressState,
+          zipCode: zipCode,
+          streetAddress: streetAddress,
+          addressNumber: addressNumber,
+          additionalAddressInfo: additionalAddressInfo,
+          neighborhood: neighborhood,
+        );
 
   factory UnderageModel.fromJson(Map<String, dynamic> json) {
     if (json == null) {
@@ -290,6 +316,13 @@ class UnderageModel extends ParticipantModel {
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
       photoUrl: json['pictureLocation'],
+      addressCity: json['addressCity'],
+      addressState: json['addressState'],
+      zipCode: json['zipCode'],
+      streetAddress: json['streetAddress'],
+      addressNumber: json['addressNumber'],
+      additionalAddressInfo: json['additionalAddressInfo'],
+      neighborhood: json['neighborhood'],
       bioGender: BioGendersExt.fromString(json['gender']),
       birthDate: DateTime.parse(json['birthDate']),
       cityOfBirth: json['cityOfBirth'],
