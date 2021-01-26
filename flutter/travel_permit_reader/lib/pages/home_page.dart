@@ -118,16 +118,15 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: PageUtil.getScreenHeight(context, 0.05),
+            bottom: PageUtil.getScreenHeight(context, 0.15),
+            left: 0, right: 0,
             // Validation Buttons Section ------------------------------
             child: Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(10),
               child: Column(
                 children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(
-                        bottom: PageUtil.getScreenHeight(context, 0.01)),
-                    child: Center(
+                  Padding(
+                      padding: EdgeInsets.only(bottom: 30),
                       child: Text(
                         "VALIDAR DOCUMENTO",
                         style: TextStyle(
@@ -137,28 +136,19 @@ class HomePage extends StatelessWidget {
                           letterSpacing: 0.7,
                           color: Color(0xFF007FBC),
                         ),
-                      ),
-                    ),
-                  ),
+                      )),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.all(12.5),
-                        alignment: Alignment.centerLeft,
-                        child: ValidationButton(
-                          icon: Icons.qr_code_scanner,
-                          text: 'Ler QR code',
-                          action: () => _scanQRCode(context),
-                        ),
+                      ValidationButton(
+                        icon: Icons.qr_code_scanner,
+                        text: 'Ler QR code',
+                        action: () => _scanQRCode(context),
                       ),
-                      Container(
-                        padding: EdgeInsets.all(12.5),
-                        alignment: Alignment.centerRight,
-                        child: ValidationButton(
-                          icon: Icons.settings_ethernet,
-                          text: 'Digitar Código',
-                          action: () => _launchEnterKey(context),
-                        ),
+                      ValidationButton(
+                        icon: Icons.settings_ethernet,
+                        text: 'Digitar Código',
+                        action: () => _launchEnterKey(context),
                       ),
                     ],
                   ),
