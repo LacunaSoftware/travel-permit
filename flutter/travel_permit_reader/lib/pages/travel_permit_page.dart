@@ -16,13 +16,15 @@ class TravelPermitPage extends StatefulWidget {
   _TravelPermitPageState createState() => _TravelPermitPageState();
 }
 
+//-------------------------------------------------------------------
+
 class _TravelPermitPageState extends State<TravelPermitPage> {
   String get typeDescription {
     switch (widget.model.type) {
       case TravelPermitTypes.domestic:
-        return 'Viagens Nacionais';
+        return 'Viagem Nacional';
       case TravelPermitTypes.international:
-        return 'Viagens Internacionais';
+        return 'Viagem Internacional';
       default:
         return null;
     }
@@ -79,69 +81,108 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                 for (final p in participants)
                   SummaryCard(
                       typedParticipant: p, isOffline: widget.model.isOffline),
+                if (widget.model.notary != null) _buildNotaryInfo(),
               ])),
             ])));
   }
 
   Widget _buildTravelPermitType() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Card(
-          elevation: 4,
-          child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(children: [
-                Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: Icon(
-                      Icons.shopping_bag_outlined,
-                      size: 30,
-                      color: AppTheme.defaultFgColor,
-                    )),
-                Text(typeDescription)
-              ]))),
-    );
+    return BaseCard(
+        child: Row(children: [
+      Padding(
+          padding: EdgeInsets.only(right: 10),
+          child: Icon(
+            Icons.card_travel,
+            size: 30,
+            color: AppTheme.defaultFgColor,
+          )),
+      Text(typeDescription)
+    ]));
   }
 
   Widget _buildPermitValidityState() {
-    final isExpired = DateTime.now().isAfter(widget.model.expirationDate);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Card(
+    final isExpired =
+        DateTime.now().isAfterDateOnly(widget.model.expirationDate);
+    return BaseCard(
         color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
-        elevation: 4,
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Row(children: [
+        child: Row(children: [
+          Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Icon(
+                isExpired ? Icons.event_busy : Icons.event_available,
+                size: 30,
+                color: Colors.white,
+              )),
+          RichText(
+            text: new TextSpan(
+              style: new TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white),
+              children: <TextSpan>[
+                new TextSpan(text: isExpired ? 'Expirou em ' : 'Vigente até '),
+                new TextSpan(
+                    text:
+                        '${widget.model.expirationDate.toLocal().toDateString()}',
+                    style: TextStyle(fontWeight: FontWeight.w700)),
+              ],
+            ),
+          )
+        ]));
+  }
+
+  Widget _buildNotaryInfo() {
+    return BaseCard(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Row(children: [
             Padding(
                 padding: EdgeInsets.only(right: 10),
                 child: Icon(
-                  isExpired ? Icons.event_busy : Icons.event_available,
+                  Icons.verified,
                   size: 30,
-                  color: Colors.white,
+                  color: AppTheme.defaultFgColor,
                 )),
-            RichText(
-              text: new TextSpan(
-                style: new TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white),
-                children: <TextSpan>[
-                  new TextSpan(
-                      text: isExpired ? 'Expirou em ' : 'Vigente até '),
-                  new TextSpan(
-                      text:
-                          '${widget.model.expirationDate.toLocal().toDateString()}',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
-                ],
-              ),
+            Text(
+              "CARTÓRIO EMISSOR",
+              style: AppTheme.headline2Style,
             )
           ]),
-        ),
-      ),
-    );
+        ]),
+        buildDivider(),
+        SizedBox(height: 2),
+        Text(widget.model.notary.name,
+            style: AppTheme.bodyStyle, overflow: TextOverflow.ellipsis),
+        SizedBox(height: 5),
+        Text('CNS: ${widget.model.notary.cns}',
+            textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+      ],
+    ));
   }
 }
+
+//-------------------------------------------------------------------
+
+class BaseCard extends StatelessWidget {
+  final Color color;
+  final Widget child;
+
+  const BaseCard({Key key, this.color, this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 5),
+        child: Card(
+            elevation: 4,
+            color: color,
+            child: Padding(padding: EdgeInsets.all(10), child: child)));
+  }
+}
+
+//-------------------------------------------------------------------
 
 class SummaryCard extends StatelessWidget {
   final TypedParticipant typedParticipant;
@@ -233,58 +274,47 @@ class SummaryCard extends StatelessWidget {
         ? model as UnderageModel
         : null;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Card(
-          elevation: 4,
-          child: wrapTappable(
-              context,
-              Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(children: [
-                              Padding(
-                                  padding: EdgeInsets.only(right: 10),
-                                  child: Icon(
-                                    participantIcon,
-                                    size: 30,
-                                    color: AppTheme.defaultFgColor,
-                                  )),
-                              Text(
-                                participantDescription.toUpperCase(),
-                                style: AppTheme.headline2Style,
-                              )
-                            ]),
-                            if (isOffline)
-                              Icon(Icons.more_vert,
-                                  size: 20, color: AppTheme.primaryFgColor)
-                          ]),
-                      buildDivider(),
-                      SizedBox(height: 2),
-                      Text(model.name, style: AppTheme.bodyStyle),
-                      SizedBox(height: 5),
-                      Text(
-                          '$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})',
-                          textAlign: TextAlign.left,
-                          style: AppTheme.body2Sytle),
-                      if (underage?.birthDate != null)
-                        Text(
-                            'Nascimento: ${underage.birthDate.toDateString()} ${underage?.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}',
-                            textAlign: TextAlign.left,
-                            style: AppTheme.body2Sytle),
-                    ],
-                  )))),
-    );
+    return BaseCard(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Row(children: [
+            Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: Icon(
+                  participantIcon,
+                  size: 30,
+                  color: AppTheme.defaultFgColor,
+                )),
+            Text(
+              participantDescription.toUpperCase(),
+              style: AppTheme.headline2Style,
+            )
+          ]),
+          if (!isOffline)
+            Icon(Icons.more_vert, size: 20, color: AppTheme.primaryFgColor)
+        ]),
+        buildDivider(),
+        SizedBox(height: 2),
+        Text(model.name, style: AppTheme.bodyStyle),
+        SizedBox(height: 5),
+        Text(
+            '$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})',
+            textAlign: TextAlign.left,
+            style: AppTheme.body2Sytle),
+        if (underage?.birthDate != null)
+          Text(
+              'Nascimento: ${underage.birthDate.toDateString()} ${underage?.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}',
+              textAlign: TextAlign.left,
+              style: AppTheme.body2Sytle),
+      ],
+    ));
   }
+}
 
-  Divider buildDivider() {
-    return Divider(
-      color: Colors.black38,
-    );
-  }
+Divider buildDivider() {
+  return Divider(
+    color: Colors.black38,
+  );
 }

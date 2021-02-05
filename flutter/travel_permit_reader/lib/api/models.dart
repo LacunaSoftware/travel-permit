@@ -11,6 +11,7 @@ class TravelPermitModel {
   final GuardianModel optionalGuardian;
   final AdultModel escort;
   final UnderageModel underage;
+  final NotaryModel notary;
   final bool isOffline;
 
   TravelPermitModel._({
@@ -21,6 +22,7 @@ class TravelPermitModel {
     this.optionalGuardian,
     this.escort,
     this.underage,
+    this.notary,
     this.isOffline,
   });
 
@@ -33,7 +35,8 @@ class TravelPermitModel {
         requiredGuardian: GuardianModel.fromJson(json['requiredGuardian']),
         optionalGuardian: GuardianModel.fromJson(json['optionalGuardian']),
         escort: AdultModel.fromJson(json['escort']),
-        underage: UnderageModel.fromJson(json['underage']));
+        underage: UnderageModel.fromJson(json['underage']),
+        notary: NotaryModel.fromJson(json['notary']));
   }
 
   factory TravelPermitModel.fromQRCode(QRCodeData data) {
@@ -357,4 +360,26 @@ class TypedParticipant {
   final ParticipantTypes type;
 
   TypedParticipant(this.participant, this.type);
+}
+
+//-------------------------------------------------------------------
+
+class NotaryModel {
+  final String name;
+  final String cns;
+  final String ownerName;
+  final String phoneNumber;
+
+  NotaryModel._({this.name, this.cns, this.ownerName, this.phoneNumber});
+
+  factory NotaryModel.fromJson(Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
+    return NotaryModel._(
+        name: json['name'],
+        cns: json['cns'],
+        ownerName: json['ownerName'],
+        phoneNumber: json['phoneNumber']);
+  }
 }

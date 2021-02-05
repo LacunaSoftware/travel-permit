@@ -142,12 +142,39 @@ extension StringExt on String {
   static bool isNullOrEmpty(String str) {
     return str == null || str == "";
   }
+
+  static String formatCpf(String cpf) {
+    return cpf?.length == 11
+        ? '${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9, 11)}'
+        : cpf;
+  }
 }
 
 //-------------------------------------------------------------------
 
 extension DateTimeExt on DateTime {
   String toDateString() => DateFormat('dd/MM/yyy').format(this);
+  bool isAfterDateOnly(DateTime d) {
+    if (this.year > d.year) {
+      return true;
+    } else if (this.year < d.year) {
+      return false;
+    }
+
+    // same year
+    if (this.month > d.month) {
+      return true;
+    } else if (this.month < d.month) {
+      return false;
+    }
+
+    // same month
+    if (this.day > d.day) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 //-------------------------------------------------------------------

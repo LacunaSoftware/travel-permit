@@ -38,8 +38,8 @@ class ParticipantDetailsPage extends SummaryCard {
     ];
     if (!StringExt.isNullOrEmpty(model.identifier)) {
       details.addAll([
-        buildLabelText('Id'),
-        buildDetailsText(model.identifier),
+        buildLabelText('CPF'),
+        buildDetailsText(StringExt.formatCpf(model.identifier)),
         buildDivider(),
       ]);
     }
