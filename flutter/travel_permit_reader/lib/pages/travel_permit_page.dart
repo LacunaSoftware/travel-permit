@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
+import 'package:travel_permit_reader/pages/notary_details_page.dart';
 import 'package:travel_permit_reader/pages/participant_details_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 
@@ -81,7 +82,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                 for (final p in participants)
                   SummaryCard(
                       typedParticipant: p, isOffline: widget.model.isOffline),
-                if (widget.model.notary != null) _buildNotaryInfo(),
+                if (widget.model.notary != null) _buildNotaryInfo(context),
               ])),
             ])));
   }
@@ -131,35 +132,47 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
         ]));
   }
 
-  Widget _buildNotaryInfo() {
+  Widget _buildNotaryInfo(context) {
     return BaseCard(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Row(children: [
-            Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Icon(
-                  Icons.verified,
-                  size: 30,
-                  color: AppTheme.defaultFgColor,
-                )),
-            Text(
-              "CARTÓRIO EMISSOR",
-              style: AppTheme.headline2Style,
-            )
-          ]),
-        ]),
-        buildDivider(),
-        SizedBox(height: 2),
-        Text(widget.model.notary.name,
-            style: AppTheme.bodyStyle, overflow: TextOverflow.ellipsis),
-        SizedBox(height: 5),
-        Text('CNS: ${widget.model.notary.cns}',
-            textAlign: TextAlign.left, style: AppTheme.body2Sytle),
-      ],
-    ));
+        child: InkWell(
+            splashColor: AppTheme.primaryFgColor.withAlpha(50),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (c) => NotaryDetailsPage(
+                          notaryModel: widget.model.notary,
+                        ))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(children: [
+                        Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Icon(
+                              Icons.verified,
+                              size: 30,
+                              color: AppTheme.defaultFgColor,
+                            )),
+                        Text(
+                          "CARTÓRIO EMISSOR",
+                          style: AppTheme.headline2Style,
+                        ),
+                      ]),
+                      Icon(Icons.more_vert,
+                          size: 20, color: AppTheme.primaryFgColor),
+                    ]),
+                buildDivider(),
+                SizedBox(height: 2),
+                Text(widget.model.notary.name,
+                    style: AppTheme.bodyStyle, overflow: TextOverflow.ellipsis),
+                SizedBox(height: 5),
+                Text('CNS: ${widget.model.notary.cns}',
+                    textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+              ],
+            )));
   }
 }
 
@@ -275,41 +288,46 @@ class SummaryCard extends StatelessWidget {
         : null;
 
     return BaseCard(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Row(children: [
-            Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Icon(
-                  participantIcon,
-                  size: 30,
-                  color: AppTheme.defaultFgColor,
-                )),
-            Text(
-              participantDescription.toUpperCase(),
-              style: AppTheme.headline2Style,
-            )
-          ]),
-          if (!isOffline)
-            Icon(Icons.more_vert, size: 20, color: AppTheme.primaryFgColor)
-        ]),
-        buildDivider(),
-        SizedBox(height: 2),
-        Text(model.name, style: AppTheme.bodyStyle),
-        SizedBox(height: 5),
-        Text(
-            '$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})',
-            textAlign: TextAlign.left,
-            style: AppTheme.body2Sytle),
-        if (underage?.birthDate != null)
-          Text(
-              'Nascimento: ${underage.birthDate.toDateString()} ${underage?.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}',
-              textAlign: TextAlign.left,
-              style: AppTheme.body2Sytle),
-      ],
-    ));
+        child: wrapTappable(
+            context,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(children: [
+                        Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Icon(
+                              participantIcon,
+                              size: 30,
+                              color: AppTheme.defaultFgColor,
+                            )),
+                        Text(
+                          participantDescription.toUpperCase(),
+                          style: AppTheme.headline2Style,
+                        )
+                      ]),
+                      if (!isOffline)
+                        Icon(Icons.more_vert,
+                            size: 20, color: AppTheme.primaryFgColor)
+                    ]),
+                buildDivider(),
+                SizedBox(height: 2),
+                Text(model.name, style: AppTheme.bodyStyle),
+                SizedBox(height: 5),
+                Text(
+                    '$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})',
+                    textAlign: TextAlign.left,
+                    style: AppTheme.body2Sytle),
+                if (underage?.birthDate != null)
+                  Text(
+                      'Nascimento: ${underage.birthDate.toDateString()} ${underage?.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}',
+                      textAlign: TextAlign.left,
+                      style: AppTheme.body2Sytle),
+              ],
+            )));
   }
 }
 

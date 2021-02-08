@@ -9,6 +9,8 @@ class EnterKeyPage extends StatefulWidget {
   _EnterKeyPageState createState() => _EnterKeyPageState();
 }
 
+//-------------------------------------------------------------------
+
 class _EnterKeyPageState extends State<EnterKeyPage> {
   final _formKey = GlobalKey<FormState>();
   final FocusNode focusnode = FocusNode();
@@ -28,7 +30,10 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 16),
       decoration: InputDecoration(
-          labelText: 'Código', hintText: '00000-00000-00000-00000'),
+          labelText: 'Código',
+          hintText: '00000-00000-00000-00000',
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)))),
       keyboardType: TextInputType.text,
       inputFormatters: [new UpperCaseTextFormatter(), maskFormatter],
       validator: (value) {
@@ -108,6 +113,8 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
         ));
   }
 }
+
+//-------------------------------------------------------------------
 
 class UpperCaseTextFormatter extends TextInputFormatter {
   @override
