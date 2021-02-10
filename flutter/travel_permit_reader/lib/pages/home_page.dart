@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
+import 'package:store_redirect/store_redirect.dart';
 import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/pages/travel_permit_page.dart';
@@ -34,25 +37,30 @@ class HomePage extends StatelessWidget {
         return;
       }
 
-      TravelPermitModel model;
+      TravelPermitModel travelPermitModel;
       try {
-        model = await CnbClient('https://assinatura-hml.e-notariado.org.br/')
-            .getTravelPermitInfo(data.documentKey);
+        travelPermitModel =
+            await CnbClient('https://assinatura-hml.e-notariado.org.br/')
+                .getTravelPermitInfo(data.documentKey);
       } on TPException catch (ex) {
-        if (ex.code == TPErrorCodes.cnbClientResponseError) {
-          PageUtil.showAppDialog(context, 'Erro', ex.message);
+        progress.dismiss();
+        if (!await _handleError(context, ex)) {
+          return;
         }
-        print('Error requesting document details: $ex');
+        progress.show();
       }
 
-      model = model ?? TravelPermitModel.fromQRCode(data);
+      travelPermitModel =
+          travelPermitModel ?? TravelPermitModel.fromQRCode(data);
 
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
-    } catch (ex) {
-      print('Error :$ex');
-    } finally {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TravelPermitPage(travelPermitModel)));
       progress.dismiss();
+    } catch (ex) {
+      progress.dismiss();
+      _handleError(context, ex);
     }
   }
 
@@ -64,9 +72,11 @@ class HomePage extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => EnterKeyPage(),
           ));
+
       if (StringExt.isNullOrEmpty(documentKey)) {
         return;
       }
+
       progress.show();
       final model =
           await CnbClient('https://assinatura-hml.e-notariado.org.br/')
@@ -74,16 +84,64 @@ class HomePage extends StatelessWidget {
 
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
-    } catch (ex) {
-      PageUtil.showAppDialog(
-          context,
-          'Erro',
-          ex is TPException && ex.code == TPErrorCodes.cnbClientResponseError
-              ? ex.message
-              : 'Error requesting document details: $ex');
-    } finally {
       progress.dismiss();
+    } catch (ex) {
+      progress.dismiss();
+      _handleError(context, ex);
     }
+  }
+
+  Future<bool> _handleError(context, Exception ex) async {
+    print('Error: $ex');
+
+    final completer = Completer<bool>();
+    var message = '$ex';
+    var title = 'Erro Inesperado';
+    var btText = 'Ok';
+    var onPressed = () => completer.complete(true);
+
+    if (ex is TPException) {
+      title = 'Erro';
+      switch (ex.code) {
+        case TPErrorCodes.cnbClientDecodeResponseError:
+          message = 'Erro ao ler resposta do servidor';
+          break;
+        case TPErrorCodes.cnbClientRequestError:
+          title = 'Aviso';
+          message =
+              'Não foi possível se comunicar com o servidor. Por favor verifique sua conexão.';
+          break;
+        case TPErrorCodes.cnbClientResponseError:
+          message = ex.message;
+          break;
+        case TPErrorCodes.documentNotFound:
+          message = 'Autorização de viagem não encontrada';
+          break;
+        case TPErrorCodes.qrCodeDecodeError:
+          message =
+              'Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação';
+          break;
+        case TPErrorCodes.qrCodeUnknownFormat:
+          message = 'Este não é um QR Code de Autorização Eletrônica de Viagem';
+          break;
+        case TPErrorCodes.qrCodeUnknownVersion:
+          title = 'Atualização Necessária';
+          message = 'Por favor atualize o App para a última versão.';
+          btText = 'Atualizar';
+          onPressed = () {
+            completer.complete(false);
+            StoreRedirect.redirect();
+          };
+          break;
+        default:
+          break;
+      }
+    }
+
+    PageUtil.showAppDialog(context, title, message,
+        positiveButton: ButtonAction(btText, onPressed));
+
+    return completer.future;
   }
 
   @override

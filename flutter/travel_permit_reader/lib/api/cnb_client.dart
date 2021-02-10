@@ -30,6 +30,7 @@ class CnbClient {
             'CnbClient response for key $documentKey: (${response.statusCode}) ${response.reasonPhrase}',
             TPErrorCodes.cnbClientRequestError);
       }
+
       return TravelPermitModel.fromJson(
           documentKey, json.decode(response.body));
     } catch (ex) {
@@ -37,7 +38,7 @@ class CnbClient {
           ? throw ex
           : throw TPException(
               'Error decoding client json response for key $documentKey: $ex',
-              TPErrorCodes.cnbClientDecodeResponseError);
+              TPErrorCodes.cnbClientRequestError);
     }
   }
 }

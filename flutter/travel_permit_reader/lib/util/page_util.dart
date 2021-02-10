@@ -61,6 +61,7 @@ class PageUtil {
     }
 
     showDialog<void>(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
