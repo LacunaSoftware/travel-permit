@@ -123,8 +123,7 @@ class QRCodeData {
 
   bool verify() {
     final tbsData = _getTbsData();
-    return CryptoUtil.verifyEcdsaSignature(
-        signature, tbsData, CryptoUtil.publicKey);
+    return CryptoUtil.verifySignature(signature, tbsData);
   }
 
   Uint8List _getTbsData() {
