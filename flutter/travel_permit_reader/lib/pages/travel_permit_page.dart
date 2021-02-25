@@ -50,11 +50,9 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     ];
 
     return BackgroundScaffold(
-        // imagePath: 'assets/img/bg_global_grey.svg',
         body: Column(children: <Widget>[
       Container(
         height: PageUtil.getScreenHeight(context, 0.05),
-        // Title Section ------------------------------
       ),
       Container(
           height: PageUtil.getScreenHeight(context, 0.95),

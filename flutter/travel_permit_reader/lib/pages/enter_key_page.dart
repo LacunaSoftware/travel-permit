@@ -75,7 +75,6 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
     );
     return BackgroundScaffold(
         color: AppTheme.primaryBgColor,
-        // imagePath: "assets/img/bg_global_grey.svg",
         body: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <
             Widget>[
           Container(
@@ -91,7 +90,6 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                       BorderRadius.only(topRight: Radius.circular(80.0)),
                 ),
                 child: Container(
-                    // Validation Buttons Section ------------------------------
                     child: Padding(
                         padding: EdgeInsets.fromLTRB(20, 8, 20, 0),
                         child: Column(
@@ -107,6 +105,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                                   ),
                                 ],
                               ),
+                              // Input code illustration ------------------------------
                               Visibility(
                                 visible: (PageUtil.getScreenHeight(context, 1) >
                                         700) ==
