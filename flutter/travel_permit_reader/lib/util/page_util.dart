@@ -5,28 +5,41 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 class AppTheme {
-  static const Color primaryBgColor = Color(0xFFF5F5F5);
-  static const Color accentBgColor = Colors.blue;
-  static const Color accentFgColor = Colors.white;
-  static const Color primaryFgColor = Colors.blue;
-  static const Color defaultFgColor = Colors.black54;
+  static const Color primaryBgColor = Color(0xFF009BB4);
+  static const Color accentBgColor = Color(0xFFE3E000);
+  static const Color accentFgColor = Color(0xFFE3E3E3);
+  static const Color primaryFgColor = Color(0xFF009BB4);
+  static const Color defaultFgColor = Color(0xFF6F7E84);
   static const Color alertColor = Color(0xFFFF4444);
-  static const Color successColor = Color(0xFF00C851);
+  static const Color successColor = Color(0xFF2DAB66);
 
   static const TextStyle headlineStyle = TextStyle(
       fontSize: 15,
       letterSpacing: 0.5,
       fontWeight: FontWeight.w400,
+      fontFamily: 'Rubik',
       color: defaultFgColor);
-  static const TextStyle headline2Style = TextStyle(fontSize: 12);
+  static const TextStyle headline2Style =
+      TextStyle(fontSize: 14, fontFamily: 'Rubik');
 
-  static const TextStyle bodyStyle =
-      TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+  static const TextStyle bodyStyle = TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: primaryBgColor,
+      fontFamily: 'Rubik');
   static const TextStyle body2Sytle = TextStyle(
-      fontSize: 14, fontWeight: FontWeight.w500, color: defaultFgColor);
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: defaultFgColor,
+      fontFamily: 'Rubik');
 
-  static const TextStyle barTiteStyle =
-      TextStyle(fontSize: 20, color: primaryFgColor);
+  static const TextStyle barTiteStyle = TextStyle(
+    fontSize: 20,
+    color: defaultFgColor,
+    fontFamily: 'Rubik',
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.7,
+  );
 
   static ThemeData getTheme() {
     return ThemeData(

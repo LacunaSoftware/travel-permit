@@ -41,7 +41,7 @@ class NotaryDetailsPage extends StatelessWidget {
                     IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: Icon(Icons.arrow_back),
-                      color: AppTheme.defaultFgColor,
+                      color: AppTheme.primaryBgColor,
                     ),
                   ],
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/pages/notary_details_page.dart';
@@ -49,56 +50,78 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     ];
 
     return BackgroundScaffold(
-        imagePath: 'assets/img/bg_global_grey.svg',
-        body: Padding(
-            padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
-            child: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.arrow_back),
-                    color: AppTheme.defaultFgColor,
+        // imagePath: 'assets/img/bg_global_grey.svg',
+        body: Column(children: <Widget>[
+      Container(
+        height: PageUtil.getScreenHeight(context, 0.05),
+        // Title Section ------------------------------
+      ),
+      Container(
+          height: PageUtil.getScreenHeight(context, 0.95),
+          width: PageUtil.getScreenWidth(context),
+          padding: EdgeInsets.fromLTRB(8, 24, 8, 8),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(topRight: Radius.circular(80.0)),
+          ),
+          child: Column(children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: EdgeInsets.fromLTRB(8, 0, 8, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.arrow_back),
+                        color: AppTheme.primaryBgColor,
+                        iconSize: 28,
+                      ),
+                      Text(
+                        'Autorização de viagem',
+                        style: AppTheme.barTiteStyle,
+                      ),
+                    ],
                   ),
-                  Text(
-                    'Autorização de viagem',
-                    style: AppTheme.barTiteStyle,
-                  ),
-                  Padding(
-                      padding: EdgeInsets.only(right: 12),
-                      child: Icon(
-                          widget.model.isOffline ? Icons.wifi_off : Icons.wifi,
-                          size: 30,
-                          color: widget.model.isOffline
-                              ? AppTheme.alertColor
-                              : AppTheme.primaryFgColor)),
-                ],
-              ),
-              Expanded(
-                  child: ListView(padding: EdgeInsets.zero, children: [
-                _buildPermitValidityState(),
-                _buildTravelPermitType(),
-                for (final p in participants)
-                  SummaryCard(
-                      typedParticipant: p, isOffline: widget.model.isOffline),
-                if (widget.model.notary != null) _buildNotaryInfo(context),
-              ])),
-            ])));
+                ),
+                Padding(
+                    padding: EdgeInsets.only(right: 12),
+                    child: Icon(
+                        widget.model.isOffline ? Icons.wifi_off : Icons.wifi,
+                        size: 30,
+                        color: widget.model.isOffline
+                            ? AppTheme.alertColor
+                            : AppTheme.primaryFgColor)),
+              ],
+            ),
+            Expanded(
+                child: ListView(padding: EdgeInsets.zero, children: [
+              _buildPermitValidityState(),
+              _buildTravelPermitType(),
+              for (final p in participants)
+                SummaryCard(
+                    typedParticipant: p, isOffline: widget.model.isOffline),
+              if (widget.model.notary != null) _buildNotaryInfo(context),
+            ])),
+          ]))
+    ]));
   }
 
   Widget _buildTravelPermitType() {
     return BaseCard(
+        color: AppTheme.accentFgColor,
         child: Row(children: [
-      Padding(
-          padding: EdgeInsets.only(right: 10),
-          child: Icon(
-            Icons.card_travel,
-            size: 30,
-            color: AppTheme.defaultFgColor,
-          )),
-      Text(typeDescription)
-    ]));
+          Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Icon(
+                Icons.card_travel,
+                size: 30,
+                color: AppTheme.defaultFgColor,
+              )),
+          Text(typeDescription)
+        ]));
   }
 
   Widget _buildPermitValidityState() {
@@ -134,6 +157,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
 
   Widget _buildNotaryInfo(context) {
     return BaseCard(
+        color: AppTheme.accentFgColor,
         child: InkWell(
             splashColor: AppTheme.primaryFgColor.withAlpha(50),
             onTap: () => Navigator.push(
@@ -165,10 +189,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                           size: 20, color: AppTheme.primaryFgColor),
                     ]),
                 buildDivider(),
-                SizedBox(height: 2),
+                SizedBox(height: 4),
                 Text(widget.model.notary.name,
                     style: AppTheme.bodyStyle, overflow: TextOverflow.ellipsis),
-                SizedBox(height: 5),
+                SizedBox(height: 4),
                 Text('CNS: ${widget.model.notary.cns}',
                     textAlign: TextAlign.left, style: AppTheme.body2Sytle),
               ],
@@ -187,11 +211,11 @@ class BaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.only(bottom: 5),
+        padding: const EdgeInsets.only(bottom: 8),
         child: Card(
-            elevation: 4,
             color: color,
-            child: Padding(padding: EdgeInsets.all(10), child: child)));
+            elevation: 0,
+            child: Padding(padding: EdgeInsets.all(12), child: child)));
   }
 }
 
@@ -288,6 +312,7 @@ class SummaryCard extends StatelessWidget {
         : null;
 
     return BaseCard(
+        color: AppTheme.accentFgColor,
         child: wrapTappable(
             context,
             Column(
@@ -298,7 +323,7 @@ class SummaryCard extends StatelessWidget {
                     children: [
                       Row(children: [
                         Padding(
-                            padding: EdgeInsets.only(right: 10),
+                            padding: EdgeInsets.only(right: 8),
                             child: Icon(
                               participantIcon,
                               size: 30,
@@ -314,9 +339,9 @@ class SummaryCard extends StatelessWidget {
                             size: 20, color: AppTheme.primaryFgColor)
                     ]),
                 buildDivider(),
-                SizedBox(height: 2),
+                SizedBox(height: 4),
                 Text(model.name, style: AppTheme.bodyStyle),
-                SizedBox(height: 5),
+                SizedBox(height: 8),
                 Text(
                     '$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})',
                     textAlign: TextAlign.left,
@@ -333,6 +358,6 @@ class SummaryCard extends StatelessWidget {
 
 Divider buildDivider() {
   return Divider(
-    color: Colors.black38,
+    color: AppTheme.defaultFgColor,
   );
 }

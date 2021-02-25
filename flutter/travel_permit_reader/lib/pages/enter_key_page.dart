@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 
@@ -49,19 +50,23 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
 
     final submitButtonSection = Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
-      child: RaisedButton(
+      child: FlatButton(
         onPressed: () {
           if (_formKey.currentState.validate()) {
             _documentKey = maskFormatter.getUnmaskedText();
             Navigator.pop(context, _documentKey);
           }
         },
-        color: Color(0xFF007FBC),
+        minWidth: PageUtil.getScreenHeight(context, 0.80),
+        height: 48,
+        color: AppTheme.primaryBgColor,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(444.0)),
         child: Text(
-          'Validar',
+          'Validar código',
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.7,
             color: Color(0xFFFFFFFF),
           ),
@@ -69,48 +74,77 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
       ),
     );
     return BackgroundScaffold(
-        color: Color(0xFFF5F5F5),
-        imagePath: "assets/img/bg_global_grey.svg",
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(Icons.arrow_back),
-                    color: Colors.black54,
-                  ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0),
-                child: Text(
-                  "Digite o código localizado acima do QR code",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.7,
-                    color: Color(0xFF007FBC),
-                  ),
-                ),
-              ),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    codeFieldSection,
-                    submitButtonSection,
-                  ],
-                ),
-              ),
-            ],
+        color: AppTheme.primaryBgColor,
+        // imagePath: "assets/img/bg_global_grey.svg",
+        body: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <
+            Widget>[
+          Container(
+            height: PageUtil.getScreenHeight(context, 0.05),
           ),
-        ));
+          Expanded(
+            child: Container(
+                height: PageUtil.getScreenHeight(context, 0.50),
+                width: PageUtil.getScreenWidth(context),
+                decoration: new BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.only(topRight: Radius.circular(80.0)),
+                ),
+                child: Container(
+                    // Validation Buttons Section ------------------------------
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(20, 8, 20, 0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    icon: Icon(Icons.arrow_back),
+                                    color: AppTheme.primaryBgColor,
+                                    iconSize: 28,
+                                  ),
+                                ],
+                              ),
+                              Visibility(
+                                visible: (PageUtil.getScreenHeight(context, 1) >
+                                        700) ==
+                                    true,
+                                child: Container(
+                                    height:
+                                        PageUtil.getScreenHeight(context, 0.2),
+                                    padding: EdgeInsets.fromLTRB(0, 4, 0, 24),
+                                    child: SvgPicture.asset(
+                                      "assets/img/AEVInputCode.svg",
+                                    )),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0, 12, 0, 24),
+                                child: Text(
+                                  "Digite o código localizado acima do QR code",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontFamily: 'Rubik',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.7,
+                                    color: AppTheme.defaultFgColor,
+                                  ),
+                                ),
+                              ),
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: <Widget>[
+                                    codeFieldSection,
+                                    submitButtonSection,
+                                  ],
+                                ),
+                              ),
+                            ])))),
+          ),
+        ]));
   }
 }
 
