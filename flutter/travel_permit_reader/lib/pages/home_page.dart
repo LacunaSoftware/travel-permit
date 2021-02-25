@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:store_redirect/store_redirect.dart';
 import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/api/models.dart';
@@ -42,6 +43,8 @@ class HomePage extends StatelessWidget {
         travelPermitModel =
             await CnbClient('https://assinatura-hml.e-notariado.org.br/')
                 .getTravelPermitInfo(data.documentKey);
+        // CnbClient('https://assinatura-hml.e-notariado.org.br/')
+        //     .getTravelPermitInfoMock('abc');
       } on TPException catch (ex) {
         progress.dismiss();
         if (!await _handleError(context, ex)) {
@@ -147,71 +150,81 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BackgroundScaffold(
-      color: Color(0xFFF5F5F5),
-      imagePath: "assets/img/bg_global_grey.svg",
-      body: Stack(
+      color: AppTheme.primaryBgColor,
+      body: Column(
         children: <Widget>[
-          Positioned(
-            top: 10,
-            // Title Section ------------------------------
-            child: Container(
-              height: PageUtil.getScreenHeight(context, 0.3),
-              width: PageUtil.getScreenWidth(context),
-              decoration: new BoxDecoration(
-                color: Colors.white,
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(80.0)),
-              ),
-              child: Center(
-                  child: Text(
-                "AUTORIZAÇÃO DE VIAGEM",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.7,
-                  color: Color(0xFF007FBC),
-                ),
-              )),
-            ),
-          ),
-          Positioned(
-            bottom: PageUtil.getScreenHeight(context, 0.15),
-            left: 0, right: 0,
-            // Validation Buttons Section ------------------------------
-            child: Container(
-              padding: EdgeInsets.all(10),
+          Container(
+              height: PageUtil.getScreenHeight(context, 0.20),
+              // CNB logo ------------------------------
               child: Column(
-                children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.only(bottom: 30),
-                      child: Text(
-                        "VALIDAR DOCUMENTO",
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.7,
-                          color: Color(0xFF007FBC),
-                        ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                        height: PageUtil.getScreenHeight(context, 0.10),
+                        width: PageUtil.getScreenWidth(context),
+                        child: SvgPicture.asset(
+                          "assets/img/CNBLogo.svg",
+                        ))
+                  ])),
+          Container(
+            height: PageUtil.getScreenHeight(context, 0.80),
+            width: PageUtil.getScreenWidth(context),
+            decoration: new BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(topRight: Radius.circular(80.0)),
+            ),
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  bottom: 0,
+                  // AEV logo ------------------------------
+                  child: Container(
+                      height: PageUtil.getScreenHeight(context, 0.25),
+                      width: PageUtil.getScreenWidth(context),
+                      child: SvgPicture.asset(
+                        "assets/img/AEVFooter.svg",
                       )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      ValidationButton(
-                        icon: Icons.qr_code_scanner,
-                        text: 'Ler QR code',
-                        action: () => _scanQRCode(context),
+                ),
+                // Action buttons ------------------------------
+                Column(
+                  children: <Widget>[
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.07),
+                    ),
+                    // Footer illustration ------------------------------
+                    Container(
+                        height: PageUtil.getScreenHeight(context, 0.13),
+                        child: SvgPicture.asset(
+                          "assets/img/AEVLogo.svg",
+                        )),
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.08),
+                    ),
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.20),
+                      padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          ValidationButton(
+                            icon: Icons.qr_code_scanner,
+                            text: 'Ler QR code',
+                            action: () => _scanQRCode(context),
+                          ),
+                          ValidationButton(
+                            icon: Icons.keyboard,
+                            text: 'Digitar Código',
+                            action: () => _launchEnterKey(context),
+                          ),
+                        ],
                       ),
-                      ValidationButton(
-                        icon: Icons.settings_ethernet,
-                        text: 'Digitar Código',
-                        action: () => _launchEnterKey(context),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.07),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         ],
@@ -233,38 +246,39 @@ class ValidationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      color: Colors.white,
+    return FlatButton(
+      color: Color(0xFFE3E3E3),
       onPressed: this.action,
       child: Container(
-        height: 135,
-        width: 105,
-        padding: EdgeInsets.only(top: 15, bottom: 15),
-        child: Stack(
+        padding: EdgeInsets.only(top: 12, bottom: 12),
+        height: 112,
+        width: PageUtil.getScreenWidth(context, 0.32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            Positioned(
+            Container(
               child: Align(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.topLeft,
                 child: Icon(
                   this.icon,
-                  color: Color(0xFF007FBC),
-                  size: 45.0,
+                  color: Color(0xFF6F7E84),
+                  size: 40.0,
                 ),
               ),
             ),
-            Positioned(
+            Container(
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
                   this.text,
                   style: TextStyle(
-                    fontFamily: 'Montserrat',
+                    fontFamily: 'Rubik',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.7,
-                    color: Color(0xFF9E9E9E),
+                    color: AppTheme.primaryBgColor,
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.left,
                   softWrap: true,
                 ),
               ),
@@ -273,9 +287,8 @@ class ValidationButton extends StatelessWidget {
         ),
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.0),
+        borderRadius: BorderRadius.circular(4.0),
       ),
-      elevation: 5.0,
     );
   }
 }

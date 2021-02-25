@@ -30,24 +30,36 @@ class NotaryDetailsPage extends StatelessWidget {
     details.add(SizedBox(height: 30));
 
     return BackgroundScaffold(
-        body: Padding(
-            padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
-            child: SingleChildScrollView(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.arrow_back),
-                      color: AppTheme.defaultFgColor,
-                    ),
-                  ],
-                ),
-                ...details
-              ],
-            ))));
+        body: Column(children: <Widget>[
+      Container(
+        height: PageUtil.getScreenHeight(context, 0.05),
+      ),
+      Container(
+          height: PageUtil.getScreenHeight(context, 0.95),
+          width: PageUtil.getScreenWidth(context),
+          padding: EdgeInsets.fromLTRB(8, 24, 8, 8),
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(topRight: Radius.circular(80.0)),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close),
+                    color: AppTheme.primaryBgColor,
+                  ),
+                ],
+              ),
+              Expanded(
+                  child: ListView(
+                children: [...details],
+              )),
+            ],
+          ))
+    ]));
   }
 
   Widget buildLabelText(String label) {
