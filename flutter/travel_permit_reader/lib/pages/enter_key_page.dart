@@ -14,7 +14,9 @@ class EnterKeyPage extends StatefulWidget {
 
 class _EnterKeyPageState extends State<EnterKeyPage> {
   final _formKey = GlobalKey<FormState>();
-  final FocusNode focusnode = FocusNode();
+  final focusnode = FocusNode();
+  final maskFormatter = new MaskTextInputFormatter(
+      mask: '#####-#####-#####-#####', filter: {"#": RegExp(r'[A-Z0-9]')});
   bool focused = false;
   String _documentKey;
 
@@ -23,10 +25,9 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
     Future.delayed(Duration(seconds: 1),
         () => FocusScope.of(context).requestFocus(focusnode));
 
-    final maskFormatter = new MaskTextInputFormatter(
-        mask: '#####-#####-#####-#####', filter: {"#": RegExp(r'[A-Z0-9]')});
-
     var codeFieldSection = TextFormField(
+      textInputAction: TextInputAction.go,
+      onFieldSubmitted: (value) => _submit(value),
       focusNode: focusnode,
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 16),
@@ -51,12 +52,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
     final submitButtonSection = Padding(
       padding: const EdgeInsets.symmetric(vertical: 20.0),
       child: FlatButton(
-        onPressed: () {
-          if (_formKey.currentState.validate()) {
-            _documentKey = maskFormatter.getUnmaskedText();
-            Navigator.pop(context, _documentKey);
-          }
-        },
+        onPressed: () => _submit(),
         minWidth: PageUtil.getScreenHeight(context, 0.80),
         height: 48,
         color: AppTheme.primaryBgColor,
@@ -144,6 +140,17 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                             ])))),
           ),
         ]));
+  }
+
+  void _submit([String rawInputvalue]) {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+    _documentKey = maskFormatter.getUnmaskedText();
+    if (StringExt.isNullOrEmpty(_documentKey)) {
+      _documentKey = rawInputvalue;
+    }
+    Navigator.pop(context, _documentKey);
   }
 }
 

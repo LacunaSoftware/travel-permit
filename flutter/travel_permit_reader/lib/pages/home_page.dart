@@ -29,6 +29,11 @@ class HomePage extends StatelessWidget {
       final code = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancelar', false, ScanMode.QR);
 
+      // '-1' is returned when cancelled. Check null or empty just in case
+      if (StringExt.isNullOrEmpty(code) || code == '-1') {
+        return;
+      }
+
       progress.show();
       final data = QRCodeData.parse(code);
 
@@ -39,16 +44,13 @@ class HomePage extends StatelessWidget {
       }
 
       TravelPermitModel travelPermitModel;
+      Exception requestException;
       try {
         travelPermitModel =
             await CnbClient('https://assinatura-hml.e-notariado.org.br/')
                 .getTravelPermitInfo(data.documentKey);
-      } on TPException catch (ex) {
-        progress.dismiss();
-        if (!await _handleError(context, ex)) {
-          return;
-        }
-        progress.show();
+      } on Exception catch (ex) {
+        requestException = ex;
       }
 
       travelPermitModel =
@@ -57,7 +59,9 @@ class HomePage extends StatelessWidget {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => TravelPermitPage(travelPermitModel)));
+              builder: (context) => TravelPermitPage(travelPermitModel,
+                  onlineRequestException: requestException)));
+
       progress.dismiss();
     } catch (ex) {
       progress.dismiss();

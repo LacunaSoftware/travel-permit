@@ -1,18 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/pages/notary_details_page.dart';
 import 'package:travel_permit_reader/pages/participant_details_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 
+import '../tp_exception.dart';
+
 class TravelPermitPage extends StatefulWidget {
   final TravelPermitModel model;
+  final Exception onlineRequestException;
 
-  TravelPermitPage(this.model);
+  TravelPermitPage(this.model, {this.onlineRequestException});
 
   @override
   _TravelPermitPageState createState() => _TravelPermitPageState();
@@ -35,6 +38,9 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    SchedulerBinding.instance.addPostFrameCallback(
+        (_) => _handleError(widget.onlineRequestException));
 
     var participants = <TypedParticipant>[
       if (widget.model.escort != null)
@@ -105,6 +111,36 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
             ])),
           ]))
     ]));
+  }
+
+  void _handleError(Exception ex) {
+    final title = 'Exibindo dados offline';
+    var message = '${widget.onlineRequestException}';
+
+    if (ex is TPException) {
+      switch (ex.code) {
+        case TPErrorCodes.cnbClientDecodeResponseError:
+          message = 'Erro ao ler resposta do servidor';
+          break;
+        case TPErrorCodes.cnbClientRequestError:
+          message =
+              'Não foi possível se comunicar com o servidor. Por favor verifique sua conexão.';
+          break;
+        case TPErrorCodes.cnbClientResponseError:
+          message = ex.message;
+          break;
+        case TPErrorCodes.documentNotFound:
+          message = 'Autorização de viagem não encontrada no servidor';
+          break;
+        case TPErrorCodes.qrCodeDecodeError:
+        case TPErrorCodes.qrCodeUnknownFormat:
+        case TPErrorCodes.qrCodeUnknownVersion:
+        default:
+          break;
+      }
+    }
+
+    PageUtil.showAppDialog(context, title, message);
   }
 
   Widget _buildTravelPermitType() {
