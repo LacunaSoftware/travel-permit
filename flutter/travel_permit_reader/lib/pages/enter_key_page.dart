@@ -78,11 +78,11 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
         body: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <
             Widget>[
           Container(
-            height: PageUtil.getScreenHeight(context, 0.05),
+            height: PageUtil.getScreenHeight(context, 0.06),
           ),
           Expanded(
             child: Container(
-                height: PageUtil.getScreenHeight(context, 0.50),
+                height: PageUtil.getScreenHeight(context, 0.70),
                 width: PageUtil.getScreenWidth(context),
                 decoration: new BoxDecoration(
                   color: Colors.white,
@@ -91,7 +91,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                 ),
                 child: Container(
                     child: Padding(
-                        padding: EdgeInsets.fromLTRB(20, 8, 20, 0),
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -112,8 +112,8 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                                     true,
                                 child: Container(
                                     height:
-                                        PageUtil.getScreenHeight(context, 0.2),
-                                    padding: EdgeInsets.fromLTRB(0, 4, 0, 24),
+                                        PageUtil.getScreenHeight(context, 0.20),
+                                    padding: EdgeInsets.fromLTRB(0, 10, 0, 24),
                                     child: SvgPicture.asset(
                                       "assets/img/AEVInputCode.svg",
                                     )),

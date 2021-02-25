@@ -52,10 +52,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     return BackgroundScaffold(
         body: Column(children: <Widget>[
       Container(
-        height: PageUtil.getScreenHeight(context, 0.05),
+        height: PageUtil.getScreenHeight(context, 0.06),
       ),
       Container(
-          height: PageUtil.getScreenHeight(context, 0.95),
+          height: PageUtil.getScreenHeight(context, 0.94),
           width: PageUtil.getScreenWidth(context),
           padding: EdgeInsets.fromLTRB(8, 24, 8, 8),
           decoration: new BoxDecoration(

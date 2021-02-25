@@ -43,8 +43,6 @@ class HomePage extends StatelessWidget {
         travelPermitModel =
             await CnbClient('https://assinatura-hml.e-notariado.org.br/')
                 .getTravelPermitInfo(data.documentKey);
-        // CnbClient('https://assinatura-hml.e-notariado.org.br/')
-        //     .getTravelPermitInfoMock('abc');
       } on TPException catch (ex) {
         progress.dismiss();
         if (!await _handleError(context, ex)) {
@@ -157,14 +155,17 @@ class HomePage extends StatelessWidget {
               height: PageUtil.getScreenHeight(context, 0.20),
               // CNB logo ------------------------------
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Container(
-                        height: PageUtil.getScreenHeight(context, 0.10),
-                        width: PageUtil.getScreenWidth(context),
-                        child: SvgPicture.asset(
-                          "assets/img/CNBLogo.svg",
-                        ))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Container(
+                          height: PageUtil.getScreenHeight(context, 0.10),
+                          width: PageUtil.getScreenWidth(context),
+                          child: SvgPicture.asset(
+                            "assets/img/CNBLogo.svg",
+                          )),
+                    )
                   ])),
           Container(
             height: PageUtil.getScreenHeight(context, 0.80),
