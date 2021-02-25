@@ -39,8 +39,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    SchedulerBinding.instance.addPostFrameCallback(
-        (_) => _handleError(widget.onlineRequestException));
+    if (widget.model.isOffline && widget.onlineRequestException != null) {
+      SchedulerBinding.instance.addPostFrameCallback(
+          (_) => _handleError(widget.onlineRequestException));
+    }
 
     var participants = <TypedParticipant>[
       if (widget.model.escort != null)
@@ -132,9 +134,6 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
         case TPErrorCodes.documentNotFound:
           message = 'Autorização de viagem não encontrada no servidor';
           break;
-        case TPErrorCodes.qrCodeDecodeError:
-        case TPErrorCodes.qrCodeUnknownFormat:
-        case TPErrorCodes.qrCodeUnknownVersion:
         default:
           break;
       }
