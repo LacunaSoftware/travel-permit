@@ -161,15 +161,15 @@ class HomePage extends StatelessWidget {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Container(
-                          height: PageUtil.getScreenHeight(context, 0.10),
-                          width: PageUtil.getScreenWidth(context),
-                          child: SvgPicture.asset(
-                            "assets/img/CNBLogo.svg",
-                          )),
-                    )
+                    Container(
+                        height: PageUtil.getScreenHeight(context, 0.10),
+                        width: PageUtil.getScreenWidth(context),
+                        child: SvgPicture.asset(
+                          "assets/img/CNBLogo.svg",
+                        )),
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.03),
+                    ),
                   ])),
           Container(
             height: PageUtil.getScreenHeight(context, 0.80),
@@ -194,7 +194,7 @@ class HomePage extends StatelessWidget {
                 Column(
                   children: <Widget>[
                     Container(
-                      height: PageUtil.getScreenHeight(context, 0.07),
+                      height: PageUtil.getScreenHeight(context, 0.08),
                     ),
                     // Footer illustration ------------------------------
                     Container(
@@ -203,7 +203,7 @@ class HomePage extends StatelessWidget {
                           "assets/img/AEVLogo.svg",
                         )),
                     Container(
-                      height: PageUtil.getScreenHeight(context, 0.08),
+                      height: PageUtil.getScreenHeight(context, 0.07),
                     ),
                     Container(
                       height: PageUtil.getScreenHeight(context, 0.20),
