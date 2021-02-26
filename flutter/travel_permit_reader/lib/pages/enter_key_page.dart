@@ -87,7 +87,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                 ),
                 child: Container(
                     child: Padding(
-                        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -109,7 +109,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                                 child: Container(
                                     height:
                                         PageUtil.getScreenHeight(context, 0.20),
-                                    padding: EdgeInsets.fromLTRB(0, 10, 0, 24),
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 24),
                                     child: SvgPicture.asset(
                                       "assets/img/AEVInputCode.svg",
                                     )),

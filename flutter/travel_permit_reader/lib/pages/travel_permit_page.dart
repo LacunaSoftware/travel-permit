@@ -65,7 +65,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
       Container(
           height: PageUtil.getScreenHeight(context, 0.94),
           width: PageUtil.getScreenWidth(context),
-          padding: EdgeInsets.fromLTRB(8, 24, 8, 8),
+          padding: EdgeInsets.fromLTRB(8, 16, 8, 8),
           decoration: new BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(topRight: Radius.circular(80.0)),
