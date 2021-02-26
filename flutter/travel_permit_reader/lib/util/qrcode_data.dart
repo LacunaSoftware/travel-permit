@@ -66,24 +66,24 @@ class QRCodeData {
   static const _spaceMarker = '+';
 
   factory QRCodeData.parse(String code) {
-    final segments = code.split(_segmentSeparator);
-    if (segments.isEmpty || segments.first != _magicPrefix) {
-      throw TPException(
-          'Unknown QR code format', TPErrorCodes.qrCodeUnknownFormat);
-    }
-
-    final version = int.parse(segments[1]);
-    if (version > _latestKnownVersion) {
-      throw TPException('Unknown QR code version: $version',
-          TPErrorCodes.qrCodeUnknownVersion);
-    }
-
-    if (version == 1 && segments.length != 26) {
-      throw TPException(
-          'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
-    }
-
     try {
+      final segments = code.split(_segmentSeparator);
+      if (segments.isEmpty || segments.first != _magicPrefix) {
+        throw TPException(
+            'Unknown QR code format', TPErrorCodes.qrCodeUnknownFormat);
+      }
+
+      final version = int.parse(segments[1]);
+      if (version > _latestKnownVersion) {
+        throw TPException('Unknown QR code version: $version',
+            TPErrorCodes.qrCodeUnknownVersion);
+      }
+
+      if (version == 1 && segments.length != 26) {
+        throw TPException(
+            'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
+      }
+
       var index = 2;
 
       final data = QRCodeData._(
@@ -115,6 +115,8 @@ class QRCodeData {
       );
       data._segments = segments;
       return data;
+    } on TPException {
+      rethrow;
     } catch (ex) {
       throw TPException(
           'Error decoding QR code: $ex', TPErrorCodes.qrCodeDecodeError);

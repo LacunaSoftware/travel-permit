@@ -13,7 +13,7 @@ import '../tp_exception.dart';
 
 class TravelPermitPage extends StatefulWidget {
   final TravelPermitModel model;
-  final Exception onlineRequestException;
+  final dynamic onlineRequestException;
 
   TravelPermitPage(this.model, {this.onlineRequestException});
 
@@ -115,9 +115,9 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     ]));
   }
 
-  void _handleError(Exception ex) {
+  void _handleError(dynamic ex) {
     final title = 'Exibindo dados offline';
-    var message = '${widget.onlineRequestException}';
+    var message = '$ex';
 
     if (ex is TPException) {
       switch (ex.code) {

@@ -44,12 +44,12 @@ class HomePage extends StatelessWidget {
       }
 
       TravelPermitModel travelPermitModel;
-      Exception requestException;
+      dynamic requestException;
       try {
         travelPermitModel =
             await CnbClient('https://assinatura-hml.e-notariado.org.br/')
                 .getTravelPermitInfo(data.documentKey);
-      } on Exception catch (ex) {
+      } catch (ex) {
         requestException = ex;
       }
 
@@ -96,7 +96,7 @@ class HomePage extends StatelessWidget {
     }
   }
 
-  Future<bool> _handleError(context, Exception ex) async {
+  Future<bool> _handleError(context, dynamic ex) async {
     print('Error: $ex');
 
     final completer = Completer<bool>();
