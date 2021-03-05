@@ -12,7 +12,7 @@ export class TravelPermitTypePipe implements PipeTransform {
 		}
     switch(value) {
 			case TravelPermitTypes.Domestic:
-			case 'N':
+			case 'D':
 				return 'Nacional';
 			case TravelPermitTypes.International:
 			case 'I':

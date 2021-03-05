@@ -1,3 +1,4 @@
+import { environment } from "src/environments/environment";
 import { segmentSeparator } from "./constants";
 
 export const hashAlg: EcdsaParams = {
@@ -10,8 +11,8 @@ export const keyOps : KeyUsage[] = ['verify'];
 export const jwk: JsonWebKey = {
 	crv: 'P-256',
 	kty: 'EC',
-	x: 'e7yZX1L9JolR7zIaA2I_QIEdnj2C8jy3DKpSILqoD4o',
-	y: 'IbGzOdj4ikD81oQHgmT7ohHxj8KfZ7M5y45cHryuBzg',
+	x: environment.ecKey.x,
+	y: environment.ecKey.y,
 	ext: true,
 	key_ops: keyOps
 };

@@ -17,6 +17,7 @@ import { DialogReadQrCodeComponent } from './dialog-read-qr-code/dialog-read-qr-
 	styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+	private offlineUnverifiedData : TravelPermitOfflineModel;
 	offlineData: TravelPermitOfflineModel;
 	segments: string[];
 
@@ -39,6 +40,7 @@ export class AppComponent {
 			if (r) {
 				console.log('Read QR Code data', r);
 				this.loading = true;
+				this.offlineUnverifiedData = null;
 				this.offlineData = null;
 				this.travelPermit = null;
 				this.parseQrCodeData(r);
@@ -56,6 +58,7 @@ export class AppComponent {
 				console.log('Read code', r);
 				this.loading = true;
 				this.offlineData = null;
+				this.offlineUnverifiedData = null;
 				this.travelPermit = null;
 				this.loadOnlineData(r);
 			}
@@ -120,7 +123,7 @@ export class AppComponent {
 			}
 
 			this.segments = segments;
-			this.offlineData = data;
+			this.offlineUnverifiedData = data;
 			this.verifyOfflineData();
 		} catch (ex) {
 			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
@@ -129,11 +132,13 @@ export class AppComponent {
 	}
 
 	private verifyOfflineData() {
-		CryptoHelper.verifyTPSignature(this.offlineData.signature, this.segments)
+		CryptoHelper.verifyTPSignature(this.offlineUnverifiedData.signature, this.segments)
 			.then((v) => {
 				if (v) {
+					this.offlineData = this.offlineUnverifiedData;
 					this.loadOnlineData(this.offlineData.key);
 				} else {
+					this.offlineUnverifiedData = null;
 					this.offlineData = null;
 					this.loading = false;
 					this.alert('A assinatura do QR code está inválida.');
@@ -143,6 +148,7 @@ export class AppComponent {
 			}).catch(() => {
 				this.alert('Ocorreu um erro ao validar a assinatura do QR Code, por favor tente digitar o código presente no documento');
 				this.offlineData = null;
+				this.offlineUnverifiedData = null;
 				this.loading = false;
 			});
 	}
