@@ -1,0 +1,43 @@
+<ngx-loading [show]="loading"></ngx-loading>
+
+<mat-toolbar class="toolbar" color="primary" mat-elevation-z2>
+  <!--Logo-->
+  <img class="logo" src="../../assets/light-logo.png" />
+
+</mat-toolbar>
+
+
+<div class="mt-5 mb-4 d-flex justify-content-center">
+  <div class="content-card">
+    <div class="mx-4">
+      <div class="my-4 title d-flex align-items-center">
+        <mat-icon color="accent">keyboard_arrow_right</mat-icon>
+        <span>Validador de Autorização Eletrônica de Viagem</span>
+      </div>
+
+      <div class="row my-5">
+        <a class="col-md-6 col-12 pointer px-md-5" (click)="openQrCodeScanner()">
+          <div class="card-link py-2 px-3">
+            <mat-icon color="accent" class="button-icon mt-2">qr_code_2</mat-icon>
+            <h4>
+              Ler QR Code
+            </h4>
+          </div>
+        </a>
+
+        <a class="col-md-6 col-12 mt-md-0 mt-3 pointer px-md-5" (click)="openEnterCode()">
+          <div class="card-link py-2 px-3">
+            <mat-icon color="accent" class="button-icon mt-2">keyboard</mat-icon>
+            <h4>
+              Digitar código
+            </h4>
+          </div>
+        </a>
+      </div>
+
+			<div class="mb-3">
+				<app-travel-permit-display *ngIf="travelPermit || offlineData" [travelPermit]="travelPermit" [offlineData]="offlineData"></app-travel-permit-display>
+			</div>
+    </div>
+  </div>
+</div>
