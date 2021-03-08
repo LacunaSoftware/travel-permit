@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
 import { encode } from 'punycode';
 import { latestKnownVersion, magicPrefix, segmentSeparator, spaceMarker } from 'src/api/constants';
 import { CryptoHelper, hashAlg, jwk, keyOps, sigAlg } from 'src/api/crypto';
@@ -16,7 +18,7 @@ import { DialogReadQrCodeComponent } from './dialog-read-qr-code/dialog-read-qr-
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 	private offlineUnverifiedData : TravelPermitOfflineModel;
 	offlineData: TravelPermitOfflineModel;
 	segments: string[];
@@ -26,9 +28,15 @@ export class AppComponent {
 
 	constructor(
 		private dialog: MatDialog,
-		private http: HttpClient
+		private http: HttpClient,
+		private matIconRegistry: MatIconRegistry,
+		private domSanitizer: DomSanitizer
 	) {
+		this.matIconRegistry.addSvgIcon('whatsapp', this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/icons/whatsapp.svg'));
+	}
 
+	ngOnInit() {
+		
 	}
 
 	openQrCodeScanner() {

@@ -4,7 +4,7 @@
         <p>Digite o código de validação presente no documento</p>
 		<form [formGroup]="form" class="d-flex w-md-60 justify-content-center">
 			<mat-form-field  floatLabel=never class="full-width">
-				<input matInput mask="AAAAA-AAAAA-AAAAA-AAAAA" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" formControlName="code">
+				<input autofocus matInput mask="AAAAA-AAAAA-AAAAA-AAAAA" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" formControlName="code">
 			  </mat-form-field>
 		</form>
     </div>
