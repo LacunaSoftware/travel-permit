@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -18,8 +18,8 @@ import { DialogReadQrCodeComponent } from './dialog-read-qr-code/dialog-read-qr-
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
-	private offlineUnverifiedData : TravelPermitOfflineModel;
+export class AppComponent implements OnInit, AfterViewInit {
+	private offlineUnverifiedData: TravelPermitOfflineModel;
 	offlineData: TravelPermitOfflineModel;
 	segments: string[];
 
@@ -36,7 +36,11 @@ export class AppComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		
+
+	}
+
+	ngAfterViewInit() {
+		this.initialize(document, "freshchat-js-sdk");
 	}
 
 	openQrCodeScanner() {
@@ -152,7 +156,7 @@ export class AppComponent implements OnInit {
 					this.alert('A assinatura do QR code está inválida.');
 				}
 
-				
+
 			}).catch(() => {
 				this.alert('Ocorreu um erro ao validar a assinatura do QR Code, por favor tente digitar o código presente no documento');
 				this.offlineData = null;
@@ -189,10 +193,27 @@ export class AppComponent implements OnInit {
 				useMessageAsHtml: useMessageAsHtml
 			}
 		});
-		
-		return dialogRef.afterClosed().toPromise().then(() => {});
+
+		return dialogRef.afterClosed().toPromise().then(() => { });
 	};
 
-	
+	private initialize(i, t) {
+		var e;
+		i.getElementById(t)
+			? this.initFreshChat()
+			: ((e = i.createElement("script")).id = t, e.async = !0, e.src = "https://wchat.freshchat.com/js/widget.js", e.onload = (() => this.initFreshChat()), i.head.appendChild(e))
+	}
 
+	private initFreshChat() {
+		(window as any).fcWidget.init({
+			config: {
+				cssNames: {
+					widget: "custom_fc_frame"
+				}
+			},
+			token: '',
+			host: 'https://wchat.freshchat.com',
+			siteId: 'VALIDACAOAEV'
+		});
+	}
 }
