@@ -8,14 +8,14 @@ class CryptoUtil {
 
   static ECPublicKey _publicKeyV1 = ECPublicKey(
       _ecDomain.curve.createPoint(
-          BigIntExt.fromBase64('e7yZX1L9JolR7zIaA2I/QIEdnj2C8jy3DKpSILqoD4o='),
-          BigIntExt.fromBase64('IbGzOdj4ikD81oQHgmT7ohHxj8KfZ7M5y45cHryuBzg=')),
+          BigIntExt.fromBase64('Mq1pD1R4qu6xjpIvarG54zOnGrAqvMbsq9Fvo8kns4s='),
+          BigIntExt.fromBase64('1c53A4cKVXCtFucnC7Z54uNPzEHrVxgu3tJVhQNv19U=')),
       _ecDomain);
 
   static bool verifySignature(Uint8List signature, Uint8List tbsData) {
     final verifier = Signer("SHA-256/ECDSA");
     verifier.init(false, PublicKeyParameter(_publicKeyV1));
-    final ecSig = ECSignatureExt.fromBytes(signature);
+    final ecSig = ECSignatureExt.fromAsn1Bytes(signature);
     return verifier.verifySignature(tbsData, ecSig);
   }
 }
@@ -23,7 +23,7 @@ class CryptoUtil {
 //-------------------------------------------------------------------
 
 extension ECSignatureExt on ECSignature {
-  static ECSignature fromBytes(Uint8List signature) {
+  static ECSignature fromAsn1Bytes(Uint8List signature) {
     // ASN1 format
     // ECDSA-Sig-Value ::= SEQUENCE {
     //   r  INTEGER,
