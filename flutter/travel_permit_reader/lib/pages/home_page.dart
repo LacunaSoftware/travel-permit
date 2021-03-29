@@ -40,6 +40,7 @@ class HomePage extends StatelessWidget {
       if (!data.verify()) {
         PageUtil.showAppDialog(context, 'QR Code Recusado',
             'A assinatura do QR code está inválida.');
+        progress.dismiss();
         return;
       }
 
