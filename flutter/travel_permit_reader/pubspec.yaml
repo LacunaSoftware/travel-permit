@@ -32,7 +32,7 @@ dependencies:
   font_awesome_flutter: ^8.11.0
   flutter_barcode_scanner: ^1.0.2
   flutter_progress_hud: ^1.0.3
-  flutter_svg: ^0.19.3
+  flutter_svg: ^0.18.0
   mask_text_input_formatter: ^1.2.1
   pointycastle: ^2.0.0
   http: ^0.12.2
