@@ -1,0 +1,14 @@
+
+<ngx-loading [show]="loading"></ngx-loading>
+<h2 class="title" mat-dialog-title>Ler QR Code</h2>
+<mat-dialog-content>
+    <div class="d-flex flex-column align-items-center">
+        <p>Leia o QR code presente no documento de autorização eletrônica de viagem</p>
+        <mat-icon class="main-icon mt-3">qr_code_scanner</mat-icon>
+    </div>
+
+    <form [formGroup]="form" class="input-hidden">
+        <textarea autofocus (blur)="onBlur()" formControlName="qrCodeData"></textarea>
+    </form>
+  
+</mat-dialog-content>

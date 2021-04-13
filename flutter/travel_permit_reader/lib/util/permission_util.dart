@@ -6,7 +6,7 @@ class PermissionUtil {
   static Future<bool> checkCameraPermission(
       BuildContext context, String requiredMessage) async {
     var status = await Permission.camera.status;
-    if (!status.isGranted && await Permission.camera.request().isGranted) {
+    if (!status.isGranted && !await Permission.camera.request().isGranted) {
       PageUtil.showAppDialog(context, 'Câmera necessária', requiredMessage,
           positiveButton:
               ButtonAction('Ir para configurações', () => openAppSettings()));

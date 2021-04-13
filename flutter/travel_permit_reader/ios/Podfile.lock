@@ -1,0 +1,55 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_barcode_scanner (1.0.2):
+    - Flutter
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - path_provider (0.0.1):
+    - Flutter
+  - "permission_handler (5.1.0+2)":
+    - Flutter
+  - sqflite (0.0.1):
+    - Flutter
+    - FMDB (~> 2.7.2)
+  - store_redirect (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_barcode_scanner (from `.symlinks/plugins/flutter_barcode_scanner/ios`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - store_redirect (from `.symlinks/plugins/store_redirect/ios`)
+
+SPEC REPOS:
+  trunk:
+    - FMDB
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_barcode_scanner:
+    :path: ".symlinks/plugins/flutter_barcode_scanner/ios"
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
+  sqflite:
+    :path: ".symlinks/plugins/sqflite/ios"
+  store_redirect:
+    :path: ".symlinks/plugins/store_redirect/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  flutter_barcode_scanner: fc42adac0732eca7bd9d3d676b215bce5903f269
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
+  sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
+  store_redirect: 2977747cf81689a39bd62c248c2deacb7a0d131e
+
+PODFILE CHECKSUM: a595cd9ebcb80ae979117a20caf99ab767cc27d9
+
+COCOAPODS: 1.10.1

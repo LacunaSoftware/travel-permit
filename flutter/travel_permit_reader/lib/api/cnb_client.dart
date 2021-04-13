@@ -12,27 +12,33 @@ class CnbClient {
   }
 
   Future<TravelPermitModel> getTravelPermitInfo(String documentKey) async {
-    final url = path.join(
-        _host.toString(), 'api/documents/keys/$documentKey/travel-permit');
-
-    final response = await http.get(url);
-
-    if (response.statusCode == 404) {
-      throw TPException('No document found for key: $documentKey',
-          TPErrorCodes.documentNotFound);
-    } else if (response.statusCode != 200) {
-      throw TPException(
-          'CnbClient response for key $documentKey: (${response.statusCode}) ${response.reasonPhrase}',
-          TPErrorCodes.cnbClientRequestError);
-    }
-
     try {
-      final jsonMap = json.decode(response.body);
-      return TravelPermitModel.fromJson(documentKey, jsonMap);
+      final url = path.join(
+          _host.toString(), 'api/documents/keys/$documentKey/travel-permit');
+
+      final response = await http.get(url);
+
+      if (response.statusCode == 422) {
+        final error = CnbErrorModel.fromJson(json.decode(response.body));
+        error == null
+            ? throw TPException('Error decoding 422 response',
+                TPErrorCodes.cnbClientDecodeResponseError)
+            : throw TPException(
+                error.message, TPErrorCodes.cnbClientResponseError);
+      } else if (response.statusCode != 200) {
+        throw TPException(
+            'CnbClient response for key $documentKey: (${response.statusCode}) ${response.reasonPhrase}',
+            TPErrorCodes.cnbClientRequestError);
+      }
+
+      return TravelPermitModel.fromJson(
+          documentKey, json.decode(response.body));
     } catch (ex) {
-      throw TPException(
-          'Error decoding client json response for key $documentKey: $ex',
-          TPErrorCodes.cnbClientDecodeResponseError);
+      ex is TPException
+          ? throw ex
+          : throw TPException(
+              'Error decoding client json response for key $documentKey: $ex',
+              TPErrorCodes.cnbClientRequestError);
     }
   }
 }

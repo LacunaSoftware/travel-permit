@@ -5,6 +5,7 @@ enum TPErrorCodes {
   qrCodeDecodeError,
   cnbClientRequestError,
   cnbClientDecodeResponseError,
+  cnbClientResponseError,
   documentNotFound,
 }
 

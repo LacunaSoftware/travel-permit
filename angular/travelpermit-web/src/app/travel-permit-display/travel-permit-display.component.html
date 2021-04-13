@@ -1,0 +1,290 @@
+<ng-container  *ngIf="travelPermit || offlineData">
+	<div class="d-flex flex-column">
+		<div class="row pt-3">
+			<div class="col-12 col-md-6 px-md-5 pt-4 pt-md-0">
+				<div class="row">
+					<div class="col-12 col-md-6">
+						<p class="mb-sm-1"><strong>Data de expiração:</strong></p>
+					</div>
+					<div class="col-12 col-md-6 d-flex justify-content-end">
+						<p>{{(travelPermit?.expirationDate || offlineData.expirationDate) | date: 'dd/MM/yyyy'}}</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12 col-md-4">
+						<h4 class="mb-sm-1"><strong>Tipo:</strong></h4>
+					</div>
+					<div class="col-12 col-md-8 d-flex justify-content-end">
+						<p>{{(travelPermit?.type || offlineData.type) | travelPermitType}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="w-md-48 px-3">
+			
+		</div>
+		<div class="row pt-0 pt-md-4">
+			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+				<ng-template
+					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.underage || offlineData.underage), title: 'Menor' }">
+				</ng-template>
+			</div>
+	
+			<div *ngIf="travelPermit?.escort || offlineData.escort.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+				<ng-template
+					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.escort || offlineData.escort), title: 'Acompanhante' }">
+				</ng-template>
+			</div>
+
+			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+				<ng-template
+					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.requiredGuardian || offlineData.requiredGuardian), title: 'Reponsável Legal 1' }">
+				</ng-template>
+			</div>
+	
+			<div *ngIf="travelPermit?.optionalGuardian || offlineData.optionalGuardian.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+				<ng-template
+					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.optionalGuardian || offlineData.optionalGuardian), title: 'Reponsável Legal 2' }">
+				</ng-template>
+			</div>
+		</div>
+		
+	</div>
+	
+</ng-container>
+
+<ng-template #participantDisplay let-participant="participant" let-title="title">
+	<div class="flex-grow-1">
+		<h4 class="text-primary"><strong>{{title}}</strong></h4>
+	</div>
+
+	<div *ngIf="travelPermit" class="row justify-content-center">
+		<div class="w-md-30 p-3">
+			<img [src]="participant.pictureLocation || '/assets/img/participant-placeholder.png'" style="width:100%; border-radius: 5px;" />
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12 col-md-4">
+			<p class="mb-sm-1"><strong>Nome:</strong></p>
+		</div>
+		<div class="col-12 col-md-8 d-flex justify-content-end">
+			<p>{{participant.name}}</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12 col-md-6">
+			<p class="mb-sm-1"><strong>Tipo de Documento:</strong></p>
+		</div>
+		<div class="col-12 col-md-6 d-flex justify-content-end">
+			<p>{{participant.documentType | bioDocumentType}}</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12 col-md-8">
+			<p class="mb-sm-1"><strong>Número do Documento:</strong></p>
+		</div>
+		<div class="col-12 col-md-4 d-flex justify-content-end">
+			<p>{{participant.documentNumber}}</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12 col-md-6">
+			<p class="mb-sm-1"><strong>Orgão emissor:</strong></p>
+		</div>
+		<div class="col-12 col-md-6 d-flex justify-content-end">
+			<p>{{participant.documentIssuer}}</p>
+		</div>
+	</div>
+
+	<div *ngIf="participant.issueDate" class="row">
+		<div class="col-12 col-md-6">
+			<p class="mb-sm-1"><strong>Data de emissão:</strong></p>
+		</div>
+		<div class="col-12 col-md-6 d-flex justify-content-end">
+			<p>{{participant.issueDate | date: 'dd/MM/yyyy'}}</p>
+		</div>
+	</div>
+
+	<div class="row" *ngIf="participant.identifier">
+		<div class="col-12 col-md-6">
+			<p class="mb-sm-1"><strong>CPF:</strong></p>
+		</div>
+		<div class="col-12 col-md-6 d-flex justify-content-end">
+			<p>{{participant.identifier | cpf}}</p>
+		</div>
+	</div>
+
+	<div class="row" *ngIf="participant.gender">
+		<div class="col-12 col-md-6">
+			<p class="mb-sm-1"><strong>Sexo:</strong></p>
+		</div>
+		<div class="col-12 col-md-6 d-flex justify-content-end">
+			<p>{{participant.gender | gender}}</p>
+		</div>
+	</div>
+
+	<div class="row" *ngIf="participant.birthDate">
+		<div class="col-12 col-md-6">
+			<p class="mb-sm-1"><strong>Data de nascimento:</strong></p>
+		</div>
+		<div class="col-12 col-md-6 d-flex justify-content-end">
+			<p>{{participant.birthDate | date: 'dd/MM/yyyy'}}</p>
+		</div>
+	</div>
+
+	<div class="row" *ngIf="participant.cityOfBirth">
+		<div class="col-12 col-md-6">
+			<p class="mb-sm-1"><strong>Naturalidade:</strong></p>
+		</div>
+		<div class="col-12 col-md-6 d-flex justify-content-end">
+			<p>{{participant.cityOfBirth}}<ng-container *ngIf="participant.stateOfBirth"> - {{participant.stateOfBirth}}</ng-container></p>
+		</div>
+	</div>
+
+	<div class="row" *ngIf="participant.guardianship">
+		<div class="col-12 col-md-6">
+			<p class="mb-sm-1"><strong>Responsabilidade:</strong></p>
+		</div>
+		<div class="col-12 col-md-6 d-flex justify-content-end">
+			<p>{{participant.guardianship | guardianship}}</p>
+		</div>
+	</div>
+
+	<mat-expansion-panel *ngIf="participant.zipCode" class="box-group mat-elevation-z0 travel-permit-group mt-3">
+		<mat-expansion-panel-header class="expansion-panel-header-padding">
+			<h3 class="mb-0">
+				<strong
+					class="text-dark">Endereço</strong>
+			</h3>
+		</mat-expansion-panel-header>
+
+		<div class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					<strong>CEP:</strong>
+				</p>
+			</div>
+
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					{{participant.zipCode}}
+				</p>
+			</div>
+		</div>
+
+		<div *ngIf="participant.streetAddress" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					<strong>Logradouro:</strong>
+				</p>
+			</div>
+
+			<div  class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					{{participant.streetAddress}}
+				</p>
+			</div>
+		</div>
+
+		<div *ngIf="participant.addressNumber" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					<strong>Número:</strong>
+				</p>
+			</div>
+
+			<div  class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					{{participant.addressNumber}}
+				</p>
+			</div>
+		</div>
+
+		<div *ngIf="participant.additionalAddressInfo" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					<strong>Complemento:</strong>
+				</p>
+			</div>
+
+			<div  class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					{{participant.additionalAddressInfo}}
+				</p>
+			</div>
+		</div>
+
+		<div *ngIf="participant.neighborhood" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					<strong>Bairro:</strong>
+				</p>
+			</div>
+
+			<div  class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					{{participant.neighborhood}}
+				</p>
+			</div>
+		</div>
+		
+		<div *ngIf="participant.addressCity" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					<strong>Cidade:</strong>
+				</p>
+			</div>
+
+			<div  class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					{{participant.addressCity}}<ng-container *ngIf="participant.addressState"> - {{participant.addressState}}</ng-container>
+				</p>
+			</div>
+		</div>
+
+	</mat-expansion-panel>
+
+
+	<mat-expansion-panel *ngIf="participant.phoneNumber || participant.email" class="box-group mat-elevation-z0 travel-permit-group">
+		<mat-expansion-panel-header class="expansion-panel-header-padding">
+			<h3 class="mb-0">
+				<strong
+					class="text-dark">Dados de Contato</strong>
+			</h3>
+		</mat-expansion-panel-header>
+
+		<div *ngIf="participant.phoneNumber" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					<strong>Telefone:</strong>
+				</p>
+			</div>
+
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					{{participant.phoneNumber}}
+				</p>
+			</div>
+		</div>
+
+		<div *ngIf="participant.email" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					<strong>Email:</strong>
+				</p>
+			</div>
+
+			<div class="d-flex flex-row align-items-center">
+				<p class="mb-0">
+					{{participant.email}}
+				</p>
+			</div>
+		</div>
+		
+	</mat-expansion-panel>
+	
+</ng-template>	

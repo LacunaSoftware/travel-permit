@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/9fbff951-57c8-4201-bcff-f3ce97aeccb6/resourceGroups/assinatura-prd/providers/Microsoft.Web/sites/aev-hml",
+    "appService.deploySubpath": "travelpermit-web\\dist\\travelpermit-web"
+}

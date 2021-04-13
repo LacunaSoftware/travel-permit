@@ -1,7 +1,33 @@
+enum TravelPermitTypes {
+  domestic,
+  international,
+}
+
+extension TravelPermitTypesExt on TravelPermitTypes {
+  static TravelPermitTypes fromString(String value) {
+    return _EnumCommonParser.parse(value, null, {
+      'd': TravelPermitTypes.domestic,
+      'i': TravelPermitTypes.international,
+    });
+  }
+}
+
+//-------------------------------------------------------------------
+
 enum ParticipantEntities {
   guardian,
   escort,
   underage,
+}
+
+extension ParticipantEntitiesExt on ParticipantEntities {
+  static ParticipantEntities fromString(String value) {
+    return _EnumCommonParser.parse(value, null, {
+      'g': ParticipantEntities.guardian,
+      'e': ParticipantEntities.escort,
+      'u': ParticipantEntities.underage,
+    });
+  }
 }
 
 //-------------------------------------------------------------------
@@ -12,6 +38,16 @@ enum BioGenders {
   undefined,
 }
 
+extension BioGendersExt on BioGenders {
+  static BioGenders fromString(String value) {
+    return _EnumCommonParser.parse(value, BioGenders.undefined, {
+      'm': BioGenders.male,
+      'f': BioGenders.female,
+      'u': BioGenders.undefined,
+    });
+  }
+}
+
 //-------------------------------------------------------------------
 
 enum LegalGuardianTypes {
@@ -19,93 +55,78 @@ enum LegalGuardianTypes {
   father,
   tutor,
   guardian,
-  undefined,
+}
+
+extension LegalGuardianTypesExt on LegalGuardianTypes {
+  static LegalGuardianTypes fromString(String value) {
+    return _EnumCommonParser.parse(value, null, {
+      'm': LegalGuardianTypes.mother,
+      'f': LegalGuardianTypes.father,
+      't': LegalGuardianTypes.tutor,
+      'g': LegalGuardianTypes.guardian,
+    });
+  }
 }
 
 //-------------------------------------------------------------------
 
 enum BioDocumentTypes {
-  //[Code("IDC")]
   idCard,
-  //[Code("PRC")]
   professionalCard,
-  //[Code("PAS")]
   passport,
-  //[Code("REC")]
   reservistCard,
-  //[Code("RNE")]
   rne,
-  undefined,
+}
+
+extension BioDocumentTypesExt on BioDocumentTypes {
+  static BioDocumentTypes fromString(String value) {
+    return _EnumCommonParser.parse(value, null, {
+      'i': BioDocumentTypes.idCard,
+      't': BioDocumentTypes.professionalCard,
+      'p': BioDocumentTypes.passport,
+      'r': BioDocumentTypes.reservistCard,
+      'e': BioDocumentTypes.rne,
+    });
+  }
 }
 
 //-------------------------------------------------------------------
 
-class EnumParser {
-  static BioGenders gendersFromString(String value) {
-    final gender = BioGenders.values.firstWhere(
-        (t) => t.toString().toLowerCase() == 'BioGenders.$value'.toLowerCase(),
-        orElse: () => BioGenders.undefined);
-    if (gender != BioGenders.undefined) {
-      return gender;
-    }
+enum CnbErrorCodes {
+  documentInvalidKey,
+  documentIsDeleted,
+  travelPermitNotEnabled,
+  travelPermitInfoMissing,
+  travelPermitNotConcluded,
+  documentIsNotTravelPermit,
+  unknown,
+}
 
-    switch (value?.toLowerCase()) {
-      case 'm':
-        return BioGenders.male;
-      case 'f':
-        return BioGenders.female;
-      default:
-        return BioGenders.undefined;
-    }
+extension CnbErrorCodesExt on CnbErrorCodes {
+  static CnbErrorCodes fromString(String value) {
+    return _EnumCommonParser.parse(value, CnbErrorCodes.unknown, {});
   }
+}
 
-  static LegalGuardianTypes guardianTypesFromString(String value) {
-    var type = LegalGuardianTypes.values.firstWhere(
-        (t) =>
-            t.toString().toLowerCase() ==
-            'LegalGuardianTypes.$value'.toLowerCase(),
-        orElse: () => LegalGuardianTypes.undefined);
-    if (type != LegalGuardianTypes.undefined) {
+//-------------------------------------------------------------------
+
+enum ParticipantTypes {
+  guardian1,
+  guardian2,
+  escort,
+  underage,
+}
+
+//-------------------------------------------------------------------
+
+class _EnumCommonParser {
+  static T parse<T>(String value, T defaultValue, Map<String, T> parseMap) {
+    var type = parseMap.values.firstWhere(
+        (t) => t.toString().toLowerCase() == '$T.$value'.toLowerCase(),
+        orElse: () => defaultValue);
+    if (type != defaultValue) {
       return type;
     }
-
-    switch (value?.toLowerCase()) {
-      case 'm':
-        return LegalGuardianTypes.mother;
-      case 'f':
-        return LegalGuardianTypes.father;
-      case 't':
-        return LegalGuardianTypes.tutor;
-      case 'g':
-        return LegalGuardianTypes.guardian;
-      default:
-        return LegalGuardianTypes.undefined;
-    }
-  }
-
-  static BioDocumentTypes documentTypesFromString(String value) {
-    var type = BioDocumentTypes.values.firstWhere(
-        (t) =>
-            t.toString().toLowerCase() ==
-            'BioDocumentTypes.$value'.toLowerCase(),
-        orElse: () => BioDocumentTypes.undefined);
-    if (type != BioDocumentTypes.undefined) {
-      return type;
-    }
-
-    switch (value?.toLowerCase()) {
-      case 'i':
-        return BioDocumentTypes.idCard;
-      case 't':
-        return BioDocumentTypes.professionalCard;
-      case 'p':
-        return BioDocumentTypes.passport;
-      case 'r':
-        return BioDocumentTypes.reservistCard;
-      case 'e':
-        return BioDocumentTypes.rne;
-      default:
-        return BioDocumentTypes.undefined;
-    }
+    return parseMap[(value ?? '').toLowerCase()] ?? defaultValue;
   }
 }

@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:store_redirect/store_redirect.dart';
 import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/pages/travel_permit_page.dart';
+import 'package:travel_permit_reader/tp_exception.dart';
 import 'package:travel_permit_reader/util/qrcode_data.dart';
-import 'package:travel_permit_reader/pages/background.dart';
 import 'package:travel_permit_reader/pages/enter_key_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 import 'package:travel_permit_reader/util/permission_util.dart';
@@ -25,45 +29,60 @@ class HomePage extends StatelessWidget {
       final code = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancelar', false, ScanMode.QR);
 
+      // '-1' is returned when cancelled. Check null or empty just in case
+      if (StringExt.isNullOrEmpty(code) || code == '-1') {
+        return;
+      }
+
       progress.show();
       final data = QRCodeData.parse(code);
 
       if (!data.verify()) {
         PageUtil.showAppDialog(context, 'QR Code Recusado',
             'A assinatura do QR code está inválida.');
+        progress.dismiss();
         return;
       }
 
-      TravelPermitModel model;
+      TravelPermitModel travelPermitModel;
+      dynamic requestException;
       try {
-        model = await CnbClient('https://assinatura-hml.e-notariado.org.br/')
-            .getTravelPermitInfo(data.documentKey);
+        travelPermitModel =
+            await CnbClient('https://assinatura.e-notariado.org.br/')
+                .getTravelPermitInfo(data.documentKey);
       } catch (ex) {
-        print('Error requesting document details: $ex');
+        requestException = ex;
       }
 
-      model = model ?? TravelPermitModel.fromQRCode(data);
+      travelPermitModel =
+          travelPermitModel ?? TravelPermitModel.fromQRCode(data);
 
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
-    } catch (ex) {
-      print('Error :$ex');
-    } finally {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TravelPermitPage(travelPermitModel,
+                  onlineRequestException: requestException)));
+
       progress.dismiss();
+    } catch (ex) {
+      progress.dismiss();
+      _handleError(context, ex);
     }
   }
 
   Future _launchEnterKey(BuildContext context) async {
-    final documentKey = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EnterKeyPage(),
-        ));
-    if (StringExt.isNullOrEmpty(documentKey)) {
-      return;
-    }
     final progress = ProgressHUD.of(context);
     try {
+      final documentKey = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EnterKeyPage(),
+          ));
+
+      if (StringExt.isNullOrEmpty(documentKey)) {
+        return;
+      }
+
       progress.show();
       final model =
           await CnbClient('https://assinatura-hml.e-notariado.org.br/')
@@ -71,98 +90,179 @@ class HomePage extends StatelessWidget {
 
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
-    } catch (ex) {
-      print('Error requesting document details: $ex');
-      PageUtil.showAppDialog(context, 'Erro',
-          'Não foi possível retornar detalhes do documento: $ex');
-    } finally {
       progress.dismiss();
+    } catch (ex) {
+      progress.dismiss();
+      _handleError(context, ex);
     }
+  }
+
+  Future<bool> _handleError(context, dynamic ex) async {
+    print('Error: $ex');
+
+    final completer = Completer<bool>();
+    var message = '$ex';
+    var title = 'Erro Inesperado';
+    var btText = 'Ok';
+    var onPressed = () => completer.complete(true);
+
+    if (ex is TPException) {
+      title = 'Erro';
+      switch (ex.code) {
+        case TPErrorCodes.cnbClientDecodeResponseError:
+          message = 'Erro ao ler resposta do servidor';
+          break;
+        case TPErrorCodes.cnbClientRequestError:
+          title = 'Aviso';
+          message =
+              'Não foi possível se comunicar com o servidor. Por favor verifique sua conexão.';
+          break;
+        case TPErrorCodes.cnbClientResponseError:
+          message = ex.message;
+          break;
+        case TPErrorCodes.documentNotFound:
+          message = 'Autorização de viagem não encontrada';
+          break;
+        case TPErrorCodes.qrCodeDecodeError:
+          message =
+              'Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação';
+          break;
+        case TPErrorCodes.qrCodeUnknownFormat:
+          message = 'Este não é um QR Code de Autorização Eletrônica de Viagem';
+          break;
+        case TPErrorCodes.qrCodeUnknownVersion:
+          title = 'Atualização Necessária';
+          message = 'Por favor atualize o App para a última versão.';
+          btText = 'Atualizar';
+          onPressed = () {
+            completer.complete(false);
+            StoreRedirect.redirect();
+          };
+          break;
+        default:
+          break;
+      }
+    }
+
+    PageUtil.showAppDialog(context, title, message,
+        positiveButton: ButtonAction(btText, onPressed));
+
+    return completer.future;
   }
 
   @override
   Widget build(BuildContext context) {
-    // Title Section
-    Widget titleSection = Container(
-      height: PageUtil.getScreenHeight(context, 0.3),
-      width: PageUtil.getScreenWidth(context),
-      decoration: new BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(80.0)),
-      ),
-      child: Center(
-          child: Text(
-        "AUTORIZAÇÃO DE VIAGEM",
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.7,
-          color: Color(0xFF007FBC),
-        ),
-      )),
-    );
-
-    // Validation Section
-    Widget validationSection = Container(
-      padding: EdgeInsets.all(20),
-      child: Column(
+    return BackgroundScaffold(
+      color: AppTheme.primaryBgColor,
+      body: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(
-                bottom: PageUtil.getScreenHeight(context, 0.01)),
-            child: Center(
-              child: Text(
-                "VALIDAR DOCUMENTO",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.7,
-                  color: Color(0xFF007FBC),
-                ),
-              ),
+              height: PageUtil.getScreenHeight(context, 0.20),
+              // CNB logo ------------------------------
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                        height: PageUtil.getScreenHeight(context, 0.10),
+                        width: PageUtil.getScreenWidth(context),
+                        child: SvgPicture.asset(
+                          "assets/img/CNBLogo.svg",
+                        )),
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.03),
+                    ),
+                  ])),
+          Container(
+            height: PageUtil.getScreenHeight(context, 0.80),
+            width: PageUtil.getScreenWidth(context),
+            decoration: new BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(topRight: Radius.circular(80.0)),
             ),
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(12.5),
-                alignment: Alignment.centerLeft,
-                child: ValidationButton(
-                  icon: Icons.qr_code_scanner,
-                  text: 'Ler QR code',
-                  action: () => _scanQRCode(context),
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  bottom: 0,
+                  // AEV logo ------------------------------
+                  child: Column(
+                    children: [
+                      Container(
+                          height: PageUtil.getScreenHeight(context, 0.22),
+                          width: PageUtil.getScreenWidth(context),
+                          child: SvgPicture.asset(
+                            "assets/img/AEVFooter.svg",
+                          )),
+                      Container(
+                          height: PageUtil.getScreenHeight(context, 0.03),
+                          width: PageUtil.getScreenWidth(context),
+                          color: Color(0xFFE3E3E3),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: PageUtil.getScreenHeight(context, 0.02),
+                                padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
+                                child: SvgPicture.asset(
+                                  "assets/img/LacunaFooter.svg",
+                                ),
+                              ),
+                              Text(
+                                'by Lacuna Software',
+                                style: TextStyle(
+                                  fontSize:
+                                      PageUtil.getScreenHeight(context, 0.013),
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.7,
+                                  color: AppTheme.defaultFgColor,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.all(12.5),
-                alignment: Alignment.centerRight,
-                child: ValidationButton(
-                  icon: Icons.settings_ethernet,
-                  text: 'Digitar Código',
-                  action: () => _launchEnterKey(context),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-
-    return BackgroundScaffold(
-      color: Color(0xFFF5F5F5),
-      imageLocation: "assets/img/bg_global_grey.svg",
-      imageFit: BoxFit.none,
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 10,
-            child: titleSection,
-          ),
-          Positioned(
-            bottom: PageUtil.getScreenHeight(context, 0.05),
-            child: validationSection,
+                // Action buttons ------------------------------
+                Column(
+                  children: <Widget>[
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.08),
+                    ),
+                    // Footer illustration ------------------------------
+                    Container(
+                        height: PageUtil.getScreenHeight(context, 0.13),
+                        child: SvgPicture.asset(
+                          "assets/img/AEVLogo.svg",
+                        )),
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.07),
+                    ),
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.20),
+                      padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          ValidationButton(
+                            icon: Icons.qr_code_scanner,
+                            text: 'Ler QR code',
+                            action: () => _scanQRCode(context),
+                          ),
+                          ValidationButton(
+                            icon: Icons.keyboard,
+                            text: 'Digitar Código',
+                            action: () => _launchEnterKey(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: PageUtil.getScreenHeight(context, 0.07),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),
@@ -183,38 +283,39 @@ class ValidationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      color: Colors.white,
+    return FlatButton(
+      color: Color(0xFFE3E3E3),
       onPressed: this.action,
       child: Container(
-        height: 135, // Considering padding value.
-        width: 105,
-        padding: EdgeInsets.only(top: 15, bottom: 15),
-        child: Stack(
+        padding: EdgeInsets.only(top: 12, bottom: 12),
+        height: 112,
+        width: PageUtil.getScreenWidth(context, 0.32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            Positioned(
+            Container(
               child: Align(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.topLeft,
                 child: Icon(
                   this.icon,
-                  color: Color(0xFF007FBC),
-                  size: 45.0,
+                  color: Color(0xFF6F7E84),
+                  size: 40.0,
                 ),
               ),
             ),
-            Positioned(
+            Container(
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Text(
                   this.text,
                   style: TextStyle(
-                    fontFamily: 'Montserrat',
+                    fontFamily: 'Rubik',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.7,
-                    color: Color(0xFF9E9E9E),
+                    color: AppTheme.primaryBgColor,
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.left,
                   softWrap: true,
                 ),
               ),
@@ -223,60 +324,8 @@ class ValidationButton extends StatelessWidget {
         ),
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.0),
+        borderRadius: BorderRadius.circular(4.0),
       ),
-      elevation: 5.0,
-    );
-  }
-}
-
-class AppBarScaffold extends StatelessWidget {
-  const AppBarScaffold({
-    this.body,
-    this.color,
-    this.imageLocation,
-    this.imageFit,
-    this.resizeToAvoidBottomInset = true,
-  });
-
-  final Widget body;
-  final Color color;
-  final String imageLocation;
-  final BoxFit imageFit;
-  final bool resizeToAvoidBottomInset;
-
-  @override
-  Widget build(BuildContext context) {
-    return BackgroundScaffold(
-      resizeToAvoidBottomInset: this.resizeToAvoidBottomInset,
-      appBar: AppBar(
-        titleSpacing: 0.0,
-        title: Text(
-          '',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-            color: Color(0xFF007FBC),
-          ),
-        ),
-        leading: IconButton(
-          iconSize: 18.0,
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Color(0xFF007FBC),
-          ),
-          tooltip: 'Voltar',
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.white,
-      ),
-      body: this.body,
-      color: this.color,
-      imageLocation: this.imageLocation,
-      imageFit: this.imageFit,
     );
   }
 }

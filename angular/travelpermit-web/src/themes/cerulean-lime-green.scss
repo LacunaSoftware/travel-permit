@@ -1,0 +1,113 @@
+$clg-primary: (
+	50 : #e0f3f6,
+    100 : #b3e1e8,
+    200 : #80cdd9,
+    300 : #4db9ca,
+    400 : #26aabe,
+    500 : #009bb3,
+    600 : #0093ac,
+    700 : #0089a3,
+    800 : #007f9a,
+    900 : #006d8b,
+    A100 : #b7edff,
+    A200 : #84e0ff,
+    A400 : #51d4ff,
+    A700 : #37cdff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$clg-accent: (
+	50 : #f8fae7,
+    100 : #edf2c3,
+    200 : #e1e99b,
+    300 : #d5e072,
+    400 : #ccda54,
+    500 : #c3d336,
+    600 : #bdce30,
+    700 : #b5c829,
+    800 : #aec222,
+    900 : #a1b716,
+    A100 : #fcffea,
+    A200 : #f4ffb7,
+    A400 : #ecff84,
+    A700 : #e8ff6a,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$clg-warn: (
+    50 : #fde8e7,
+    100 : #fac5c3,
+    200 : #f79f9b,
+    300 : #f47872,
+    400 : #f15b54,
+    500 : #ef3e36,
+    600 : #ed3830,
+    700 : #eb3029,
+    800 : #e82822,
+    900 : #e41b16,
+    A100 : #ffffff,
+    A200 : #ffe2e1,
+    A400 : #ffb0ae,
+    A700 : #ff9795,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+//derivated colors from theme-primary
+$clg-container: #009bb3;
+$clg-container-light: #ccebf1;
+$clg-container-text: #006371;
+
+$clg-success: #76bb67;
+$clg-glow: #FE5D26;
+$clg-dark: #006979;
+
+// define 3 theme color
+// mat-palette accepts $palette-name, main, lighter and darker variants
+$clg-theme-primary: mat-palette($clg-primary);
+$clg-theme-accent: mat-palette($clg-accent);
+$clg-theme-warn: mat-palette($clg-warn);

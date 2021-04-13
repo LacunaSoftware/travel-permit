@@ -8,6 +8,7 @@ class QRCodeData {
   final int version;
   final String documentKey;
   final String expirationDate;
+  final String travelPermitType;
   final String requiredGuardianName;
   final String requiredGuardianDocumentNumber;
   final String requiredGuardianDocumentIssuer;
@@ -36,6 +37,7 @@ class QRCodeData {
       {this.version,
       this.documentKey,
       this.expirationDate,
+      this.travelPermitType,
       this.requiredGuardianName,
       this.requiredGuardianDocumentNumber,
       this.requiredGuardianDocumentIssuer,
@@ -64,30 +66,31 @@ class QRCodeData {
   static const _spaceMarker = '+';
 
   factory QRCodeData.parse(String code) {
-    final segments = code.split(_segmentSeparator);
-    if (segments.isEmpty || segments.first != _magicPrefix) {
-      throw TPException(
-          'Unknown QR code format', TPErrorCodes.qrCodeUnknownFormat);
-    }
-
-    final version = int.parse(segments[1]);
-    if (version > _latestKnownVersion) {
-      throw TPException('Unknown QR code version: $version',
-          TPErrorCodes.qrCodeUnknownVersion);
-    }
-
-    if (version == 1 && segments.length != 25) {
-      throw TPException(
-          'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
-    }
-
     try {
+      final segments = code.split(_segmentSeparator);
+      if (segments.isEmpty || segments.first != _magicPrefix) {
+        throw TPException(
+            'Unknown QR code format', TPErrorCodes.qrCodeUnknownFormat);
+      }
+
+      final version = int.parse(segments[1]);
+      if (version > _latestKnownVersion) {
+        throw TPException('Unknown QR code version: $version',
+            TPErrorCodes.qrCodeUnknownVersion);
+      }
+
+      if (version == 1 && segments.length != 26) {
+        throw TPException(
+            'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
+      }
+
       var index = 2;
 
       final data = QRCodeData._(
         version: version,
         documentKey: segments[index++],
         expirationDate: segments[index++],
+        travelPermitType: _decodeField(segments[index++]),
         requiredGuardianName: _decodeField(segments[index++]),
         requiredGuardianDocumentNumber: _decodeField(segments[index++]),
         requiredGuardianDocumentIssuer: _decodeField(segments[index++]),
@@ -112,6 +115,8 @@ class QRCodeData {
       );
       data._segments = segments;
       return data;
+    } on TPException {
+      rethrow;
     } catch (ex) {
       throw TPException(
           'Error decoding QR code: $ex', TPErrorCodes.qrCodeDecodeError);
@@ -120,8 +125,7 @@ class QRCodeData {
 
   bool verify() {
     final tbsData = _getTbsData();
-    return CryptoUtil.verifyEcdsaSignature(
-        signature, tbsData, CryptoUtil.publicKey);
+    return CryptoUtil.verifySignature(signature, tbsData);
   }
 
   Uint8List _getTbsData() {
