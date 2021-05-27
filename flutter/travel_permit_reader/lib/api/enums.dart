@@ -70,22 +70,24 @@ extension LegalGuardianTypesExt on LegalGuardianTypes {
 
 //-------------------------------------------------------------------
 
-enum BioDocumentTypes {
+enum IdDocumentTypes {
   idCard,
   professionalCard,
   passport,
   reservistCard,
   rne,
+  birthCertificate,
 }
 
-extension BioDocumentTypesExt on BioDocumentTypes {
-  static BioDocumentTypes fromString(String value) {
+extension IdDocumentTypesExt on IdDocumentTypes {
+  static IdDocumentTypes fromString(String value) {
     return _EnumCommonParser.parse(value, null, {
-      'i': BioDocumentTypes.idCard,
-      't': BioDocumentTypes.professionalCard,
-      'p': BioDocumentTypes.passport,
-      'r': BioDocumentTypes.reservistCard,
-      'e': BioDocumentTypes.rne,
+      'i': IdDocumentTypes.idCard,
+      't': IdDocumentTypes.professionalCard,
+      'p': IdDocumentTypes.passport,
+      'r': IdDocumentTypes.reservistCard,
+      'e': IdDocumentTypes.rne,
+      'c': IdDocumentTypes.birthCertificate,
     });
   }
 }

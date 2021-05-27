@@ -61,7 +61,7 @@ class QRCodeData {
       this.signature});
 
   static const _magicPrefix = 'LTP';
-  static const _latestKnownVersion = 1;
+  static const _latestKnownVersion = 2;
   static const _segmentSeparator = '%';
   static const _spaceMarker = '+';
 
@@ -74,12 +74,12 @@ class QRCodeData {
       }
 
       final version = int.parse(segments[1]);
-      if (version > _latestKnownVersion) {
+      if (version > _latestKnownVersion || version < 1) {
         throw TPException('Unknown QR code version: $version',
             TPErrorCodes.qrCodeUnknownVersion);
       }
 
-      if (version == 1 && segments.length != 26) {
+      if (version <= 2 && segments.length != 26) {
         throw TPException(
             'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
       }

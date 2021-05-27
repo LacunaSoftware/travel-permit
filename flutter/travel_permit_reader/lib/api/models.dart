@@ -52,7 +52,7 @@ class TravelPermitModel {
               name: data.requiredGuardianName,
               documentNumber: data.requiredGuardianDocumentNumber,
               documentIssuer: data.requiredGuardianDocumentIssuer,
-              documentType: BioDocumentTypesExt.fromString(
+              documentType: IdDocumentTypesExt.fromString(
                   data.requiredGuardianDocumentType),
               guardianship: LegalGuardianTypesExt.fromString(
                   data.requiredGuardianGuardianship)),
@@ -63,7 +63,7 @@ class TravelPermitModel {
               name: data.optionalGuardianName,
               documentNumber: data.optionalGuardianDocumentNumber,
               documentIssuer: data.optionalGuardianDocumentIssuer,
-              documentType: BioDocumentTypesExt.fromString(
+              documentType: IdDocumentTypesExt.fromString(
                   data.optionalGuardianDocumentType),
               guardianship: LegalGuardianTypesExt.fromString(
                   data.optionalGuardianGuardianship)),
@@ -75,7 +75,7 @@ class TravelPermitModel {
               documentNumber: data.escortDocumentNumber,
               documentIssuer: data.escortDocumentIssuer,
               documentType:
-                  BioDocumentTypesExt.fromString(data.escortDocumentType),
+                  IdDocumentTypesExt.fromString(data.escortDocumentType),
             ),
       //-------------------------------------------------------------------
       underage: StringExt.isNullOrEmpty(data.underageName)
@@ -85,7 +85,7 @@ class TravelPermitModel {
               documentNumber: data.underageDocumentNumber,
               documentIssuer: data.underageDocumentIssuer,
               documentType:
-                  BioDocumentTypesExt.fromString(data.underageDocumentType),
+                  IdDocumentTypesExt.fromString(data.underageDocumentType),
               birthDate: DateTime.parse(data.underageBirthDate),
               bioGender: BioGendersExt.fromString(data.underageBioGender)),
     );
@@ -98,7 +98,7 @@ abstract class ParticipantModel {
   final String identifier;
   final String name;
   final String documentNumber;
-  final BioDocumentTypes documentType;
+  final IdDocumentTypes documentType;
   final String documentIssuer;
   final DateTime issueDate;
   final String photoUrl;
@@ -176,7 +176,7 @@ class AdultModel extends ParticipantModel {
       identifier: json['identifier'],
       name: json['name'],
       documentNumber: json['documentNumber'],
-      documentType: BioDocumentTypesExt.fromString(json['documentType']),
+      documentType: IdDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
       photoUrl: json['pictureLocation'],
@@ -245,7 +245,7 @@ class GuardianModel extends AdultModel {
       identifier: json['identifier'],
       name: json['name'],
       documentNumber: json['documentNumber'],
-      documentType: BioDocumentTypesExt.fromString(json['documentType']),
+      documentType: IdDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
       photoUrl: json['pictureLocation'],
@@ -315,7 +315,7 @@ class UnderageModel extends ParticipantModel {
       identifier: json['identifier'],
       name: json['name'],
       documentNumber: json['documentNumber'],
-      documentType: BioDocumentTypesExt.fromString(json['documentType']),
+      documentType: IdDocumentTypesExt.fromString(json['documentType']),
       documentIssuer: json['documentIssuer'],
       issueDate: DateTime.parse(json['issueDate']),
       photoUrl: json['pictureLocation'],
