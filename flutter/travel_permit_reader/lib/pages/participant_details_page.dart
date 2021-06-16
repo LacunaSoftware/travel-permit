@@ -146,7 +146,7 @@ class ParticipantDetailsPage extends SummaryCard {
                     ? ''
                     : '\n${model.neighborhood}') +
                 (StringExt.isNullOrEmpty(
-                        model.addressCity ?? '' + model.addressState ?? '')
+                        (model.addressCity ?? '') + (model.addressState ?? ''))
                     ? ''
                     : '\n${model.addressCity ?? ''} - ${model.addressState ?? ''}')),
       ]);
@@ -186,7 +186,7 @@ class ParticipantDetailsPage extends SummaryCard {
       details.addAll([
         buildLabelText('Nascimento'),
         buildDetailsText(
-            underage.birthDate?.toDateString() ?? '' + birthLocation ?? ''),
+            (underage.birthDate?.toDateString() ?? '') + (birthLocation ?? '')),
         buildDivider(),
       ]);
     }
