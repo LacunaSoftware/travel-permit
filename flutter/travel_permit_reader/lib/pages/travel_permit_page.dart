@@ -294,16 +294,18 @@ class SummaryCard extends StatelessWidget {
 
   String get documentTypeDescription {
     switch (model.documentType) {
-      case BioDocumentTypes.idCard:
+      case IdDocumentTypes.idCard:
         return 'RG';
-      case BioDocumentTypes.professionalCard:
+      case IdDocumentTypes.professionalCard:
         return 'CTPS';
-      case BioDocumentTypes.passport:
+      case IdDocumentTypes.passport:
         return 'Passaporte';
-      case BioDocumentTypes.reservistCard:
+      case IdDocumentTypes.reservistCard:
         return 'Reservista';
-      case BioDocumentTypes.rne:
+      case IdDocumentTypes.rne:
         return 'RN de Extrangeiro';
+      case IdDocumentTypes.birthCertificate:
+        return 'Certidão de Nascimento';
       default:
         return '';
     }

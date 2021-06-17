@@ -137,10 +137,18 @@ class ParticipantDetailsPage extends SummaryCard {
     ].any((s) => !StringExt.isNullOrEmpty(s))) {
       details.addAll([
         buildLabelText('Endereço'),
-        buildDetailsText('${model.streetAddress} ${model.addressNumber}' +
-            '${!StringExt.isNullOrEmpty(model.additionalAddressInfo) ? '\n' + model.additionalAddressInfo : ''}' +
-            '${!StringExt.isNullOrEmpty(model.neighborhood) ? '\n' + model.neighborhood : ''}' +
-            '${!StringExt.isNullOrEmpty(model.addressCity + model.addressState) ? '\n' + model.addressCity + ' - ' + model.addressState : ''}'),
+        buildDetailsText(
+            '${model.streetAddress ?? ''} ${model.addressNumber ?? ''}' +
+                (StringExt.isNullOrEmpty(model.additionalAddressInfo)
+                    ? ''
+                    : '\n${model.additionalAddressInfo}') +
+                (StringExt.isNullOrEmpty(model.neighborhood)
+                    ? ''
+                    : '\n${model.neighborhood}') +
+                (StringExt.isNullOrEmpty(
+                        (model.addressCity ?? '') + (model.addressState ?? ''))
+                    ? ''
+                    : '\n${model.addressCity ?? ''} - ${model.addressState ?? ''}')),
       ]);
     }
 
@@ -167,16 +175,18 @@ class ParticipantDetailsPage extends SummaryCard {
       ]);
     }
 
-    if (underage.birthDate != null ||
-        [underage.cityOfBirth, underage.stateOfBirth]
-            .any((s) => !StringExt.isNullOrEmpty(s))) {
+    String birthLocation;
+    if ([underage.cityOfBirth, underage.stateOfBirth]
+        .any((s) => !StringExt.isNullOrEmpty(s))) {
+      birthLocation =
+          '\n${underage.cityOfBirth ?? ''} - ${underage.stateOfBirth ?? ''}';
+    }
+
+    if (underage.birthDate != null || birthLocation != null) {
       details.addAll([
         buildLabelText('Nascimento'),
-        buildDetailsText('${underage.birthDate.toDateString()}' +
-            (!StringExt.isNullOrEmpty(
-                    underage.cityOfBirth + underage.stateOfBirth)
-                ? '\n${underage.cityOfBirth} - ${underage.stateOfBirth}'
-                : '')),
+        buildDetailsText(
+            (underage.birthDate?.toDateString() ?? '') + (birthLocation ?? '')),
         buildDivider(),
       ]);
     }
