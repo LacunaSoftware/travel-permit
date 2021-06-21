@@ -41,7 +41,7 @@ extension ECSignatureExt on ECSignature {
 //-------------------------------------------------------------------
 
 extension BigIntExt on BigInt {
-  static BigInt fromBytes(List<int> bytes) {
+  static BigInt fromBytes(List<int> bytes, {bool signed = false}) {
     var negative = bytes.isNotEmpty && bytes[0] & 0x80 == 0x80;
     BigInt result;
     if (bytes.length == 1) {
@@ -53,14 +53,22 @@ extension BigIntExt on BigInt {
         result |= (BigInt.from(item) << (8 * i));
       }
     }
-    return result != BigInt.zero
-        ? negative
-            ? result.toSigned(result.bitLength)
-            : result
-        : BigInt.zero;
+
+    if (result == BigInt.zero) {
+      return BigInt.zero;
+    }
+
+    if (!negative) {
+      return result;
+    }
+
+    if (signed) {
+      return result.toSigned(result.bitLength);
+    }
+    return result.toUnsigned(result.bitLength);
   }
 
-  static BigInt fromBase64(String b64) {
+  static BigInt fromBase64(String b64, {bool signed = false}) {
     return fromBytes(base64.decode(b64));
   }
 }
