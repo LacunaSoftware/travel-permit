@@ -84,9 +84,8 @@ class HomePage extends StatelessWidget {
       }
 
       progress.show();
-      final model =
-          await CnbClient('https://assinatura-hml.e-notariado.org.br/')
-              .getTravelPermitInfo(documentKey);
+      final model = await CnbClient('https://assinatura.e-notariado.org.br/')
+          .getTravelPermitInfo(documentKey);
 
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
