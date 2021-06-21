@@ -26,25 +26,25 @@
 		<div class="row pt-0 pt-md-4">
 			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.underage || offlineData.underage), title: 'Menor' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.underage || offlineData?.underage), title: 'Menor' }">
 				</ng-template>
 			</div>
 	
-			<div *ngIf="travelPermit?.escort || offlineData.escort.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+			<div *ngIf="travelPermit?.escort || offlineData?.escort?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.escort || offlineData.escort), title: 'Acompanhante' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.escort || offlineData?.escort), title: 'Acompanhante' }">
 				</ng-template>
 			</div>
 
 			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.requiredGuardian || offlineData.requiredGuardian), title: 'Reponsável Legal 1' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.requiredGuardian || offlineData?.requiredGuardian), title: 'Reponsável Legal 1' }">
 				</ng-template>
 			</div>
 	
-			<div *ngIf="travelPermit?.optionalGuardian || offlineData.optionalGuardian.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+			<div *ngIf="travelPermit?.optionalGuardian || offlineData?.optionalGuardian?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.optionalGuardian || offlineData.optionalGuardian), title: 'Reponsável Legal 2' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.optionalGuardian || offlineData?.optionalGuardian), title: 'Reponsável Legal 2' }">
 				</ng-template>
 			</div>
 		</div>
