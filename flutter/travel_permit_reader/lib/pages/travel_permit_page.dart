@@ -158,8 +158,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
   }
 
   Widget _buildPermitValidityState() {
-    final isExpired =
-        DateTime.now().isAfterDateOnly(widget.model.expirationDate);
+    final now = DateTime.now();
+    final isExpired = now.isAfterDateOnly(widget.model.expirationDate) ||
+        (widget.model.startDate != null &&
+            now.isBefore(widget.model.startDate));
     return BaseCard(
         color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
         child: Row(children: [
@@ -176,13 +178,25 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
                   color: Colors.white),
-              children: <TextSpan>[
-                new TextSpan(text: isExpired ? 'Expirou em ' : 'Vigente até '),
-                new TextSpan(
-                    text:
-                        '${widget.model.expirationDate.toLocal().toDateString()}',
-                    style: TextStyle(fontWeight: FontWeight.w700)),
-              ],
+              children: widget.model.startDate == null
+                  ? <TextSpan>[
+                      new TextSpan(
+                          text: isExpired ? 'Expirou em ' : 'Vigente até '),
+                      new TextSpan(
+                          text:
+                              '${widget.model.expirationDate.toLocal().toDateString()}',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ]
+                  : <TextSpan>[
+                      new TextSpan(
+                          text: isExpired
+                              ? 'Fora do período de '
+                              : 'Vigente de '),
+                      new TextSpan(
+                          text:
+                              '${widget.model.startDate.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ],
             ),
           )
         ]));
