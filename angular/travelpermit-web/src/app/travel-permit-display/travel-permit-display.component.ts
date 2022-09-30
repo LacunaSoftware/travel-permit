@@ -7,12 +7,12 @@ import { TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-perm
 	styleUrls: ['./travel-permit-display.component.scss']
 })
 export class TravelPermitDisplayComponent implements OnInit {
-
 	@Input()
-	travelPermit: TravelPermitModel
+	travelPermit: TravelPermitModel | TravelPermitOfflineModel;
 
-	@Input()
-	offlineData: TravelPermitOfflineModel
+	get isOnline(): boolean {
+		return !this.travelPermit['version'];
+	}
 
 	constructor(
 	) { }

@@ -16,14 +16,13 @@ export class DialogReadQrCodeComponent implements OnInit {
 	constructor(
 		private fb: FormBuilder,
 		private dialogRef: MatDialogRef<DialogReadQrCodeComponent>,
-	) {
-
-		this.form = fb.group({
-			qrCodeData: null,
-		});
-	}
+	) { }
 
 	ngOnInit(): void {
+		this.form = this.fb.group({
+			qrCodeData: null,
+		});
+		
 		this.form.controls.qrCodeData.valueChanges.subscribe((v: string) => {
 			if (v) {
 				this.loading = true;

@@ -3,9 +3,8 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { encode } from 'punycode';
 import { latestKnownVersion, magicPrefix, segmentSeparator, spaceMarker } from 'src/api/constants';
-import { CryptoHelper, hashAlg, jwk, keyOps, sigAlg } from 'src/api/crypto';
+import { CryptoHelper } from 'src/api/crypto';
 import { BioDocumentType, BioGender, LegalGuardianTypes, TravelPermitTypes } from 'src/api/enums';
 import { TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
 import { environment } from 'src/environments/environment';
@@ -19,11 +18,8 @@ import { DialogReadQrCodeComponent } from './dialog-read-qr-code/dialog-read-qr-
 	styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, AfterViewInit {
-	private offlineUnverifiedData: TravelPermitOfflineModel;
-	offlineData: TravelPermitOfflineModel;
+	travelPermit: TravelPermitModel | TravelPermitOfflineModel;
 	segments: string[];
-
-	travelPermit: TravelPermitModel;
 	loading: boolean = false;
 
 	constructor(
@@ -35,9 +31,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 		this.matIconRegistry.addSvgIcon('whatsapp', this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/icons/whatsapp.svg'));
 	}
 
-	ngOnInit() {
-
-	}
+	ngOnInit() { }
 
 	ngAfterViewInit() {
 		this.initialize(document, "freshchat-js-sdk");
@@ -52,8 +46,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 			if (r) {
 				console.log('Read QR Code data', r);
 				this.loading = true;
-				this.offlineUnverifiedData = null;
-				this.offlineData = null;
 				this.travelPermit = null;
 				this.parseQrCodeData(r);
 			}
@@ -69,8 +61,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 			if (r) {
 				console.log('Read code', r);
 				this.loading = true;
-				this.offlineData = null;
-				this.offlineUnverifiedData = null;
 				this.travelPermit = null;
 				this.loadOnlineData(r);
 			}
@@ -87,11 +77,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 		const versionStr = segments[1];
 		let version = versionStr ? parseInt(versionStr) : null;
 
-		if (!version || version > latestKnownVersion) {
+		if (!version || version > latestKnownVersion || version < 1) {
 			this.alert("Este não é um QR Code de Autorização Eletrônica de Viagem");
 		}
 
-		if (version == 1 && segments.length != 26) {
+		if (version <= 2 && segments.length != 26) {
 			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
 		}
 
@@ -135,32 +125,27 @@ export class AppComponent implements OnInit, AfterViewInit {
 			}
 
 			this.segments = segments;
-			this.offlineUnverifiedData = data;
-			this.verifyOfflineData();
+			this.verifyOfflineData(data);
 		} catch (ex) {
 			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
 			console.log(ex);
 		}
 	}
 
-	private verifyOfflineData() {
-		CryptoHelper.verifyTPSignature(this.offlineUnverifiedData.signature, this.segments)
+	private verifyOfflineData(offlineUnverifiedData: TravelPermitOfflineModel) {
+		CryptoHelper.verifyTPSignature(offlineUnverifiedData.signature, this.segments)
 			.then((v) => {
 				if (v) {
-					this.offlineData = this.offlineUnverifiedData;
-					this.loadOnlineData(this.offlineData.key);
+					this.travelPermit = offlineUnverifiedData;
+					this.loadOnlineData(this.travelPermit.key);
 				} else {
-					this.offlineUnverifiedData = null;
-					this.offlineData = null;
+					this.travelPermit = null;
 					this.loading = false;
 					this.alert('A assinatura do QR code está inválida.');
 				}
-
-
 			}).catch(() => {
 				this.alert('Ocorreu um erro ao validar a assinatura do QR Code, por favor tente digitar o código presente no documento');
-				this.offlineData = null;
-				this.offlineUnverifiedData = null;
+				this.travelPermit = null;
 				this.loading = false;
 			});
 	}
