@@ -81,7 +81,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 			this.alert("Este não é um QR Code de Autorização Eletrônica de Viagem");
 		}
 
-		if (version <= 2 && segments.length != 26) {
+		if ((version <= 2 && segments.length != 26) ||
+			(version == 3 && segments.length != 27)) {
 			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
 		}
 
@@ -91,6 +92,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 			const data: TravelPermitOfflineModel = {
 				version: version,
 				key: segments[index++],
+				startDate: version == 3 ? this.decodeField(segments[index++]) : null,
 				expirationDate: this.decodeField(segments[index++]),
 				type: this.decodeField(segments[index++]) as TravelPermitTypes,
 				requiredGuardian: {
