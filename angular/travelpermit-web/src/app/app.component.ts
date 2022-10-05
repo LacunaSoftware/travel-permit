@@ -160,6 +160,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 		this.loading = true;
 		this.http.get<TravelPermitModel>(`${environment.cnbEndpoint}/api/documents/keys/${docKey}/travel-permit`)
 			.subscribe((tp) => {
+				tp.key = docKey;
 				this.travelPermit = tp;
 				console.log('Loaded travel permit', tp);
 				this.loading = false;

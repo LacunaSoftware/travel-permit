@@ -63,6 +63,7 @@ export interface TravelPermitParticipantModel {
 }
 
 export interface TravelPermitModel {
+	key?: string;
 	startDate?: string;
 	expirationDate: string;
 	type: TravelPermitTypes;

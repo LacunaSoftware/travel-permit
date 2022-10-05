@@ -172,3 +172,11 @@ a {
 	right: 20px !important;
 	bottom: 50px !important;
 }
+
+a {
+	.card-link {
+		border-top: 1px solid #DBDBDB;
+		border-left: 1px solid #DBDBDB;
+		border-right: 1px solid #DBDBDB;
+	}
+}
