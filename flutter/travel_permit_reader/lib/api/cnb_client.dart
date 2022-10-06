@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/tp_exception.dart';
+import 'package:travel_permit_reader/util/file_util.dart';
 
 class CnbClient {
   static final String _host = 'https://assinatura.e-notariado.org.br/';
@@ -59,8 +60,9 @@ class CnbClient {
   }
 
   Future<String> getTravelPermitPdfShare() async {
-    // TODO
-    return "";
+    final file = await FileUtil.writeFile(
+        getTravelPermitPdfBytes, 'Autorização de Viagem - $_documentKey.pdf');
+    return file.path;
   }
 
   Future getTravelPermitPdfDownload() async {
