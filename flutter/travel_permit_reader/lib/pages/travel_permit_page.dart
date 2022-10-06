@@ -3,8 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:share/share.dart';
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
+import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/pages/notary_details_page.dart';
 import 'package:travel_permit_reader/pages/participant_details_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
@@ -92,14 +94,52 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                     ],
                   ),
                 ),
-                Padding(
-                    padding: EdgeInsets.only(right: 12),
-                    child: Icon(
-                        widget.model.isOffline ? Icons.wifi_off : Icons.wifi,
-                        size: 30,
-                        color: widget.model.isOffline
-                            ? AppTheme.alertColor
-                            : AppTheme.primaryFgColor)),
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 4, 14, 28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () async => Share.shareFiles([
+                              await CnbClient(widget.model.key)
+                                  .getTravelPermitPdfShare()
+                            ],
+                                mimeTypes: [
+                                  "application/pdf"
+                                ],
+                                subject: "Autorização de Viagem - PDF",
+                                text: "Compartilhar AEV"),
+                            icon: Icon(Icons.share_outlined),
+                            color: AppTheme.primaryBgColor,
+                            iconSize: 30,
+                          ),
+                          IconButton(
+                            onPressed: () => {
+                              // TODO
+                              // await CnbClient(widget.model.key)
+                              // .getTravelPermitPdfDownload()
+                            },
+                            icon: Icon(Icons.download_outlined),
+                            color: AppTheme.primaryBgColor,
+                            iconSize: 30,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(right: 9),
+                          child: Icon(
+                              widget.model.isOffline
+                                  ? Icons.wifi_off
+                                  : Icons.wifi,
+                              size: 30,
+                              color: widget.model.isOffline
+                                  ? AppTheme.alertColor
+                                  : AppTheme.successColor)),
+                    ],
+                  ),
+                ),
               ],
             ),
             Expanded(

@@ -1,20 +1,22 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/tp_exception.dart';
 
 class CnbClient {
-  String _host;
+  static final String _host = 'https://assinatura.e-notariado.org.br/';
 
-  CnbClient(String host) {
-    _host = host;
+  String _documentKey;
+
+  CnbClient(String documentKey) {
+    _documentKey = documentKey;
   }
 
-  Future<TravelPermitModel> getTravelPermitInfo(String documentKey) async {
+  Future<http.Response> getFrom(String endpoint) async {
     try {
-      final url = path.join(
-          _host.toString(), 'api/documents/keys/$documentKey/travel-permit');
+      final url = path.join(_host, endpoint);
 
       final response = await http.get(url);
 
@@ -27,18 +29,41 @@ class CnbClient {
                 error.message, TPErrorCodes.cnbClientResponseError);
       } else if (response.statusCode != 200) {
         throw TPException(
-            'CnbClient response for key $documentKey: (${response.statusCode}) ${response.reasonPhrase}',
+            'CnbClient response for key $_documentKey: (${response.statusCode}) ${response.reasonPhrase}',
             TPErrorCodes.cnbClientRequestError);
       }
 
-      return TravelPermitModel.fromJson(
-          documentKey, json.decode(response.body));
+      return response;
     } catch (ex) {
       ex is TPException
           ? throw ex
           : throw TPException(
-              'Error decoding client json response for key $documentKey: $ex',
+              'Error decoding client json response for key $_documentKey: $ex',
               TPErrorCodes.cnbClientRequestError);
     }
+  }
+
+  Future<TravelPermitModel> getTravelPermitInfo() async {
+    final response =
+        await getFrom('api/documents/keys/$_documentKey/travel-permit');
+    return TravelPermitModel.fromJson(_documentKey, json.decode(response.body));
+  }
+
+  Future<Uint8List> getTravelPermitPdfBytes() async {
+    final ticketResponse = await getFrom(
+        'api/documents/keys/$_documentKey/ticket?type=Signatures');
+    final downloadEndpoint =
+        json.decode(ticketResponse.body)['location'].substring(1);
+    final finalPdf = await getFrom(downloadEndpoint);
+    return finalPdf.bodyBytes;
+  }
+
+  Future<String> getTravelPermitPdfShare() async {
+    // TODO
+    return "";
+  }
+
+  Future getTravelPermitPdfDownload() async {
+    // TODO
   }
 }

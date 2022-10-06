@@ -48,8 +48,7 @@ class HomePage extends StatelessWidget {
       dynamic requestException;
       try {
         travelPermitModel =
-            await CnbClient('https://assinatura.e-notariado.org.br/')
-                .getTravelPermitInfo(data.documentKey);
+            await CnbClient(data.documentKey).getTravelPermitInfo();
       } catch (ex) {
         requestException = ex;
       }
@@ -84,8 +83,7 @@ class HomePage extends StatelessWidget {
       }
 
       progress.show();
-      final model = await CnbClient('https://assinatura.e-notariado.org.br/')
-          .getTravelPermitInfo(documentKey);
+      final model = await CnbClient(documentKey).getTravelPermitInfo();
 
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
