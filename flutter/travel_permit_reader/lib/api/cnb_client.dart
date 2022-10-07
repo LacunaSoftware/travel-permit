@@ -1,5 +1,5 @@
+import 'dart:io';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:travel_permit_reader/api/models.dart';
@@ -10,6 +10,7 @@ class CnbClient {
   static final String _host = 'https://assinatura.e-notariado.org.br/';
 
   String _documentKey;
+  File _pdf;
 
   CnbClient(String documentKey) {
     _documentKey = documentKey;
@@ -50,19 +51,18 @@ class CnbClient {
     return TravelPermitModel.fromJson(_documentKey, json.decode(response.body));
   }
 
-  Future<Uint8List> getTravelPermitPdfBytes() async {
+  Future<http.Response> getTravelPermitPdfBytes() async {
     final ticketResponse = await getFrom(
         'api/documents/keys/$_documentKey/ticket?type=Signatures');
     final downloadEndpoint =
         json.decode(ticketResponse.body)['location'].substring(1);
-    final finalPdf = await getFrom(downloadEndpoint);
-    return finalPdf.bodyBytes;
+    return await getFrom(downloadEndpoint);
   }
 
   Future<String> getTravelPermitPdfShare() async {
-    final file = await FileUtil.writeFile(
-        getTravelPermitPdfBytes, 'Autorização de Viagem - $_documentKey.pdf');
-    return file.path;
+    _pdf ??= await FileUtil.downloadTempFile(
+        getTravelPermitPdfBytes, "Autorização de Viagem - $_documentKey.pdf");
+    return _pdf.path;
   }
 
   Future getTravelPermitPdfDownload() async {

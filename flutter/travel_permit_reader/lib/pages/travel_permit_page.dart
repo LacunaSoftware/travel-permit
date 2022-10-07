@@ -37,6 +37,11 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     }
   }
 
+  CnbClient _cnbClient;
+  CnbClient get cnbClient {
+    return _cnbClient ??= CnbClient(widget.model.key);
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -102,13 +107,9 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                       Row(
                         children: [
                           IconButton(
-                            onPressed: () async => Share.shareFiles([
-                              await CnbClient(widget.model.key)
-                                  .getTravelPermitPdfShare()
-                            ],
-                                mimeTypes: [
-                                  "application/pdf"
-                                ],
+                            onPressed: () async => Share.shareFiles(
+                                [await cnbClient.getTravelPermitPdfShare()],
+                                mimeTypes: ["application/pdf"],
                                 subject: "Autorização de Viagem - PDF",
                                 text: "Compartilhar AEV"),
                             icon: Icon(Icons.share_outlined),
