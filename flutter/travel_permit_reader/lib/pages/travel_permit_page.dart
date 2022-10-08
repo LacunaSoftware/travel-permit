@@ -117,11 +117,8 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                             iconSize: 30,
                           ),
                           IconButton(
-                            onPressed: () => {
-                              // TODO
-                              // await CnbClient(widget.model.key)
-                              // .getTravelPermitPdfDownload()
-                            },
+                            onPressed: () async =>
+                                await cnbClient.getTravelPermitPdfDownload(),
                             icon: Icon(Icons.download_outlined),
                             color: AppTheme.primaryBgColor,
                             iconSize: 30,

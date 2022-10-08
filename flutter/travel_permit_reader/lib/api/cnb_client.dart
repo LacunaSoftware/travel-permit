@@ -51,7 +51,7 @@ class CnbClient {
     return TravelPermitModel.fromJson(_documentKey, json.decode(response.body));
   }
 
-  Future<http.Response> getTravelPermitPdfBytes() async {
+  Future<http.Response> getTravelPermitPdfRequest() async {
     final ticketResponse = await getFrom(
         'api/documents/keys/$_documentKey/ticket?type=Signatures');
     final downloadEndpoint =
@@ -60,12 +60,18 @@ class CnbClient {
   }
 
   Future<String> getTravelPermitPdfShare() async {
-    _pdf ??= await FileUtil.downloadTempFile(
-        getTravelPermitPdfBytes, "Autorização de Viagem - $_documentKey.pdf");
+    _pdf ??= await FileUtil.downloadFile(await getTravelPermitPdfRequest(),
+        "Autorização de Viagem - $_documentKey.pdf");
     return _pdf.path;
   }
 
   Future getTravelPermitPdfDownload() async {
-    // TODO
+    _pdf = await (_pdf == null
+        ? FileUtil.downloadFile(await getTravelPermitPdfRequest(),
+            "Autorização de Viagem - $_documentKey.pdf",
+            public: true)
+        : FileUtil.moveToPublic(_pdf));
+
+    // TODO: Notify user;
   }
 }
