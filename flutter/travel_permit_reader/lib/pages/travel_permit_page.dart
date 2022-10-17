@@ -107,11 +107,16 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                       Row(
                         children: [
                           IconButton(
-                            onPressed: () async => Share.shareFiles(
-                                [await cnbClient.getTravelPermitPdfShare()],
-                                mimeTypes: ["application/pdf"],
-                                subject: "Autorização de Viagem - PDF",
-                                text: "Compartilhar AEV"),
+                            onPressed: () async {
+                              final path =
+                                  await cnbClient.getTravelPermitPdfShare();
+                              if (path == null) return;
+
+                              Share.shareFiles([path],
+                                  mimeTypes: ["application/pdf"],
+                                  subject: "Autorização de Viagem - PDF",
+                                  text: "Compartilhar AEV");
+                            },
                             icon: Icon(Icons.share_outlined),
                             color: AppTheme.primaryBgColor,
                             iconSize: 30,

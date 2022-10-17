@@ -3,13 +3,12 @@ import 'package:http/http.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart' as sysPaths;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:travel_permit_reader/api/notification_api.dart';
 
 class FileUtil {
   static Future<File> downloadFile(Response download, String defaultName,
       {bool public = false}) async {
-    if (public) {
-      await askForPermissions();
-    }
+    if (public && !await askForPermissions()) return null;
 
     final folder =
         await (public ? getDownloadDir() : sysPaths.getTemporaryDirectory());
@@ -42,7 +41,7 @@ class FileUtil {
   }
 
   static Future<File> moveToPublic(File pdf) async {
-    await askForPermissions();
+    if (!await askForPermissions()) return null;
 
     final downloadPath = (await getDownloadDir()).path;
     if (p.dirname(pdf.path) != downloadPath) {
@@ -56,10 +55,17 @@ class FileUtil {
     return pdf;
   }
 
-  static Future askForPermissions() async {
-    if (!await Permission.storage.status.isGranted) {
-      await Permission.storage.request();
-    }
+  static Future<bool> askForPermissions() async {
+    final hasPerms = await Permission.storage.status.isGranted ||
+        await Permission.storage.request().isGranted;
+
+    if (!hasPerms)
+      NotificationApi.showNotification(
+          title: 'Permission failed.',
+          body:
+              'Failed to download file. The app doesn\'t have file managing privileges.');
+
+    return hasPerms;
   }
 
   static Future<Directory> getDownloadDir() async {

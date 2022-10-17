@@ -4,11 +4,34 @@ import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:travel_permit_reader/pages/home_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 
+import 'api/notification_api.dart';
+
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+//-------------------------------------------------------------------
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    NotificationApi.init();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      NotificationApi.updatePermissionState();
+    }
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
