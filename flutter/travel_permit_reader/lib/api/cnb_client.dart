@@ -1,13 +1,10 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:path/path.dart' as p;
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/tp_exception.dart';
 import 'package:travel_permit_reader/util/file_util.dart';
-
-import 'notification_api.dart';
 
 class CnbClient {
   static final String _host = 'https://assinatura.e-notariado.org.br/';
@@ -62,7 +59,7 @@ class CnbClient {
     return await getFrom(downloadEndpoint);
   }
 
-  Future<String> getTravelPermitPdfShare() async {
+  Future<String> getTravelPermitPdfPrivate() async {
     if (_pdf == null || !await _pdf.exists())
       _pdf = await FileUtil.downloadFile(await getTravelPermitPdfRequest(),
           "Autorização de Viagem - $_documentKey.pdf");
@@ -70,18 +67,13 @@ class CnbClient {
     return _pdf?.path;
   }
 
-  Future getTravelPermitPdfDownload() async {
+  Future<String> getTravelPermitPdfPublic() async {
     _pdf = await (_pdf == null || !await _pdf.exists()
         ? FileUtil.downloadFile(await getTravelPermitPdfRequest(),
             "Autorização de Viagem - $_documentKey.pdf",
             public: true)
         : FileUtil.moveToPublic(_pdf));
 
-    if (_pdf != null) {
-      NotificationApi.showNotification(
-          title: p.basename(_pdf.path),
-          body: 'Download completed.',
-          payload: _pdf.path);
-    }
+    return _pdf?.path;
   }
 }

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';
+import 'package:path/path.dart' as p;
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/api/cnb_client.dart';
+import 'package:travel_permit_reader/api/notification_api.dart';
 import 'package:travel_permit_reader/pages/notary_details_page.dart';
 import 'package:travel_permit_reader/pages/participant_details_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
@@ -109,7 +111,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                           IconButton(
                             onPressed: () async {
                               final path =
-                                  await cnbClient.getTravelPermitPdfShare();
+                                  await cnbClient.getTravelPermitPdfPrivate();
                               if (path == null) return;
 
                               Share.shareFiles([path],
@@ -122,8 +124,16 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                             iconSize: 30,
                           ),
                           IconButton(
-                            onPressed: () async =>
-                                await cnbClient.getTravelPermitPdfDownload(),
+                            onPressed: () async {
+                              final path =
+                                  await cnbClient.getTravelPermitPdfPublic();
+                              if (path == null) return;
+
+                              NotificationApi.showNotification(
+                                  title: p.basename(path),
+                                  body: 'Download completed.',
+                                  payload: path);
+                            },
                             icon: Icon(Icons.download_outlined),
                             color: AppTheme.primaryBgColor,
                             iconSize: 30,
