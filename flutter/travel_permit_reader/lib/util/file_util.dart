@@ -6,19 +6,19 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:travel_permit_reader/api/notification_api.dart';
 
 class FileUtil {
-  static Future<File> downloadFile(Response download, String defaultName,
-      {bool public = false}) async {
-    if (public && !await askForPermissions()) return null;
+  static Future<File> downloadFile(
+      Response download, String defaultName, bool isTemp) async {
+    if (!isTemp && !await askForPermissions()) return null;
 
     final folder =
-        await (public ? getDownloadDir() : sysPaths.getTemporaryDirectory());
+        await (isTemp ? sysPaths.getTemporaryDirectory() : getDownloadDir());
 
     final name =
         getFilenameFromHeader(download.headers['content-disposition']) ??
             defaultName;
 
     String path = p.join(folder.path, name);
-    if (public) {
+    if (!isTemp) {
       path = await getFileUniquePath(path);
     }
 

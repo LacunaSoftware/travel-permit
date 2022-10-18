@@ -7,11 +7,11 @@ import 'package:share/share.dart';
 import 'package:path/path.dart' as p;
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
-import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/api/notification_api.dart';
 import 'package:travel_permit_reader/pages/notary_details_page.dart';
 import 'package:travel_permit_reader/pages/participant_details_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
+import 'package:travel_permit_reader/util/pdf_util.dart';
 
 import '../tp_exception.dart';
 
@@ -39,9 +39,9 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     }
   }
 
-  CnbClient _cnbClient;
-  CnbClient get cnbClient {
-    return _cnbClient ??= CnbClient(widget.model.key);
+  PdfUtil _pdfUtil;
+  PdfUtil get pdfUtil {
+    return _pdfUtil ??= PdfUtil(widget.model);
   }
 
   @override
@@ -111,7 +111,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                           IconButton(
                             onPressed: () async {
                               final path =
-                                  await cnbClient.getTravelPermitPdfPrivate();
+                                  await pdfUtil.getTravelPermitPdfPrivate();
                               if (path == null) return;
 
                               Share.shareFiles([path],
@@ -126,7 +126,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                           IconButton(
                             onPressed: () async {
                               final path =
-                                  await cnbClient.getTravelPermitPdfPublic();
+                                  await pdfUtil.getTravelPermitPdfPublic();
                               if (path == null) return;
 
                               NotificationApi.showNotification(
