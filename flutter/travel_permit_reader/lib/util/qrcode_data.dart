@@ -32,7 +32,7 @@ class QRCodeData {
   final String underageBioGender;
   final Uint8List signature;
 
-  List<String> _segments;
+  List<String> segments;
 
   QRCodeData._(
       {this.version,
@@ -64,12 +64,12 @@ class QRCodeData {
 
   static const _magicPrefix = 'LTP';
   static const _latestKnownVersion = 3;
-  static const _segmentSeparator = '%';
+  static const segmentSeparator = '%';
   static const _spaceMarker = '+';
 
   factory QRCodeData.parse(String code) {
     try {
-      final segments = code.split(_segmentSeparator);
+      final segments = code.split(segmentSeparator);
       if (segments.isEmpty || segments.first != _magicPrefix) {
         throw TPException(
             'Unknown QR code format', TPErrorCodes.qrCodeUnknownFormat);
@@ -117,7 +117,7 @@ class QRCodeData {
         escortDocumentType: _decodeField(segments[index++]),
         signature: hex.decode(segments[index++]),
       );
-      data._segments = segments;
+      data.segments = segments;
       return data;
     } on TPException {
       rethrow;
@@ -134,7 +134,7 @@ class QRCodeData {
 
   Uint8List _getTbsData() {
     return Uint8List.fromList(utf8.encode(
-        _segments.getRange(0, _segments.length - 1).join(_segmentSeparator)));
+        segments.getRange(0, segments.length - 1).join(segmentSeparator)));
   }
 
   static String _decodeField(String value) {

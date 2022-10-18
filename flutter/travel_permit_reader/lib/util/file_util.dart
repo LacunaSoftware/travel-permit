@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:http/http.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart' as sysPaths;
@@ -6,23 +7,26 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:travel_permit_reader/api/notification_api.dart';
 
 class FileUtil {
-  static Future<File> downloadFile(
+  static Future<File> createFromResponse(
       Response download, String defaultName, bool isTemp) async {
-    if (!isTemp && !await askForPermissions()) return null;
-
-    final folder =
-        await (isTemp ? sysPaths.getTemporaryDirectory() : getDownloadDir());
-
     final name =
         getFilenameFromHeader(download.headers['content-disposition']) ??
             defaultName;
+
+    return await createFromBytes(download.bodyBytes, name, isTemp);
+  }
+
+  static Future<File> createFromBytes(
+      Uint8List bytes, String name, bool isTemp) async {
+    final folder =
+        await (isTemp ? sysPaths.getTemporaryDirectory() : getDownloadDir());
 
     String path = p.join(folder.path, name);
     if (!isTemp) {
       path = await getFileUniquePath(path);
     }
 
-    return await File(path).writeAsBytes(download.bodyBytes, flush: true);
+    return await File(path).writeAsBytes(bytes, flush: true);
   }
 
   static String getFilenameFromHeader(String header) {

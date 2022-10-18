@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:travel_permit_reader/util/file_util.dart';
 import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/api/models.dart';
@@ -23,17 +24,31 @@ class PdfUtil {
   }
 
   Future<String> getTravelPermitPdfPublic() async {
-    _pdf = await (_pdf == null || !await _pdf.exists()
-        ? getTravelPermitPdf(false)
-        : FileUtil.moveToPublic(_pdf));
+    if (_pdf == null || !await _pdf.exists()) {
+      _pdf = await FileUtil.askForPermissions()
+          ? await getTravelPermitPdf(false)
+          : null;
+    } else {
+      _pdf = await FileUtil.moveToPublic(_pdf);
+    }
 
     return _pdf?.path;
   }
 
   Future<File> getTravelPermitPdf(bool isTemp) async => model.isOffline
       ? generateTravelPermitOffline(isTemp)
-      : FileUtil.downloadFile(await cnbClient.getTravelPermitPdfRequest(),
+      : FileUtil.createFromResponse(await cnbClient.getTravelPermitPdfRequest(),
           "Autorização de Viagem - ${model.key}.pdf", isTemp);
 
-  generateTravelPermitOffline(bool isTemp) {}
+  Future<File> generateTravelPermitOffline(bool isTemp) async {
+    final pdf = pw.Document();
+
+    // TODO: Create PDF itself
+
+    // TODO: Generate file name
+    String pdfName;
+
+    // Save to file and return
+    return FileUtil.createFromBytes(pdf.save(), pdfName, isTemp);
+  }
 }

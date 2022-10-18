@@ -14,6 +14,7 @@ class TravelPermitModel {
   final UnderageModel underage;
   final NotaryModel notary;
   final bool isOffline;
+  final String qrcodeData;
 
   TravelPermitModel._({
     this.key,
@@ -26,6 +27,7 @@ class TravelPermitModel {
     this.underage,
     this.notary,
     this.isOffline,
+    this.qrcodeData,
   });
 
   factory TravelPermitModel.fromJson(String key, Map<String, dynamic> json) {
@@ -96,6 +98,7 @@ class TravelPermitModel {
                   IdDocumentTypesExt.fromString(data.underageDocumentType),
               birthDate: DateTime.parse(data.underageBirthDate),
               bioGender: BioGendersExt.fromString(data.underageBioGender)),
+      qrcodeData: data.segments.join(QRCodeData.segmentSeparator),
     );
   }
 }
