@@ -8,7 +8,7 @@ class PendingNotification {
   final String body;
   final String payload;
 
-  PendingNotification({this.id, this.title, this.body, this.payload});
+  PendingNotification(this.id, this.title, this.body, this.payload);
 }
 
 class NotificationApi {
@@ -64,8 +64,7 @@ class NotificationApi {
   }) async {
     if (_permissionStatus == PermissionStatus.denied ||
         _permissionStatus == PermissionStatus.unknown) {
-      toNotify.add(PendingNotification(
-          id: id, title: title, body: body, payload: payload));
+      toNotify.add(PendingNotification(id, title, body, payload));
 
       await NotificationPermissions.requestNotificationPermissions(
           iosSettings: const NotificationSettingsIos(

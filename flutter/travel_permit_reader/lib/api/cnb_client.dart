@@ -9,9 +9,7 @@ class CnbClient {
 
   String _documentKey;
 
-  CnbClient(String documentKey) {
-    _documentKey = documentKey;
-  }
+  CnbClient(this._documentKey);
 
   Future<http.Response> getFrom(String endpoint) async {
     try {

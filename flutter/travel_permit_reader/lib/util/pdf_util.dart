@@ -6,15 +6,15 @@ import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/api/models.dart';
 
 class PdfUtil {
-  TravelPermitModel model;
+  TravelPermitModel _model;
   File _pdf;
 
   CnbClient _cnbClient;
   CnbClient get cnbClient {
-    return _cnbClient ??= CnbClient(model.key);
+    return _cnbClient ??= CnbClient(_model.key);
   }
 
-  PdfUtil(this.model);
+  PdfUtil(this._model);
 
   Future<String> getTravelPermitPdfPrivate() async {
     if (_pdf == null || !await _pdf.exists())
@@ -35,10 +35,10 @@ class PdfUtil {
     return _pdf?.path;
   }
 
-  Future<File> getTravelPermitPdf(bool isTemp) async => model.isOffline
+  Future<File> getTravelPermitPdf(bool isTemp) async => _model.isOffline
       ? generateTravelPermitOffline(isTemp)
       : FileUtil.createFromResponse(await cnbClient.getTravelPermitPdfRequest(),
-          "Autorização de Viagem - ${model.key}.pdf", isTemp);
+          "Autorização de Viagem - ${_model.key}.pdf", isTemp);
 
   Future<File> generateTravelPermitOffline(bool isTemp) async {
     final pdf = pw.Document();
