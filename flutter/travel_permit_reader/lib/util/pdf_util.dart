@@ -1,9 +1,15 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:travel_permit_reader/util/file_util.dart';
-import 'package:travel_permit_reader/api/cnb_client.dart';
+import 'package:pdf/widgets/widget.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart' as d;
+import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
+import 'package:travel_permit_reader/api/cnb_client.dart';
+import 'package:travel_permit_reader/util/file_util.dart';
+import 'package:travel_permit_reader/util/page_util.dart';
 
 class PdfUtil {
   TravelPermitModel _model;
@@ -41,14 +47,213 @@ class PdfUtil {
           "Autorização de Viagem - ${_model.key}.pdf", isTemp);
 
   Future<File> generateTravelPermitOffline(bool isTemp) async {
+    // Initialising variables
+    final isInternational = _model.type == TravelPermitTypes.international;
+    final startDate = _model.startDate?.toLocal()?.toDateString();
+    final expirationDate = _model.expirationDate.toLocal().toDateString();
+
+    final helvetica = pw.Font.helvetica();
+    final font11 = pw.TextStyle(font: helvetica, fontSize: 11);
+    final font12 = pw.TextStyle(font: helvetica, fontSize: 12);
+    final bold12 = pw.TextStyle(font: pw.Font.helveticaBold(), fontSize: 12);
+
+    final List<Widget> doc = [];
+
+    // Adding Brazilian Logo
+    doc.add(pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.center,
+        children: [await getImage('brasil_logo.png', width: 70, height: 70)]));
+
+    // Adding Title
+    doc.add(pw.Paragraph(
+        text:
+            'AUTORIZAÇÃO DE VIAGEM ${isInternational ? "INTERNACIONAL" : "NACIONAL"}',
+        textAlign: pw.TextAlign.center,
+        style: bold12,
+        margin: pw.EdgeInsets.only(top: 10, bottom: 2)));
+
+    // Adding Description
+    doc.add(pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+              'PARA CRIANÇAS OU ADOLESCENTES - RES.: ${isInternational ? "131/2011" : "295/2019"}-CNJ',
+              style: font11),
+          pw.ConstrainedBox(
+              constraints: pw.BoxConstraints.tightFor(width: 110),
+              child: pw.Text(
+                  'Válida ${startDate == null ? "" : "de $startDate\n"}até $expirationDate',
+                  style: font11,
+                  textAlign: pw.TextAlign.right))
+        ]));
+
+    // Main Info Paragraph Opening
+    List<pw.TextSpan> personsInfos = [];
+
+    /// Required Guardian
+    addSpan(personsInfos, 'Eu, ', font12);
+    addGuardianInfo(_model.requiredGuardian, personsInfos, font12, bold12);
+
+    /// Optional Guardian
+    if (_model.optionalGuardian != null) {
+      addSpan(personsInfos, ' e eu, ', font12);
+      addGuardianInfo(_model.optionalGuardian, personsInfos, font12, bold12);
+    }
+
+    /// We/I authorise
+    addSpan(
+        personsInfos,
+        ', ${_model.optionalGuardian != null ? "AUTORIZAMOS" : "AUTORIZO"} ' +
+            'a circular livremente ${startDate == null ? "até" : "no período de $startDate a"} $expirationDate' +
+            ', ${isInternational ? "em território internacional," : "dentro do território nacional,"} ',
+        font12);
+
+    if (_model.escort == null) {
+      addSpan(personsInfos, 'desacompanhado(a), ', font12);
+    }
+
+    /// Underage
+    addSpan(personsInfos, _model.underage.name, bold12);
+    addSpan(
+        personsInfos,
+        ', nascido(a) em ${_model.underage.birthDate.toLocal().toDateString()}',
+        font12);
+    addSpan(personsInfos, ', sexo ${getGenderStr(_model.underage.bioGender)}',
+        font12);
+    addDocumentPhrase(_model.underage, personsInfos, font12);
+
+    /// Escort
+    if (_model.escort != null) {
+      addSpan(
+          personsInfos,
+          isInternational
+              ? ', na companhia de '
+              : ', desde que acompanhada(o) de ',
+          font12);
+      addSpan(personsInfos, _model.escort.name, bold12);
+
+      addDocumentPhrase(_model.escort, personsInfos, font12);
+    }
+
+    addSpan(personsInfos, '.', font12);
+
+    // Main Info Paragraph Closure
+    doc.add(pw.Padding(
+        padding: pw.EdgeInsets.only(top: 20),
+        child: pw.RichText(text: pw.TextSpan(children: personsInfos))));
+
+    // International Obs.
+    if (isInternational) {
+      doc.add(pw.Paragraph(
+          text:
+              'Observação: Salvo se expressamente consignado, este documento não constitui autorização para fixação de residência permanente no exterior.',
+          style: font12,
+          margin: pw.EdgeInsets.only(top: 10)));
+    }
+
+    // Emission Date
+    d.initializeDateFormatting('pt_BR');
+    final dateNow = DateTime.now();
+    doc.add(pw.Paragraph(
+        text:
+            "Data de emissão: ${dateNow.day} de ${DateFormat('MMMM', 'pt_BR').format(dateNow)} de ${dateNow.year}",
+        textAlign: pw.TextAlign.center,
+        style: font12,
+        margin: pw.EdgeInsets.only(top: 20, bottom: 25)));
+
+    // CNJ and CNB logos
+    doc.add(
+        pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceAround, children: [
+      pw.Text('____________________', style: font12),
+      await getImage('cnj.jpg', width: 25, height: 25),
+      await getImage('logo-cnb.jpg', width: 25, height: 25),
+      pw.Text('____________________', style: font12)
+    ]));
+
+    // TODO: Add QRCode
+
+    // Finishing PDF
+    final name = // TODO: Sanitizing the file name
+        'name'; //Formatter.SanitizeFileName(travelPermitData.Underage.Name, documentRequest.Id.ToString());
+    return createFromWidgets(doc, "$name - Autorização de Viagem.pdf", isTemp);
+  }
+
+  Future<File> createFromWidgets(
+      List<Widget> doc, String pdfName, bool isTemp) {
     final pdf = pw.Document();
-
-    // TODO: Create PDF itself
-
-    // TODO: Generate file name
-    String pdfName;
-
-    // Save to file and return
+    pdf.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        margin: pw.EdgeInsets.fromLTRB(60, 30, 60, 30),
+        build: (pw.Context context) => pw.Column(children: doc)));
     return FileUtil.createFromBytes(pdf.save(), pdfName, isTemp);
+  }
+
+  Future<pw.Image> getImage(String asset, {double width, double height}) async {
+    final imgData = await rootBundle.load('assets/img/$asset');
+    final memImg = pw.MemoryImage(imgData.buffer.asUint8List());
+    return pw.Image.provider(memImg, width: width, height: height);
+  }
+
+  void addSpan(List<pw.TextSpan> paragraph, String text, pw.TextStyle font) =>
+      paragraph.add(pw.TextSpan(text: text, style: font));
+
+  void addDocumentPhrase(ParticipantModel participant,
+          List<pw.TextSpan> paragraph, pw.TextStyle font) =>
+      addSpan(
+          paragraph,
+          ', portador(a) ${getDocumentTypeStr(participant.documentType)} ' +
+              'nº ${participant.documentNumber}, expedida(o) pela ${participant.documentIssuer}',
+          font);
+
+  void addGuardianInfo(GuardianModel guardian, List<pw.TextSpan> paragraph,
+      pw.TextStyle font, pw.TextStyle bold) {
+    addSpan(paragraph, guardian.name, bold);
+    addDocumentPhrase(guardian, paragraph, font);
+    addSpan(paragraph, ', na qualidade de ', font);
+    addSpan(paragraph, getResponsibilityStr(guardian.guardianship), bold);
+  }
+
+  String getDocumentTypeStr(IdDocumentTypes type) {
+    switch (type) {
+      case IdDocumentTypes.idCard:
+        return "do RG";
+      case IdDocumentTypes.professionalCard:
+        return "da Carteira profissional";
+      case IdDocumentTypes.passport:
+        return "do Passaporte";
+      case IdDocumentTypes.reservistCard:
+        return "da Carteira de reservista";
+      case IdDocumentTypes.birthCertificate:
+        return "da Certidão de nascimento";
+      default:
+        return "";
+    }
+  }
+
+  String getResponsibilityStr(LegalGuardianTypes type) {
+    switch (type) {
+      case LegalGuardianTypes.mother:
+        return "mãe";
+      case LegalGuardianTypes.father:
+        return "pai";
+      case LegalGuardianTypes.tutor:
+        return "tutor";
+      case LegalGuardianTypes.guardian:
+        return "guardião";
+      default:
+        return "";
+    }
+  }
+
+  String getGenderStr(BioGenders gender) {
+    switch (gender) {
+      case BioGenders.male:
+        return "masculino";
+      case BioGenders.female:
+        return "feminino";
+      default:
+        return "";
+    }
   }
 }
