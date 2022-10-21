@@ -89,7 +89,7 @@ class PdfUtil {
         ]));
 
     // Main Info Paragraph Opening
-    List<pw.TextSpan> personsInfos = [];
+    final List<pw.TextSpan> personsInfos = [];
 
     /// Required Guardian
     addSpan(personsInfos, 'Eu, ', font12);
@@ -171,12 +171,37 @@ class PdfUtil {
       pw.Text('____________________', style: font12)
     ]));
 
-    // TODO: Add QRCode
+    // Validation Code and QRCode
+    final List<Widget> codeInfo = [];
+    codeInfo.add(pw.Column(children: [
+      pw.Paragraph(
+          text: 'Código de Validação:\n${formatValidationCode(_model.key)}',
+          textAlign: pw.TextAlign.center,
+          style: pw.TextStyle(font: helvetica, fontSize: 10),
+          margin: pw.EdgeInsets.only(top: 10, bottom: 2)),
+      pw.BarcodeWidget(
+          data: _model.qrcodeData,
+          barcode: pw.Barcode.qrCode(),
+          width: 150,
+          height: 150)
+    ]));
+
+    codeInfo.add(pw.Paragraph(
+        text:
+            "A autenticidade desse documento pode ser confirmada no endereço eletrônico https://aev.e-notariado.org.br ou pelo app AEV - Autorização de Viagens e-notariado, disponível nas lojas Google Play ou App Store.",
+        style: font11,
+        margin: pw.EdgeInsets.only(top: 20)));
 
     // Finishing PDF
+    final structure = [
+      pw.Container(
+          child: pw.Column(children: doc),
+          margin: pw.EdgeInsets.fromLTRB(40, 5, 40, 0)),
+      pw.Column(children: codeInfo)
+    ];
     final name = // TODO: Sanitizing the file name
-        'name'; //Formatter.SanitizeFileName(travelPermitData.Underage.Name, documentRequest.Id.ToString());
-    return createFromWidgets(doc, "$name - Autorização de Viagem.pdf", isTemp);
+        "name - Autorização de Viagem.pdf"; //Formatter.SanitizeFileName(travelPermitData.Underage.Name, documentRequest.Id.ToString());
+    return createFromWidgets(structure, name, isTemp);
   }
 
   Future<File> createFromWidgets(
@@ -184,8 +209,10 @@ class PdfUtil {
     final pdf = pw.Document();
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
-        margin: pw.EdgeInsets.fromLTRB(60, 30, 60, 30),
-        build: (pw.Context context) => pw.Column(children: doc)));
+        margin: pw.EdgeInsets.all(20),
+        build: (pw.Context context) => pw.Column(
+            children: doc,
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween)));
     return FileUtil.createFromBytes(pdf.save(), pdfName, isTemp);
   }
 
@@ -212,6 +239,14 @@ class PdfUtil {
     addDocumentPhrase(guardian, paragraph, font);
     addSpan(paragraph, ', na qualidade de ', font);
     addSpan(paragraph, getResponsibilityStr(guardian.guardianship), bold);
+  }
+
+  String formatValidationCode(String code) {
+    final charsPerGroup = code.length ~/ 4;
+    return new List<String>.generate(4, (i) {
+      final initial = i * charsPerGroup;
+      return code.substring(initial, initial + charsPerGroup);
+    }).join('-');
   }
 
   String getDocumentTypeStr(IdDocumentTypes type) {
