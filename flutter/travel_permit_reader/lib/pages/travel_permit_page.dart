@@ -214,7 +214,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     final now = DateTime.now();
     final isExpired = now.isAfterDateOnly(widget.model.expirationDate) ||
         (widget.model.startDate != null &&
-            now.isBefore(widget.model.startDate));
+            now.isBeforeDateOnly(widget.model.startDate));
     return BaseCard(
         color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
         child: Row(children: [
