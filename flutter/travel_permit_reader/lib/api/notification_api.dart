@@ -1,6 +1,8 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:notification_permissions/notification_permissions.dart';
 import 'package:open_file/open_file.dart';
+import 'package:travel_permit_reader/util/page_util.dart';
 
 class PendingNotification {
   final int id;
@@ -45,6 +47,26 @@ class NotificationApi {
     if (isReleasePending) tryReleasePending();
   }
 
+  static Future ensureHasPermissions(
+      BuildContext context, Future<dynamic> Function() then) async {
+    if (_permissionStatus != PermissionStatus.denied &&
+        _permissionStatus != PermissionStatus.unknown) {
+      await then();
+      return;
+    }
+
+    final positiveButton = () async {
+      await NotificationPermissions.requestNotificationPermissions(
+          iosSettings: const NotificationSettingsIos(
+              sound: true, badge: true, alert: true));
+      await then();
+    };
+
+    PageUtil.showAppDialog(context, "Permissão de notificação necessária.",
+        "Para funcionar corretamente, o aplicativo precisa de permissões para notificar. Clique no botão abaixo para ser redirecionada(o) para as configurações.",
+        positiveButton: ButtonAction("Redirecionar", positiveButton));
+  }
+
   static void tryReleasePending() {
     if (_permissionStatus == PermissionStatus.granted ||
         _permissionStatus == PermissionStatus.provisional) {
@@ -65,10 +87,6 @@ class NotificationApi {
     if (_permissionStatus == PermissionStatus.denied ||
         _permissionStatus == PermissionStatus.unknown) {
       toNotify.add(PendingNotification(id, title, body, payload));
-
-      await NotificationPermissions.requestNotificationPermissions(
-          iosSettings: const NotificationSettingsIos(
-              sound: true, badge: true, alert: true));
     } else {
       _notifications.show(id, title, body, _settings, payload: payload);
     }

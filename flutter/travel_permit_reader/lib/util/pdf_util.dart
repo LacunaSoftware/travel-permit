@@ -199,8 +199,8 @@ class PdfUtil {
           margin: pw.EdgeInsets.fromLTRB(40, 5, 40, 0)),
       pw.Column(children: codeInfo)
     ];
-    final name = // TODO: Sanitizing the file name
-        "name - Autorização de Viagem.pdf"; //Formatter.SanitizeFileName(travelPermitData.Underage.Name, documentRequest.Id.ToString());
+    final name =
+        "${_model.underage.name.replaceAll(RegExp(r'[^A-Za-zÀ-ÖØ-öø-ÿ0-9_ -]'), '_')} - Autorização de Viagem.pdf";
     return createFromWidgets(structure, name, isTemp);
   }
 
