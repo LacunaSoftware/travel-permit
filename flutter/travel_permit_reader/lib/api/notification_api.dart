@@ -47,6 +47,17 @@ class NotificationApi {
     if (isReleasePending) tryReleasePending();
   }
 
+  static void tryReleasePending() {
+    if (_permissionStatus == PermissionStatus.granted ||
+        _permissionStatus == PermissionStatus.provisional) {
+      for (var i = 0; i < toNotify.length; i++) {
+        final notif = toNotify.removeAt(0);
+        _notifications.show(notif.id, notif.title, notif.body, _settings,
+            payload: notif.payload);
+      }
+    }
+  }
+
   static Future ensureHasPermissions(
       BuildContext context, Future<dynamic> Function() then) async {
     if (_permissionStatus != PermissionStatus.denied &&
@@ -67,17 +78,6 @@ class NotificationApi {
         positiveButton: ButtonAction("Redirecionar", positiveButton));
   }
 
-  static void tryReleasePending() {
-    if (_permissionStatus == PermissionStatus.granted ||
-        _permissionStatus == PermissionStatus.provisional) {
-      for (var i = 0; i < toNotify.length; i++) {
-        final notif = toNotify.removeAt(0);
-        _notifications.show(notif.id, notif.title, notif.body, _settings,
-            payload: notif.payload);
-      }
-    }
-  }
-
   static Future showNotification({
     int id = 0,
     String title,
@@ -87,6 +87,9 @@ class NotificationApi {
     if (_permissionStatus == PermissionStatus.denied ||
         _permissionStatus == PermissionStatus.unknown) {
       toNotify.add(PendingNotification(id, title, body, payload));
+      await NotificationPermissions.requestNotificationPermissions(
+          iosSettings: const NotificationSettingsIos(
+              sound: true, badge: true, alert: true));
     } else {
       _notifications.show(id, title, body, _settings, payload: payload);
     }
