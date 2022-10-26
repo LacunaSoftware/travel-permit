@@ -30,7 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   permission_handler: ^5.0.1+1
   font_awesome_flutter: ^8.11.0
-  flutter_local_notifications: ^1.4.4+5
+  flutter_local_notifications: ^1.5.0+1
   notification_permissions: ^0.4.8
   flutter_barcode_scanner: ^1.0.2
   flutter_progress_hud: ^1.0.3

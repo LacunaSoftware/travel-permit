@@ -16,7 +16,7 @@ class PendingNotification {
 class NotificationApi {
   static final _notifications = FlutterLocalNotificationsPlugin();
   static final _settings = NotificationDetails(
-      AndroidNotificationDetails('0', 'Colégio Notarial do Brasil',
+      AndroidNotificationDetails('cnb-aev', 'Colégio Notarial do Brasil',
           'AEV - Autorização Eletrônica de Viagem',
           importance: Importance.Max),
       IOSNotificationDetails());
@@ -26,7 +26,7 @@ class NotificationApi {
 
   static Future init({bool initScheduled = false}) async {
     final settings = InitializationSettings(
-        AndroidInitializationSettings('@mipmap/ic_launcher'),
+        AndroidInitializationSettings('@drawable/notif_icon'),
         IOSInitializationSettings());
 
     await _notifications.initialize(settings,
