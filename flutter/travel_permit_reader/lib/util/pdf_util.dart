@@ -17,7 +17,7 @@ class PdfUtil {
 
   CnbClient _cnbClient;
   CnbClient get cnbClient {
-    return _cnbClient ??= CnbClient(_model.key);
+    return _cnbClient ??= CnbClient();
   }
 
   PdfUtil(this._model);
@@ -43,8 +43,10 @@ class PdfUtil {
 
   Future<File> getTravelPermitPdf(bool isTemp) async => _model.isOffline
       ? generateTravelPermitOffline(isTemp)
-      : FileUtil.createFromResponse(await cnbClient.getTravelPermitPdfRequest(),
-          "Autorização de Viagem - ${_model.key}.pdf", isTemp);
+      : FileUtil.createFromResponse(
+          await cnbClient.getTravelPermitPdfRequest(_model.key),
+          "Autorização de Viagem - ${_model.key}.pdf",
+          isTemp);
 
   Future<File> generateTravelPermitOffline(bool isTemp) async {
     // Initialising variables

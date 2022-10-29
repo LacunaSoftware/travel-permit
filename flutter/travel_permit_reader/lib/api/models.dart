@@ -98,7 +98,7 @@ class TravelPermitModel {
                   IdDocumentTypesExt.fromString(data.underageDocumentType),
               birthDate: DateTime.parse(data.underageBirthDate),
               bioGender: BioGendersExt.fromString(data.underageBioGender)),
-      qrcodeData: data.segments.join(QRCodeData.segmentSeparator),
+      qrcodeData: data.getQRCodeData(),
     );
   }
 }

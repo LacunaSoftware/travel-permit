@@ -49,7 +49,7 @@ class HomePage extends StatelessWidget {
       dynamic requestException;
       try {
         travelPermitModel =
-            await CnbClient(data.documentKey).getTravelPermitInfo();
+            await CnbClient().getTravelPermitInfo(data.documentKey);
       } catch (ex) {
         requestException = ex;
       }
@@ -83,7 +83,7 @@ class HomePage extends StatelessWidget {
       }
 
       progress.show();
-      final model = await CnbClient(documentKey).getTravelPermitInfo();
+      final model = await CnbClient().getTravelPermitInfo(documentKey);
 
       ensurePermsAndPush(context, TravelPermitPage(model));
       progress.dismiss();
