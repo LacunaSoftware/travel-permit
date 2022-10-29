@@ -7,8 +7,21 @@ import 'package:travel_permit_reader/tp_exception.dart';
 class CnbClient {
   static final String _host = 'https://assinatura.e-notariado.org.br/';
 
-  Future<http.Response> getFrom(String endpoint, String documentKey) async {
+  Future<dynamic> tryCatchMethod(
+      String documentKey, dynamic Function() toWrap) async {
     try {
+      return await toWrap();
+    } catch (ex) {
+      ex is TPException
+          ? throw ex
+          : throw TPException(
+              'Error decoding client json response for key $documentKey: $ex',
+              TPErrorCodes.cnbClientRequestError);
+    }
+  }
+
+  Future<http.Response> getFrom(String endpoint, String documentKey) async {
+    final getResponse = () async {
       final url = path.join(_host, endpoint);
 
       final response = await http.get(url);
@@ -27,19 +40,16 @@ class CnbClient {
       }
 
       return response;
-    } catch (ex) {
-      ex is TPException
-          ? throw ex
-          : throw TPException(
-              'Error decoding client json response for key $documentKey: $ex',
-              TPErrorCodes.cnbClientRequestError);
-    }
+    };
+    return await tryCatchMethod(documentKey, getResponse);
   }
 
   Future<TravelPermitModel> getTravelPermitInfo(String documentKey) async {
     final response = await getFrom(
         'api/documents/keys/$documentKey/travel-permit', documentKey);
-    return TravelPermitModel.fromJson(documentKey, json.decode(response.body));
+    final getJson = () =>
+        TravelPermitModel.fromJson(documentKey, json.decode(response.body));
+    return await tryCatchMethod(documentKey, getJson);
   }
 
   Future<http.Response> getTravelPermitPdfRequest(String documentKey) async {
