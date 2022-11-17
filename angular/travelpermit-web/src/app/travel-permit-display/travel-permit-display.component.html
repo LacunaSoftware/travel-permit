@@ -1,13 +1,14 @@
-<ng-container  *ngIf="travelPermit || offlineData">
+<ngx-loading [show]="loading"></ngx-loading>
+<ng-container  *ngIf="travelPermit">
 	<div class="d-flex flex-column">
 		<div class="row pt-3">
 			<div class="col-12 col-md-6 px-md-5 pt-4 pt-md-0">
 				<div class="row">
 					<div class="col-12 col-md-6">
-						<p class="mb-sm-1"><strong>Data de expiração:</strong></p>
+						<p class="mb-sm-1"><strong>{{travelPermit.startDate ? "Período de Validade" : "Data de Expiração"}}:</strong></p>
 					</div>
 					<div class="col-12 col-md-6 d-flex justify-content-end">
-						<p>{{(travelPermit?.expirationDate || offlineData.expirationDate) | date: 'dd/MM/yyyy'}}</p>
+						<p>{{(travelPermit.startDate ? (travelPermit.startDate | date: 'dd/MM/yyyy') + " à " : "") + (travelPermit.expirationDate | date: 'dd/MM/yyyy')}}</p>
 					</div>
 				</div>
 				<div class="row">
@@ -15,10 +16,19 @@
 						<h4 class="mb-sm-1"><strong>Tipo:</strong></h4>
 					</div>
 					<div class="col-12 col-md-8 d-flex justify-content-end">
-						<p>{{(travelPermit?.type || offlineData.type) | travelPermitType}}</p>
+						<p>{{travelPermit.type | travelPermitType}}</p>
 					</div>
 				</div>
 			</div>
+
+			<a *ngIf="isOnline" class="col-12 col-md-6 px-md-5 pt-4 pt-md-0 pointer" (click)="download()">
+				<div class="card-link py-2 px-3">
+					<mat-icon color="accent" class="button-icon mt-2">cloud_download</mat-icon>
+					<h4>
+						Baixar documento assinado
+					</h4>
+				</div>
+			</a>
 		</div>
 		<div class="w-md-48 px-3">
 			
@@ -26,25 +36,25 @@
 		<div class="row pt-0 pt-md-4">
 			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.underage || offlineData?.underage), title: 'Menor' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.underage, title: 'Menor' }">
 				</ng-template>
 			</div>
 	
-			<div *ngIf="travelPermit?.escort || offlineData?.escort?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+			<div *ngIf="travelPermit.escort?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.escort || offlineData?.escort), title: 'Acompanhante' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante' }">
 				</ng-template>
 			</div>
 
 			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.requiredGuardian || offlineData?.requiredGuardian), title: 'Reponsável Legal 1' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.requiredGuardian, title: 'Reponsável Legal 1' }">
 				</ng-template>
 			</div>
 	
-			<div *ngIf="travelPermit?.optionalGuardian || offlineData?.optionalGuardian?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+			<div *ngIf="travelPermit.optionalGuardian?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: (travelPermit?.optionalGuardian || offlineData?.optionalGuardian), title: 'Reponsável Legal 2' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.optionalGuardian, title: 'Reponsável Legal 2' }">
 				</ng-template>
 			</div>
 		</div>
@@ -58,7 +68,7 @@
 		<h4 class="text-primary"><strong>{{title}}</strong></h4>
 	</div>
 
-	<div *ngIf="travelPermit" class="row justify-content-center">
+	<div *ngIf="isOnline" class="row justify-content-center">
 		<div class="w-md-30 p-3">
 			<img [src]="participant.pictureLocation || '/assets/img/participant-placeholder.png'" style="width:100%; border-radius: 5px;" />
 		</div>

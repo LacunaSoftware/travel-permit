@@ -3,6 +3,7 @@ import { BioDocumentType, BioGender, LegalGuardianTypes, TravelPermitTypes, Uf }
 export interface TravelPermitOfflineModel {
 	version: number;
 	key: string;
+	startDate?: string;
 	expirationDate: string;
 	type: string;
 	requiredGuardian: GuardianOfflineModel;
@@ -62,6 +63,8 @@ export interface TravelPermitParticipantModel {
 }
 
 export interface TravelPermitModel {
+	key?: string;
+	startDate?: string;
 	expirationDate: string;
 	type: TravelPermitTypes;
 	isRemoteTravelPermit: boolean;
