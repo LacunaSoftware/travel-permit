@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Autorização de Viagem',
+        title: 'Autorização de Viagem HOMOLOG',
         home: Scaffold(
           body: ProgressHUD(child: HomePage()),
         ),

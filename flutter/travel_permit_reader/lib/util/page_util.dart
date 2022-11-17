@@ -123,7 +123,7 @@ class BackgroundScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: color,
+      backgroundColor: Color(0xFFFF0000),
       appBar: appBar,
       body: imagePath == null
           ? body

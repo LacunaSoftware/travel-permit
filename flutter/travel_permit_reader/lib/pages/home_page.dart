@@ -155,7 +155,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BackgroundScaffold(
-      color: AppTheme.primaryBgColor,
+      color: Color(0xFFFF0000),
       body: Column(
         children: <Widget>[
           Container(
@@ -167,9 +167,13 @@ class HomePage extends StatelessWidget {
                     Container(
                         height: PageUtil.getScreenHeight(context, 0.10),
                         width: PageUtil.getScreenWidth(context),
-                        child: SvgPicture.asset(
-                          "assets/img/CNBLogo.svg",
-                        )),
+                        child: Text("AMBIENTE DE HOMOLOGAÇÃO\n(SEM VALIDADE)",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ))),
                     Container(
                       height: PageUtil.getScreenHeight(context, 0.03),
                     ),

@@ -5,7 +5,7 @@ import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/tp_exception.dart';
 
 class CnbClient {
-  static final String _host = 'https://assinatura.e-notariado.org.br/';
+  static final String _host = 'https://assinatura-hml.e-notariado.org.br/';
 
   Future<dynamic> tryCatchMethod(
       String documentKey, dynamic Function() toWrap) async {

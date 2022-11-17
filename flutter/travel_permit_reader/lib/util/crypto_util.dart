@@ -8,8 +8,8 @@ class CryptoUtil {
 
   static ECPublicKey _publicKeyV1 = ECPublicKey(
       _ecDomain.curve.createPoint(
-          BigIntExt.fromBase64('Mq1pD1R4qu6xjpIvarG54zOnGrAqvMbsq9Fvo8kns4s='),
-          BigIntExt.fromBase64('1c53A4cKVXCtFucnC7Z54uNPzEHrVxgu3tJVhQNv19U=')),
+          BigIntExt.fromBase64('e7yZX1L9JolR7zIaA2I/QIEdnj2C8jy3DKpSILqoD4o='),
+          BigIntExt.fromBase64('IbGzOdj4ikD81oQHgmT7ohHxj8KfZ7M5y45cHryuBzg=')),
       _ecDomain);
 
   static bool verifySignature(Uint8List signature, Uint8List tbsData) {
