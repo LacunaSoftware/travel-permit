@@ -16,22 +16,22 @@ class PendingNotification {
 class NotificationApi {
   static final _notifications = FlutterLocalNotificationsPlugin();
   static final _settings = NotificationDetails(
-      AndroidNotificationDetails('cnb-aev', 'Colégio Notarial do Brasil',
-          'AEV - Autorização Eletrônica de Viagem',
-          importance: Importance.Max),
-      IOSNotificationDetails());
+    android: AndroidNotificationDetails(
+      'cnb-aev',
+      'Colégio Notarial do Brasil',
+      channelDescription: 'AEV - Autorização Eletrônica de Viagem',
+      importance: Importance.max,
+    ),
+    iOS: IOSNotificationDetails(),
+  );
 
   static final List<PendingNotification> toNotify = [];
   static PermissionStatus _permissionStatus;
 
   static Future init({bool initScheduled = false}) async {
-    final settings = InitializationSettings(
-        AndroidInitializationSettings('@drawable/notif_icon'),
-        IOSInitializationSettings());
+    final settings = InitializationSettings(android: AndroidInitializationSettings('@drawable/notif_icon'), iOS: IOSInitializationSettings());
 
-    await _notifications.initialize(settings,
-        onSelectNotification: (payload) async =>
-            onClickedNotification(payload));
+    await _notifications.initialize(settings, onSelectNotification: (payload) async => onClickedNotification(payload));
 
     updatePermissionState(isReleasePending: false);
   }
@@ -41,41 +41,32 @@ class NotificationApi {
   }
 
   static Future updatePermissionState({bool isReleasePending = true}) async {
-    _permissionStatus =
-        await NotificationPermissions.getNotificationPermissionStatus();
+    _permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
 
     if (isReleasePending) tryReleasePending();
   }
 
   static void tryReleasePending() {
-    if (_permissionStatus == PermissionStatus.granted ||
-        _permissionStatus == PermissionStatus.provisional) {
+    if (_permissionStatus == PermissionStatus.granted || _permissionStatus == PermissionStatus.provisional) {
       for (var i = 0; i < toNotify.length; i++) {
         final notif = toNotify.removeAt(0);
-        _notifications.show(notif.id, notif.title, notif.body, _settings,
-            payload: notif.payload);
+        _notifications.show(notif.id, notif.title, notif.body, _settings, payload: notif.payload);
       }
     }
   }
 
-  static Future ensureHasPermissions(
-      BuildContext context, Future<dynamic> Function() then) async {
-    if (_permissionStatus != PermissionStatus.denied &&
-        _permissionStatus != PermissionStatus.unknown) {
+  static Future ensureHasPermissions(BuildContext context, Future<dynamic> Function() then) async {
+    if (_permissionStatus != PermissionStatus.denied && _permissionStatus != PermissionStatus.unknown) {
       await then();
       return;
     }
 
     final positiveButton = () async {
-      await NotificationPermissions.requestNotificationPermissions(
-          iosSettings: const NotificationSettingsIos(
-              sound: true, badge: true, alert: true));
+      await NotificationPermissions.requestNotificationPermissions(iosSettings: const NotificationSettingsIos(sound: true, badge: true, alert: true));
       await then();
     };
 
-    PageUtil.showAppDialog(context, "Permissão de notificação necessária.",
-        "Para funcionar corretamente, o aplicativo precisa de permissões para notificar. Clique no botão abaixo para ser redirecionada(o) para as configurações.",
-        positiveButton: ButtonAction("Redirecionar", positiveButton));
+    PageUtil.showAppDialog(context, "Permissão de notificação necessária.", "Para funcionar corretamente, o aplicativo precisa de permissões para notificar. Clique no botão abaixo para ser redirecionada(o) para as configurações.", positiveButton: ButtonAction("Redirecionar", positiveButton));
   }
 
   static Future showNotification({
@@ -84,12 +75,9 @@ class NotificationApi {
     String body,
     String payload,
   }) async {
-    if (_permissionStatus == PermissionStatus.denied ||
-        _permissionStatus == PermissionStatus.unknown) {
+    if (_permissionStatus == PermissionStatus.denied || _permissionStatus == PermissionStatus.unknown) {
       toNotify.add(PendingNotification(id, title, body, payload));
-      await NotificationPermissions.requestNotificationPermissions(
-          iosSettings: const NotificationSettingsIos(
-              sound: true, badge: true, alert: true));
+      await NotificationPermissions.requestNotificationPermissions(iosSettings: const NotificationSettingsIos(sound: true, badge: true, alert: true));
     } else {
       _notifications.show(id, title, body, _settings, payload: payload);
     }
