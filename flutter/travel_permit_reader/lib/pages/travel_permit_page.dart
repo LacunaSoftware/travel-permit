@@ -3,11 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:share/share.dart';
+import 'package:path/path.dart' as p;
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
+import 'package:travel_permit_reader/api/notification_api.dart';
 import 'package:travel_permit_reader/pages/notary_details_page.dart';
 import 'package:travel_permit_reader/pages/participant_details_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
+import 'package:travel_permit_reader/util/pdf_util.dart';
 
 import '../tp_exception.dart';
 
@@ -33,6 +37,11 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
       default:
         return null;
     }
+  }
+
+  PdfUtil _pdfUtil;
+  PdfUtil get pdfUtil {
+    return _pdfUtil ??= PdfUtil(widget.model);
   }
 
   @override
@@ -92,14 +101,58 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                     ],
                   ),
                 ),
-                Padding(
-                    padding: EdgeInsets.only(right: 12),
-                    child: Icon(
-                        widget.model.isOffline ? Icons.wifi_off : Icons.wifi,
-                        size: 30,
-                        color: widget.model.isOffline
-                            ? AppTheme.alertColor
-                            : AppTheme.primaryFgColor)),
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 4, 14, 28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              final path =
+                                  await pdfUtil.getTravelPermitPdfPrivate();
+                              if (path == null) return;
+
+                              Share.shareFiles([path],
+                                  mimeTypes: ["application/pdf"],
+                                  subject: "Autorização de Viagem - PDF",
+                                  text: "Compartilhar AEV");
+                            },
+                            icon: Icon(Icons.share_outlined),
+                            color: AppTheme.primaryBgColor,
+                            iconSize: 30,
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              final path =
+                                  await pdfUtil.getTravelPermitPdfPublic();
+                              if (path == null) return;
+
+                              NotificationApi.showNotification(
+                                  title: p.basename(path),
+                                  body: 'Download completed.',
+                                  payload: path);
+                            },
+                            icon: Icon(Icons.download_outlined),
+                            color: AppTheme.primaryBgColor,
+                            iconSize: 30,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(right: 9),
+                          child: Icon(
+                              widget.model.isOffline
+                                  ? Icons.wifi_off
+                                  : Icons.wifi,
+                              size: 30,
+                              color: widget.model.isOffline
+                                  ? AppTheme.alertColor
+                                  : AppTheme.successColor)),
+                    ],
+                  ),
+                ),
               ],
             ),
             Expanded(
@@ -158,8 +211,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
   }
 
   Widget _buildPermitValidityState() {
-    final isExpired =
-        DateTime.now().isAfterDateOnly(widget.model.expirationDate);
+    final now = DateTime.now();
+    final isExpired = now.isAfterDateOnly(widget.model.expirationDate) ||
+        (widget.model.startDate != null &&
+            now.isBeforeDateOnly(widget.model.startDate));
     return BaseCard(
         color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
         child: Row(children: [
@@ -176,13 +231,25 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
                   color: Colors.white),
-              children: <TextSpan>[
-                new TextSpan(text: isExpired ? 'Expirou em ' : 'Vigente até '),
-                new TextSpan(
-                    text:
-                        '${widget.model.expirationDate.toLocal().toDateString()}',
-                    style: TextStyle(fontWeight: FontWeight.w700)),
-              ],
+              children: widget.model.startDate == null
+                  ? <TextSpan>[
+                      new TextSpan(
+                          text: isExpired ? 'Expirou em ' : 'Vigente até '),
+                      new TextSpan(
+                          text:
+                              '${widget.model.expirationDate.toLocal().toDateString()}',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ]
+                  : <TextSpan>[
+                      new TextSpan(
+                          text: isExpired
+                              ? 'Fora do período de '
+                              : 'Vigente de '),
+                      new TextSpan(
+                          text:
+                              '${widget.model.startDate.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ],
             ),
           )
         ]));

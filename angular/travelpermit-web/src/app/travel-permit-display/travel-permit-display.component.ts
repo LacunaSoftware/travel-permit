@@ -1,5 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-travel-permit-display',
@@ -7,16 +10,32 @@ import { TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-perm
 	styleUrls: ['./travel-permit-display.component.scss']
 })
 export class TravelPermitDisplayComponent implements OnInit {
-
 	@Input()
-	travelPermit: TravelPermitModel
+	travelPermit: TravelPermitModel | TravelPermitOfflineModel;
+	
+	loading: boolean = false;
 
-	@Input()
-	offlineData: TravelPermitOfflineModel
+	get isOnline(): boolean {
+		return !this.travelPermit['version'];
+	}
 
 	constructor(
+		private http: HttpClient,
 	) { }
 
 	ngOnInit() {
+	}
+
+	download() {
+		this.loading = true;
+
+		this.getDownloadTicket(this.travelPermit.key).subscribe(m => {
+			document.location.href = environment.cnbEndpoint + m.location;
+			this.loading = false;
+		}, _ => this.loading = false);
+	}
+
+	getDownloadTicket(key: string): Observable<{location: string}> {
+		return this.http.get<{location: string}>(`${environment.cnbEndpoint}/api/documents/keys/${key}/ticket?type=Signatures`);
 	}
 }

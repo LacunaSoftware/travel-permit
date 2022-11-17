@@ -7,6 +7,7 @@ import 'package:travel_permit_reader/util/crypto_util.dart';
 class QRCodeData {
   final int version;
   final String documentKey;
+  final String startDate;
   final String expirationDate;
   final String travelPermitType;
   final String requiredGuardianName;
@@ -36,6 +37,7 @@ class QRCodeData {
   QRCodeData._(
       {this.version,
       this.documentKey,
+      this.startDate,
       this.expirationDate,
       this.travelPermitType,
       this.requiredGuardianName,
@@ -61,7 +63,7 @@ class QRCodeData {
       this.signature});
 
   static const _magicPrefix = 'LTP';
-  static const _latestKnownVersion = 2;
+  static const _latestKnownVersion = 3;
   static const _segmentSeparator = '%';
   static const _spaceMarker = '+';
 
@@ -79,7 +81,8 @@ class QRCodeData {
             TPErrorCodes.qrCodeUnknownVersion);
       }
 
-      if (version <= 2 && segments.length != 26) {
+      if ((version <= 2 && segments.length != 26) ||
+          (version == 3 && segments.length != 27)) {
         throw TPException(
             'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
       }
@@ -89,6 +92,7 @@ class QRCodeData {
       final data = QRCodeData._(
         version: version,
         documentKey: segments[index++],
+        startDate: version == 3 ? segments[index++] : null,
         expirationDate: segments[index++],
         travelPermitType: _decodeField(segments[index++]),
         requiredGuardianName: _decodeField(segments[index++]),
@@ -131,6 +135,10 @@ class QRCodeData {
   Uint8List _getTbsData() {
     return Uint8List.fromList(utf8.encode(
         _segments.getRange(0, _segments.length - 1).join(_segmentSeparator)));
+  }
+
+  String getQRCodeData() {
+    return _segments.join(_segmentSeparator);
   }
 
   static String _decodeField(String value) {

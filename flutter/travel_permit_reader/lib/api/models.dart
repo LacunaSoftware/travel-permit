@@ -5,6 +5,7 @@ import 'package:travel_permit_reader/util/qrcode_data.dart';
 
 class TravelPermitModel {
   final String key;
+  final DateTime startDate;
   final DateTime expirationDate;
   final TravelPermitTypes type;
   final GuardianModel requiredGuardian;
@@ -13,9 +14,11 @@ class TravelPermitModel {
   final UnderageModel underage;
   final NotaryModel notary;
   final bool isOffline;
+  final String qrcodeData;
 
   TravelPermitModel._({
     this.key,
+    this.startDate,
     this.expirationDate,
     this.type,
     this.requiredGuardian,
@@ -24,12 +27,16 @@ class TravelPermitModel {
     this.underage,
     this.notary,
     this.isOffline,
+    this.qrcodeData,
   });
 
   factory TravelPermitModel.fromJson(String key, Map<String, dynamic> json) {
     return TravelPermitModel._(
         isOffline: false,
         key: key,
+        startDate: StringExt.isNullOrEmpty(json['startDate'])
+            ? null
+            : DateTime.parse(json['startDate']),
         expirationDate: DateTime.parse(json['expirationDate']),
         type: TravelPermitTypesExt.fromString(json['type']),
         requiredGuardian: GuardianModel.fromJson(json['requiredGuardian']),
@@ -43,6 +50,9 @@ class TravelPermitModel {
     return TravelPermitModel._(
       isOffline: true,
       key: data.documentKey,
+      startDate: StringExt.isNullOrEmpty(data.startDate)
+          ? null
+          : DateTime.parse(data.startDate),
       expirationDate: DateTime.parse(data.expirationDate),
       type: TravelPermitTypesExt.fromString(data.travelPermitType),
       //-------------------------------------------------------------------
@@ -88,6 +98,7 @@ class TravelPermitModel {
                   IdDocumentTypesExt.fromString(data.underageDocumentType),
               birthDate: DateTime.parse(data.underageBirthDate),
               bioGender: BioGendersExt.fromString(data.underageBioGender)),
+      qrcodeData: data.getQRCodeData(),
     );
   }
 }
