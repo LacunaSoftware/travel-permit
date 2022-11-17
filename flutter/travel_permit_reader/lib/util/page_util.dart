@@ -168,6 +168,7 @@ extension StringExt on String {
 
 extension DateTimeExt on DateTime {
   String toDateString() => DateFormat('dd/MM/yyy').format(this);
+
   bool isAfterDateOnly(DateTime d) {
     if (this.year > d.year) {
       return true;
@@ -184,6 +185,28 @@ extension DateTimeExt on DateTime {
 
     // same month
     if (this.day > d.day) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool isBeforeDateOnly(DateTime d) {
+    if (this.year < d.year) {
+      return true;
+    } else if (this.year > d.year) {
+      return false;
+    }
+
+    // same year
+    if (this.month < d.month) {
+      return true;
+    } else if (this.month > d.month) {
+      return false;
+    }
+
+    // same month
+    if (this.day < d.day) {
       return true;
     } else {
       return false;
