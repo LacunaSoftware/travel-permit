@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
@@ -21,14 +20,12 @@ class HomePage extends StatelessWidget {
     final progress = ProgressHUD.of(context);
 
     try {
-      final cameraGranted = await PermissionUtil.checkCameraPermission(
-          context, 'Dê permissão de uso da câmera para ler QR code');
+      final cameraGranted = await PermissionUtil.checkCameraPermission(context, 'Dê permissão de uso da câmera para ler QR code');
       if (!cameraGranted) {
         return;
       }
 
-      final code = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancelar', false, ScanMode.QR);
+      final code = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancelar', false, ScanMode.QR);
 
       // '-1' is returned when cancelled. Check null or empty just in case
       if (StringExt.isNullOrEmpty(code) || code == '-1') {
@@ -39,8 +36,7 @@ class HomePage extends StatelessWidget {
       final data = QRCodeData.parse(code);
 
       if (!data.verify()) {
-        PageUtil.showAppDialog(context, 'QR Code Recusado',
-            'A assinatura do QR code está inválida.');
+        PageUtil.showAppDialog(context, 'QR Code Recusado', 'A assinatura do QR code está inválida.');
         progress.dismiss();
         return;
       }
@@ -48,19 +44,14 @@ class HomePage extends StatelessWidget {
       TravelPermitModel travelPermitModel;
       dynamic requestException;
       try {
-        travelPermitModel =
-            await CnbClient().getTravelPermitInfo(data.documentKey);
+        travelPermitModel = await CnbClient().getTravelPermitInfo(data.documentKey);
       } catch (ex) {
         requestException = ex;
       }
 
-      travelPermitModel =
-          travelPermitModel ?? TravelPermitModel.fromQRCode(data);
+      travelPermitModel = travelPermitModel ?? TravelPermitModel.fromQRCode(data);
 
-      ensurePermsAndPush(
-          context,
-          TravelPermitPage(travelPermitModel,
-              onlineRequestException: requestException));
+      ensurePermsAndPush(context, TravelPermitPage(travelPermitModel, onlineRequestException: requestException));
 
       progress.dismiss();
     } catch (ex) {
@@ -94,8 +85,7 @@ class HomePage extends StatelessWidget {
   }
 
   Future ensurePermsAndPush(BuildContext context, Widget widget) async {
-    final then = () async => await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => widget));
+    final then = () async => await Navigator.push(context, MaterialPageRoute(builder: (context) => widget));
     NotificationApi.ensureHasPermissions(context, then);
   }
 
@@ -116,8 +106,7 @@ class HomePage extends StatelessWidget {
           break;
         case TPErrorCodes.cnbClientRequestError:
           title = 'Aviso';
-          message =
-              'Não foi possível se comunicar com o servidor. Por favor verifique sua conexão.';
+          message = 'Não foi possível se comunicar com o servidor. Por favor verifique sua conexão.';
           break;
         case TPErrorCodes.cnbClientResponseError:
           message = ex.message;
@@ -126,8 +115,7 @@ class HomePage extends StatelessWidget {
           message = 'Autorização de viagem não encontrada';
           break;
         case TPErrorCodes.qrCodeDecodeError:
-          message =
-              'Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação';
+          message = 'Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação';
           break;
         case TPErrorCodes.qrCodeUnknownFormat:
           message = 'Este não é um QR Code de Autorização Eletrônica de Viagem';
@@ -146,8 +134,7 @@ class HomePage extends StatelessWidget {
       }
     }
 
-    PageUtil.showAppDialog(context, title, message,
-        positiveButton: ButtonAction(btText, onPressed));
+    PageUtil.showAppDialog(context, title, message, positiveButton: ButtonAction(btText, onPressed));
 
     return completer.future;
   }
@@ -161,19 +148,17 @@ class HomePage extends StatelessWidget {
           Container(
               height: PageUtil.getScreenHeight(context, 0.20),
               // CNB logo ------------------------------
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                        height: PageUtil.getScreenHeight(context, 0.10),
-                        width: PageUtil.getScreenWidth(context),
-                        child: SvgPicture.asset(
-                          "assets/img/CNBLogo.svg",
-                        )),
-                    Container(
-                      height: PageUtil.getScreenHeight(context, 0.03),
-                    ),
-                  ])),
+              child: Column(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                Container(
+                    height: PageUtil.getScreenHeight(context, 0.10),
+                    width: PageUtil.getScreenWidth(context),
+                    child: SvgPicture.asset(
+                      "assets/img/CNBLogo.svg",
+                    )),
+                Container(
+                  height: PageUtil.getScreenHeight(context, 0.03),
+                ),
+              ])),
           Container(
             height: PageUtil.getScreenHeight(context, 0.80),
             width: PageUtil.getScreenWidth(context),
@@ -212,8 +197,7 @@ class HomePage extends StatelessWidget {
                               Text(
                                 'by Lacuna Software',
                                 style: TextStyle(
-                                  fontSize:
-                                      PageUtil.getScreenHeight(context, 0.013),
+                                  fontSize: PageUtil.getScreenHeight(context, 0.013),
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.7,
                                   color: AppTheme.defaultFgColor,
@@ -285,8 +269,7 @@ class ValidationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      color: Color(0xFFE3E3E3),
+    return TextButton(
       onPressed: this.action,
       child: Container(
         padding: EdgeInsets.only(top: 12, bottom: 12),
@@ -325,8 +308,11 @@ class ValidationButton extends StatelessWidget {
           ],
         ),
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0),
+      style: TextButton.styleFrom(
+        foregroundColor: Color(0xFFE3E3E3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4.0),
+        ),
       ),
     );
   }
