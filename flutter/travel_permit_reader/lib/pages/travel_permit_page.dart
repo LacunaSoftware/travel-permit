@@ -185,30 +185,36 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     final now = DateTime.now();
     final isExpired = now.isAfterDateOnly(widget.model.expirationDate) || (widget.model.startDate != null && now.isBeforeDateOnly(widget.model.startDate));
     return BaseCard(
-        color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
-        child: Row(children: [
+      color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
+      child: Row(
+        children: [
           Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                isExpired ? Icons.event_busy : Icons.event_available,
-                size: 30,
-                color: Colors.white,
-              )),
-          RichText(
-            text: new TextSpan(
-              style: new TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: Colors.white),
-              children: widget.model.startDate == null
-                  ? <TextSpan>[
-                      new TextSpan(text: isExpired ? 'Expirou em ' : 'Vigente até '),
-                      new TextSpan(text: '${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
-                    ]
-                  : <TextSpan>[
-                      new TextSpan(text: isExpired ? 'Fora do período de ' : 'Vigente de '),
-                      new TextSpan(text: '${widget.model.startDate.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
-                    ],
+            padding: EdgeInsets.only(right: 10),
+            child: Icon(
+              isExpired ? Icons.event_busy : Icons.event_available,
+              size: 30,
+              color: Colors.white,
             ),
-          )
-        ]));
+          ),
+          Flexible(
+            child: RichText(
+              text: new TextSpan(
+                style: new TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: Colors.white),
+                children: widget.model.startDate == null
+                    ? <TextSpan>[
+                        new TextSpan(text: isExpired ? 'Expirou em ' : 'Vigente até '),
+                        new TextSpan(text: '${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
+                      ]
+                    : <TextSpan>[
+                        new TextSpan(text: isExpired ? 'Fora do período de ' : 'Vigente de '),
+                        new TextSpan(text: '${widget.model.startDate.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
+                      ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildNotaryInfo(context) {
