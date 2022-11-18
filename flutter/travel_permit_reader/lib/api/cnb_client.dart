@@ -17,7 +17,7 @@ class CnbClient {
 
   Future<http.Response> getFrom(String endpoint, String documentKey) async {
     final getResponse = () async {
-      final url = Uri(path: path.join(_host, endpoint));
+      final url = Uri.parse(path.join(_host, endpoint));
 
       final response = await http.get(url);
 
