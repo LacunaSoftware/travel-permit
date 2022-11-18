@@ -47,8 +47,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
       child: TextButton(
         onPressed: () => _submit(),
         style: TextButton.styleFrom(
-          minimumSize: Size.fromWidth(PageUtil.getScreenHeight(context, 0.80)),
-          fixedSize: Size.fromHeight(48),
+          minimumSize: Size(PageUtil.getScreenHeight(context, 0.80), 48),
           foregroundColor: AppTheme.primaryBgColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(444.0),
