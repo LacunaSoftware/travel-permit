@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:notification_permissions/notification_permissions.dart';
-import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 
 class PendingNotification {
@@ -37,7 +37,7 @@ class NotificationApi {
   }
 
   static void onClickedNotification(String payload) {
-    if (payload != null) OpenFile.open(payload);
+    if (payload != null) OpenFilex.open(payload);
   }
 
   static Future updatePermissionState({bool isReleasePending = true}) async {

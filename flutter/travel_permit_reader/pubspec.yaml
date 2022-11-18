@@ -44,10 +44,10 @@ dependencies:
   cached_network_image: ^3.2.2
   store_redirect: ^2.0.0
   share_plus: ^2.1.4
-  open_file: ^3.2.1
   pdf: ^3.8.4
   convert: ^3.1.1
   url_launcher: 6.0.14
+  open_filex: ^3.4.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.11.0
