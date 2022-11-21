@@ -22,7 +22,7 @@ class NotificationApi {
       channelDescription: 'AEV - Autorização Eletrônica de Viagem',
       importance: Importance.max,
     ),
-    iOS: IOSNotificationDetails(),
+    iOS: IOSNotificationDetails(threadIdentifier: 'cnb-aev'),
   );
 
   static final List<PendingNotification> toNotify = [];
