@@ -224,7 +224,7 @@ class HomePage extends StatelessWidget {
                       height: PageUtil.getScreenHeight(context, 0.07),
                     ),
                     Container(
-                      height: PageUtil.getScreenHeight(context, 0.20),
+                      height: PageUtil.getScreenHeight(context, 0.22),
                       padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,

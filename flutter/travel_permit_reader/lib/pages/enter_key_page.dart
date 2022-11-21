@@ -43,7 +43,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
     );
 
     final submitButtonSection = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      padding: (PageUtil.getScreenHeight(context, 1) > 700) ? const EdgeInsets.symmetric(vertical: 20.0) : const EdgeInsets.symmetric(vertical: 10.0),
       child: TextButton(
         onPressed: () => _submit(),
         style: TextButton.styleFrom(
@@ -80,7 +80,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                 ),
                 child: Container(
                     child: Padding(
-                        padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+                        padding: (PageUtil.getScreenHeight(context, 1) > 700) ? EdgeInsets.fromLTRB(20, 16, 20, 0) : EdgeInsets.fromLTRB(20, 10, 20, 0),
                         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                           Row(
                             children: [
@@ -103,7 +103,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
                                 )),
                           ),
                           Padding(
-                            padding: EdgeInsets.fromLTRB(0, 12, 0, 24),
+                            padding: (PageUtil.getScreenHeight(context, 1) > 700) ? EdgeInsets.fromLTRB(0, 12, 0, 24) : EdgeInsets.fromLTRB(0, 8, 0, 16),
                             child: Text(
                               "Digite o código localizado acima do QR code",
                               textAlign: TextAlign.left,

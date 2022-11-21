@@ -85,9 +85,14 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                         color: AppTheme.primaryBgColor,
                         iconSize: 28,
                       ),
-                      Text(
-                        'Autorização de viagem',
-                        style: AppTheme.barTiteStyle,
+                      Container(
+                        width: PageUtil.getScreenWidth(context, 0.55),
+                        child: Flexible(
+                          child: Text(
+                            'Autorização de viagem',
+                            style: AppTheme.barTiteStyle,
+                          ),
+                        ),
                       ),
                     ],
                   ),
