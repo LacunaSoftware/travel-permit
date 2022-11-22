@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pdf/widgets/widget.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart' as d;
 import 'package:travel_permit_reader/api/enums.dart';
@@ -23,17 +22,14 @@ class PdfUtil {
   PdfUtil(this._model);
 
   Future<String> getTravelPermitPdfPrivate() async {
-    if (_pdf == null || !await _pdf.exists())
-      _pdf = await getTravelPermitPdf(true);
+    if (_pdf == null || !await _pdf.exists()) _pdf = await getTravelPermitPdf(true);
 
     return _pdf?.path;
   }
 
   Future<String> getTravelPermitPdfPublic() async {
     if (_pdf == null || !await _pdf.exists()) {
-      _pdf = await FileUtil.askForPermissions()
-          ? await getTravelPermitPdf(false)
-          : null;
+      _pdf = await FileUtil.askForPermissions() ? await getTravelPermitPdf(false) : null;
     } else {
       _pdf = await FileUtil.moveToPublic(_pdf);
     }
@@ -41,12 +37,7 @@ class PdfUtil {
     return _pdf?.path;
   }
 
-  Future<File> getTravelPermitPdf(bool isTemp) async => _model.isOffline
-      ? generateTravelPermitOffline(isTemp)
-      : FileUtil.createFromResponse(
-          await cnbClient.getTravelPermitPdfRequest(_model.key),
-          "Autorização de Viagem - ${_model.key}.pdf",
-          isTemp);
+  Future<File> getTravelPermitPdf(bool isTemp) async => _model.isOffline ? generateTravelPermitOffline(isTemp) : FileUtil.createFromResponse(await cnbClient.getTravelPermitPdfRequest(_model.key), "Autorização de Viagem - ${_model.key}.pdf", isTemp);
 
   Future<File> generateTravelPermitOffline(bool isTemp) async {
     // Initialising variables
@@ -59,36 +50,16 @@ class PdfUtil {
     final font12 = pw.TextStyle(font: helvetica, fontSize: 12);
     final bold12 = pw.TextStyle(font: pw.Font.helveticaBold(), fontSize: 12);
 
-    final List<Widget> doc = [];
+    final List<pw.Widget> doc = [];
 
     // Adding Brazilian Logo
-    doc.add(pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.center,
-        children: [await getImage('brasil_logo.png', width: 70, height: 70)]));
+    doc.add(pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [await getImage('brasil_logo.png', width: 70, height: 70)]));
 
     // Adding Title
-    doc.add(pw.Paragraph(
-        text:
-            'AUTORIZAÇÃO DE VIAGEM ${isInternational ? "INTERNACIONAL" : "NACIONAL"}',
-        textAlign: pw.TextAlign.center,
-        style: bold12,
-        margin: pw.EdgeInsets.only(top: 10, bottom: 2)));
+    doc.add(pw.Paragraph(text: 'AUTORIZAÇÃO DE VIAGEM ${isInternational ? "INTERNACIONAL" : "NACIONAL"}', textAlign: pw.TextAlign.center, style: bold12, margin: pw.EdgeInsets.only(top: 10, bottom: 2)));
 
     // Adding Description
-    doc.add(pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-              'PARA CRIANÇAS OU ADOLESCENTES - RES.: ${isInternational ? "131/2011" : "295/2019"}-CNJ',
-              style: font11),
-          pw.ConstrainedBox(
-              constraints: pw.BoxConstraints.tightFor(width: 110),
-              child: pw.Text(
-                  'Válida ${startDate == null ? "" : "de $startDate\n"}até $expirationDate',
-                  style: font11,
-                  textAlign: pw.TextAlign.right))
-        ]));
+    doc.add(pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, crossAxisAlignment: pw.CrossAxisAlignment.start, children: [pw.Text('PARA CRIANÇAS OU ADOLESCENTES - RES.: ${isInternational ? "131/2011" : "295/2019"}-CNJ', style: font11), pw.ConstrainedBox(constraints: pw.BoxConstraints.tightFor(width: 110), child: pw.Text('Válida ${startDate == null ? "" : "de $startDate\n"}até $expirationDate', style: font11, textAlign: pw.TextAlign.right))]));
 
     // Main Info Paragraph Opening
     final List<pw.TextSpan> personsInfos = [];
@@ -104,12 +75,7 @@ class PdfUtil {
     }
 
     /// We/I authorise
-    addSpan(
-        personsInfos,
-        ', ${_model.optionalGuardian != null ? "AUTORIZAMOS" : "AUTORIZO"} ' +
-            'a circular livremente ${startDate == null ? "até" : "no período de $startDate a"} $expirationDate' +
-            ', ${isInternational ? "em território internacional," : "dentro do território nacional,"} ',
-        font12);
+    addSpan(personsInfos, ', ${_model.optionalGuardian != null ? "AUTORIZAMOS" : "AUTORIZO"} ' + 'a circular livremente ${startDate == null ? "até" : "no período de $startDate a"} $expirationDate' + ', ${isInternational ? "em território internacional," : "dentro do território nacional,"} ', font12);
 
     if (_model.escort == null) {
       addSpan(personsInfos, 'desacompanhado(a), ', font12);
@@ -117,22 +83,13 @@ class PdfUtil {
 
     /// Underage
     addSpan(personsInfos, _model.underage.name, bold12);
-    addSpan(
-        personsInfos,
-        ', nascido(a) em ${_model.underage.birthDate.toLocal().toDateString()}',
-        font12);
-    addSpan(personsInfos, ', sexo ${getGenderStr(_model.underage.bioGender)}',
-        font12);
+    addSpan(personsInfos, ', nascido(a) em ${_model.underage.birthDate.toLocal().toDateString()}', font12);
+    addSpan(personsInfos, ', sexo ${getGenderStr(_model.underage.bioGender)}', font12);
     addDocumentPhrase(_model.underage, personsInfos, font12);
 
     /// Escort
     if (_model.escort != null) {
-      addSpan(
-          personsInfos,
-          isInternational
-              ? ', na companhia de '
-              : ', desde que acompanhada(o) de ',
-          font12);
+      addSpan(personsInfos, isInternational ? ', na companhia de ' : ', desde que acompanhada(o) de ', font12);
       addSpan(personsInfos, _model.escort.name, bold12);
 
       addDocumentPhrase(_model.escort, personsInfos, font12);
@@ -141,102 +98,51 @@ class PdfUtil {
     addSpan(personsInfos, '.', font12);
 
     // Main Info Paragraph Closure
-    doc.add(pw.Padding(
-        padding: pw.EdgeInsets.only(top: 20),
-        child: pw.RichText(text: pw.TextSpan(children: personsInfos))));
+    doc.add(pw.Padding(padding: pw.EdgeInsets.only(top: 20), child: pw.RichText(text: pw.TextSpan(children: personsInfos))));
 
     // International Obs.
     if (isInternational) {
-      doc.add(pw.Paragraph(
-          text:
-              'Observação: Salvo se expressamente consignado, este documento não constitui autorização para fixação de residência permanente no exterior.',
-          style: font12,
-          margin: pw.EdgeInsets.only(top: 10)));
+      doc.add(pw.Paragraph(text: 'Observação: Salvo se expressamente consignado, este documento não constitui autorização para fixação de residência permanente no exterior.', style: font12, margin: pw.EdgeInsets.only(top: 10)));
     }
 
     // Emission Date
     d.initializeDateFormatting('pt_BR');
     final dateNow = DateTime.now();
-    doc.add(pw.Paragraph(
-        text:
-            "Data de emissão: ${dateNow.day} de ${DateFormat('MMMM', 'pt_BR').format(dateNow)} de ${dateNow.year}",
-        textAlign: pw.TextAlign.center,
-        style: font12,
-        margin: pw.EdgeInsets.only(top: 20, bottom: 25)));
+    doc.add(pw.Paragraph(text: "Data de emissão: ${dateNow.day} de ${DateFormat('MMMM', 'pt_BR').format(dateNow)} de ${dateNow.year}", textAlign: pw.TextAlign.center, style: font12, margin: pw.EdgeInsets.only(top: 20, bottom: 25)));
 
     // CNJ and CNB logos
-    doc.add(
-        pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceAround, children: [
-      pw.Text('____________________', style: font12),
-      await getImage('cnj.jpg', width: 25, height: 25),
-      await getImage('logo-cnb.jpg', width: 25, height: 25),
-      pw.Text('____________________', style: font12)
-    ]));
+    doc.add(pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceAround, children: [pw.Text('____________________', style: font12), await getImage('cnj.jpg', width: 25, height: 25), await getImage('logo-cnb.jpg', width: 25, height: 25), pw.Text('____________________', style: font12)]));
 
     // Validation Code and QRCode
-    final List<Widget> codeInfo = [];
-    codeInfo.add(pw.Column(children: [
-      pw.Paragraph(
-          text: 'Código de Validação:\n${formatValidationCode(_model.key)}',
-          textAlign: pw.TextAlign.center,
-          style: pw.TextStyle(font: helvetica, fontSize: 10),
-          margin: pw.EdgeInsets.only(top: 10, bottom: 2)),
-      pw.BarcodeWidget(
-          data: _model.qrcodeData,
-          barcode: pw.Barcode.qrCode(),
-          width: 150,
-          height: 150)
-    ]));
+    final List<pw.Widget> codeInfo = [];
+    codeInfo.add(pw.Column(children: [pw.Paragraph(text: 'Código de Validação:\n${formatValidationCode(_model.key)}', textAlign: pw.TextAlign.center, style: pw.TextStyle(font: helvetica, fontSize: 10), margin: pw.EdgeInsets.only(top: 10, bottom: 2)), pw.BarcodeWidget(data: _model.qrcodeData, barcode: pw.Barcode.qrCode(), width: 150, height: 150)]));
 
-    codeInfo.add(pw.Paragraph(
-        text:
-            "A autenticidade desse documento pode ser confirmada no endereço eletrônico https://aev.e-notariado.org.br ou pelo app AEV - Autorização de Viagens e-notariado, disponível nas lojas Google Play ou App Store.",
-        style: font11,
-        margin: pw.EdgeInsets.only(top: 20)));
+    codeInfo.add(pw.Paragraph(text: "A autenticidade desse documento pode ser confirmada no endereço eletrônico https://aev.e-notariado.org.br ou pelo app AEV - Autorização de Viagens e-notariado, disponível nas lojas Google Play ou App Store.", style: font11, margin: pw.EdgeInsets.only(top: 20)));
 
     // Finishing PDF
-    final structure = [
-      pw.Container(
-          child: pw.Column(children: doc),
-          margin: pw.EdgeInsets.fromLTRB(40, 5, 40, 0)),
-      pw.Column(children: codeInfo)
-    ];
-    final name =
-        "${_model.underage.name.replaceAll(RegExp(r'[^A-Za-zÀ-ÖØ-öø-ÿ0-9_ -]'), '_')} - Autorização de Viagem.pdf";
+    final structure = [pw.Container(child: pw.Column(children: doc), margin: pw.EdgeInsets.fromLTRB(40, 5, 40, 0)), pw.Column(children: codeInfo)];
+    final name = "${_model.underage.name.replaceAll(RegExp(r'[^A-Za-zÀ-ÖØ-öø-ÿ0-9_ -]'), '_')} - Autorização de Viagem.pdf";
     return createFromWidgets(structure, name, isTemp);
   }
 
-  Future<File> createFromWidgets(
-      List<Widget> doc, String pdfName, bool isTemp) {
+  Future<File> createFromWidgets(List<pw.Widget> doc, String pdfName, bool isTemp) async {
     final pdf = pw.Document();
-    pdf.addPage(pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        margin: pw.EdgeInsets.all(20),
-        build: (pw.Context context) => pw.Column(
-            children: doc,
-            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween)));
-    return FileUtil.createFromBytes(pdf.save(), pdfName, isTemp);
+    pdf.addPage(pw.Page(pageFormat: PdfPageFormat.a4, margin: pw.EdgeInsets.all(20), build: (pw.Context context) => pw.Column(children: doc, mainAxisAlignment: pw.MainAxisAlignment.spaceBetween)));
+    final pdfBytes = await pdf.save();
+    return FileUtil.createFromBytes(pdfBytes, pdfName, isTemp);
   }
 
   Future<pw.Image> getImage(String asset, {double width, double height}) async {
     final imgData = await rootBundle.load('assets/img/$asset');
     final memImg = pw.MemoryImage(imgData.buffer.asUint8List());
-    return pw.Image.provider(memImg, width: width, height: height);
+    return pw.Image(memImg, width: width, height: height);
   }
 
-  void addSpan(List<pw.TextSpan> paragraph, String text, pw.TextStyle font) =>
-      paragraph.add(pw.TextSpan(text: text, style: font));
+  void addSpan(List<pw.TextSpan> paragraph, String text, pw.TextStyle font) => paragraph.add(pw.TextSpan(text: text, style: font));
 
-  void addDocumentPhrase(ParticipantModel participant,
-          List<pw.TextSpan> paragraph, pw.TextStyle font) =>
-      addSpan(
-          paragraph,
-          ', portador(a) ${getDocumentTypeStr(participant.documentType)} ' +
-              'nº ${participant.documentNumber}, expedida(o) pela ${participant.documentIssuer}',
-          font);
+  void addDocumentPhrase(ParticipantModel participant, List<pw.TextSpan> paragraph, pw.TextStyle font) => addSpan(paragraph, ', portador(a) ${getDocumentTypeStr(participant.documentType)} ' + 'nº ${participant.documentNumber}, expedida(o) pela ${participant.documentIssuer}', font);
 
-  void addGuardianInfo(GuardianModel guardian, List<pw.TextSpan> paragraph,
-      pw.TextStyle font, pw.TextStyle bold) {
+  void addGuardianInfo(GuardianModel guardian, List<pw.TextSpan> paragraph, pw.TextStyle font, pw.TextStyle bold) {
     addSpan(paragraph, guardian.name, bold);
     addDocumentPhrase(guardian, paragraph, font);
     addSpan(paragraph, ', na qualidade de ', font);

@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:travel_permit_reader/api/enums.dart';
 import 'package:travel_permit_reader/api/models.dart';
@@ -49,21 +47,14 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     if (widget.model.isOffline && widget.onlineRequestException != null) {
-      SchedulerBinding.instance.addPostFrameCallback(
-          (_) => _handleError(widget.onlineRequestException));
+      SchedulerBinding.instance.addPostFrameCallback((_) => _handleError(widget.onlineRequestException));
     }
 
     var participants = <TypedParticipant>[
-      if (widget.model.escort != null)
-        TypedParticipant(widget.model.escort, ParticipantTypes.escort),
-      if (widget.model.underage != null)
-        TypedParticipant(widget.model.underage, ParticipantTypes.underage),
-      if (widget.model.requiredGuardian != null)
-        TypedParticipant(
-            widget.model.requiredGuardian, ParticipantTypes.guardian1),
-      if (widget.model.optionalGuardian != null)
-        TypedParticipant(
-            widget.model.optionalGuardian, ParticipantTypes.guardian2),
+      if (widget.model.escort != null) TypedParticipant(widget.model.escort, ParticipantTypes.escort),
+      if (widget.model.underage != null) TypedParticipant(widget.model.underage, ParticipantTypes.underage),
+      if (widget.model.requiredGuardian != null) TypedParticipant(widget.model.requiredGuardian, ParticipantTypes.guardian1),
+      if (widget.model.optionalGuardian != null) TypedParticipant(widget.model.optionalGuardian, ParticipantTypes.guardian2),
     ];
 
     return BackgroundScaffold(
@@ -94,9 +85,14 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                         color: AppTheme.primaryBgColor,
                         iconSize: 28,
                       ),
-                      Text(
-                        'Autorização de viagem',
-                        style: AppTheme.barTiteStyle,
+                      Container(
+                        width: PageUtil.getScreenWidth(context, 0.55),
+                        child: Flexible(
+                          child: Text(
+                            'Autorização de viagem',
+                            style: AppTheme.barTiteStyle,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -110,14 +106,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                         children: [
                           IconButton(
                             onPressed: () async {
-                              final path =
-                                  await pdfUtil.getTravelPermitPdfPrivate();
+                              final path = await pdfUtil.getTravelPermitPdfPrivate();
                               if (path == null) return;
 
-                              Share.shareFiles([path],
-                                  mimeTypes: ["application/pdf"],
-                                  subject: "Autorização de Viagem - PDF",
-                                  text: "Compartilhar AEV");
+                              Share.shareFiles([path], mimeTypes: ["application/pdf"], subject: "Autorização de Viagem - PDF", text: "Compartilhar AEV");
                             },
                             icon: Icon(Icons.share_outlined),
                             color: AppTheme.primaryBgColor,
@@ -125,14 +117,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                           ),
                           IconButton(
                             onPressed: () async {
-                              final path =
-                                  await pdfUtil.getTravelPermitPdfPublic();
+                              final path = await pdfUtil.getTravelPermitPdfPublic();
                               if (path == null) return;
 
-                              NotificationApi.showNotification(
-                                  title: p.basename(path),
-                                  body: 'Download completed.',
-                                  payload: path);
+                              NotificationApi.showNotification(title: p.basename(path), body: 'Download completed.', payload: path);
                             },
                             icon: Icon(Icons.download_outlined),
                             color: AppTheme.primaryBgColor,
@@ -140,16 +128,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                           ),
                         ],
                       ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 9),
-                          child: Icon(
-                              widget.model.isOffline
-                                  ? Icons.wifi_off
-                                  : Icons.wifi,
-                              size: 30,
-                              color: widget.model.isOffline
-                                  ? AppTheme.alertColor
-                                  : AppTheme.successColor)),
+                      Padding(padding: EdgeInsets.only(right: 9), child: Icon(widget.model.isOffline ? Icons.wifi_off : Icons.wifi, size: 30, color: widget.model.isOffline ? AppTheme.alertColor : AppTheme.successColor)),
                     ],
                   ),
                 ),
@@ -159,9 +138,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                 child: ListView(padding: EdgeInsets.zero, children: [
               _buildPermitValidityState(),
               _buildTravelPermitType(),
-              for (final p in participants)
-                SummaryCard(
-                    typedParticipant: p, isOffline: widget.model.isOffline),
+              for (final p in participants) SummaryCard(typedParticipant: p, isOffline: widget.model.isOffline),
               if (widget.model.notary != null) _buildNotaryInfo(context),
             ])),
           ]))
@@ -178,8 +155,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
           message = 'Erro ao ler resposta do servidor';
           break;
         case TPErrorCodes.cnbClientRequestError:
-          message =
-              'Não foi possível se comunicar com o servidor. Por favor verifique sua conexão.';
+          message = 'Não foi possível se comunicar com o servidor. Por favor verifique sua conexão.';
           break;
         case TPErrorCodes.cnbClientResponseError:
           message = ex.message;
@@ -212,47 +188,38 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
 
   Widget _buildPermitValidityState() {
     final now = DateTime.now();
-    final isExpired = now.isAfterDateOnly(widget.model.expirationDate) ||
-        (widget.model.startDate != null &&
-            now.isBeforeDateOnly(widget.model.startDate));
+    final isExpired = now.isAfterDateOnly(widget.model.expirationDate) || (widget.model.startDate != null && now.isBeforeDateOnly(widget.model.startDate));
     return BaseCard(
-        color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
-        child: Row(children: [
+      color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
+      child: Row(
+        children: [
           Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                isExpired ? Icons.event_busy : Icons.event_available,
-                size: 30,
-                color: Colors.white,
-              )),
-          RichText(
-            text: new TextSpan(
-              style: new TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white),
-              children: widget.model.startDate == null
-                  ? <TextSpan>[
-                      new TextSpan(
-                          text: isExpired ? 'Expirou em ' : 'Vigente até '),
-                      new TextSpan(
-                          text:
-                              '${widget.model.expirationDate.toLocal().toDateString()}',
-                          style: TextStyle(fontWeight: FontWeight.w700)),
-                    ]
-                  : <TextSpan>[
-                      new TextSpan(
-                          text: isExpired
-                              ? 'Fora do período de '
-                              : 'Vigente de '),
-                      new TextSpan(
-                          text:
-                              '${widget.model.startDate.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}',
-                          style: TextStyle(fontWeight: FontWeight.w700)),
-                    ],
+            padding: EdgeInsets.only(right: 10),
+            child: Icon(
+              isExpired ? Icons.event_busy : Icons.event_available,
+              size: 30,
+              color: Colors.white,
             ),
-          )
-        ]));
+          ),
+          Flexible(
+            child: RichText(
+              text: new TextSpan(
+                style: new TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: Colors.white),
+                children: widget.model.startDate == null
+                    ? <TextSpan>[
+                        new TextSpan(text: isExpired ? 'Expirou em ' : 'Vigente até '),
+                        new TextSpan(text: '${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
+                      ]
+                    : <TextSpan>[
+                        new TextSpan(text: isExpired ? 'Fora do período de ' : 'Vigente de '),
+                        new TextSpan(text: '${widget.model.startDate.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
+                      ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildNotaryInfo(context) {
@@ -269,32 +236,27 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: Icon(
-                              Icons.verified,
-                              size: 30,
-                              color: AppTheme.defaultFgColor,
-                            )),
-                        Text(
-                          "CARTÓRIO EMISSOR",
-                          style: AppTheme.headline2Style,
-                        ),
-                      ]),
-                      Icon(Icons.more_vert,
-                          size: 20, color: AppTheme.primaryFgColor),
-                    ]),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Row(children: [
+                    Padding(
+                        padding: EdgeInsets.only(right: 10),
+                        child: Icon(
+                          Icons.verified,
+                          size: 30,
+                          color: AppTheme.defaultFgColor,
+                        )),
+                    Text(
+                      "CARTÓRIO EMISSOR",
+                      style: AppTheme.headline2Style,
+                    ),
+                  ]),
+                  Icon(Icons.more_vert, size: 20, color: AppTheme.primaryFgColor),
+                ]),
                 buildDivider(),
                 SizedBox(height: 4),
-                Text(widget.model.notary.name,
-                    style: AppTheme.bodyStyle, overflow: TextOverflow.ellipsis),
+                Text(widget.model.notary.name, style: AppTheme.bodyStyle, overflow: TextOverflow.ellipsis),
                 SizedBox(height: 4),
-                Text('CNS: ${widget.model.notary.cns}',
-                    textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+                Text('CNS: ${widget.model.notary.cns}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
               ],
             )));
   }
@@ -310,12 +272,7 @@ class BaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Card(
-            color: color,
-            elevation: 0,
-            child: Padding(padding: EdgeInsets.all(12), child: child)));
+    return Padding(padding: const EdgeInsets.only(bottom: 8), child: Card(color: color, elevation: 0, child: Padding(padding: EdgeInsets.all(12), child: child)));
   }
 }
 
@@ -325,8 +282,7 @@ class SummaryCard extends StatelessWidget {
   final TypedParticipant typedParticipant;
   final bool isOffline;
 
-  const SummaryCard({Key key, this.typedParticipant, this.isOffline})
-      : super(key: key);
+  const SummaryCard({Key key, this.typedParticipant, this.isOffline}) : super(key: key);
 
   ParticipantModel get model => typedParticipant.participant;
 
@@ -409,9 +365,7 @@ class SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final underage = typedParticipant.type == ParticipantTypes.underage
-        ? model as UnderageModel
-        : null;
+    final underage = typedParticipant.type == ParticipantTypes.underage ? model as UnderageModel : null;
 
     return BaseCard(
         color: AppTheme.accentFgColor,
@@ -420,39 +374,28 @@ class SummaryCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        Padding(
-                            padding: EdgeInsets.only(right: 8),
-                            child: Icon(
-                              participantIcon,
-                              size: 30,
-                              color: AppTheme.defaultFgColor,
-                            )),
-                        Text(
-                          participantDescription.toUpperCase(),
-                          style: AppTheme.headline2Style,
-                        )
-                      ]),
-                      if (!isOffline)
-                        Icon(Icons.more_vert,
-                            size: 20, color: AppTheme.primaryFgColor)
-                    ]),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Row(children: [
+                    Padding(
+                        padding: EdgeInsets.only(right: 8),
+                        child: Icon(
+                          participantIcon,
+                          size: 30,
+                          color: AppTheme.defaultFgColor,
+                        )),
+                    Text(
+                      participantDescription.toUpperCase(),
+                      style: AppTheme.headline2Style,
+                    )
+                  ]),
+                  if (!isOffline) Icon(Icons.more_vert, size: 20, color: AppTheme.primaryFgColor)
+                ]),
                 buildDivider(),
                 SizedBox(height: 4),
                 Text(model.name, style: AppTheme.bodyStyle),
                 SizedBox(height: 8),
-                Text(
-                    '$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})',
-                    textAlign: TextAlign.left,
-                    style: AppTheme.body2Sytle),
-                if (underage?.birthDate != null)
-                  Text(
-                      'Nascimento: ${underage.birthDate.toDateString()} ${underage?.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}',
-                      textAlign: TextAlign.left,
-                      style: AppTheme.body2Sytle),
+                Text('$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+                if (underage?.birthDate != null) Text('Nascimento: ${underage.birthDate.toDateString()} ${underage?.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
               ],
             )));
   }

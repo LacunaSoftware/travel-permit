@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/pages/travel_permit_page.dart';
@@ -63,14 +62,10 @@ class NotaryDetailsPage extends StatelessWidget {
   }
 
   Widget buildLabelText(String label) {
-    return Padding(
-        padding: EdgeInsets.only(top: 5, bottom: 5),
-        child: Text(label.toUpperCase(), style: AppTheme.headlineStyle));
+    return Padding(padding: EdgeInsets.only(top: 5, bottom: 5), child: Text(label.toUpperCase(), style: AppTheme.headlineStyle));
   }
 
   Widget buildDetailsText(String detail) {
-    return Padding(
-        padding: EdgeInsets.only(left: 10, bottom: 2),
-        child: Text(detail ?? '', style: AppTheme.bodyStyle));
+    return Padding(padding: EdgeInsets.only(left: 10, bottom: 2), child: Text(detail ?? '', style: AppTheme.bodyStyle));
   }
 }

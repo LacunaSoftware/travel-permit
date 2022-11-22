@@ -43,5 +43,11 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>Needed to scan QR codes</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>
