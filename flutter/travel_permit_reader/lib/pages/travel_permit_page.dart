@@ -87,11 +87,15 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                       ),
                       Container(
                         width: PageUtil.getScreenWidth(context, 0.55),
-                        child: Flexible(
-                          child: Text(
-                            'Autorização de viagem',
-                            style: AppTheme.barTiteStyle,
-                          ),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Autorização de viagem',
+                                style: AppTheme.barTiteStyle,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
