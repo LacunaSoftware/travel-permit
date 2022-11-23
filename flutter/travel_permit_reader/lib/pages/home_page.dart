@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:store_redirect/store_redirect.dart';
 import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/api/models.dart';
-import 'package:travel_permit_reader/api/notification_api.dart';
 import 'package:travel_permit_reader/pages/travel_permit_page.dart';
 import 'package:travel_permit_reader/tp_exception.dart';
 import 'package:travel_permit_reader/util/qrcode_data.dart';
@@ -51,7 +50,7 @@ class HomePage extends StatelessWidget {
 
       travelPermitModel = travelPermitModel ?? TravelPermitModel.fromQRCode(data);
 
-      ensurePermsAndPush(context, TravelPermitPage(travelPermitModel, onlineRequestException: requestException));
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(travelPermitModel, onlineRequestException: requestException)));
 
       progress.dismiss();
     } catch (ex) {
@@ -76,17 +75,12 @@ class HomePage extends StatelessWidget {
       progress.show();
       final model = await CnbClient().getTravelPermitInfo(documentKey);
 
-      ensurePermsAndPush(context, TravelPermitPage(model));
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
       progress.dismiss();
     } catch (ex) {
       progress.dismiss();
       _handleError(context, ex);
     }
-  }
-
-  Future ensurePermsAndPush(BuildContext context, Widget widget) async {
-    final then = () async => await Navigator.push(context, MaterialPageRoute(builder: (context) => widget));
-    NotificationApi.ensureHasPermissions(context, then);
   }
 
   Future<bool> _handleError(context, dynamic ex) async {
