@@ -53,7 +53,7 @@ class NotificationApi {
     }
   }
 
-  static Future showNotification({
+  static Future<bool> showNotification({
     int id = 0,
     String title,
     String body,
@@ -61,9 +61,10 @@ class NotificationApi {
   }) async {
     if (_permissionStatus != PermissionStatus.granted && _permissionStatus != PermissionStatus.limited) {
       toNotify.add(PendingNotification(id, title, body, payload));
-      // TODO: Show something?;
+      return false;
     } else {
       _notifications.show(id, title, body, _settings, payload: payload);
+      return true;
     }
   }
 }

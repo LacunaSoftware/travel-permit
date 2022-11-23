@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:travel_permit_reader/api/enums.dart';
@@ -124,7 +125,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                               final path = await pdfUtil.getTravelPermitPdfPublic();
                               if (path == null) return;
 
-                              NotificationApi.showNotification(title: p.basename(path), body: 'Download completed.', payload: path);
+                              final didShowNotification = await NotificationApi.showNotification(title: p.basename(path), body: 'Download completed.', payload: path);
+                              if(!didShowNotification) {
+                                PageUtil.showAppDialog(context, 'Download concluído.', "O download do arquivo foi concluído. Caso queira abrir o arquivo, clique no botão abaixo.", positiveButton: ButtonAction("Abrir", () => OpenFilex.open(path)), negativeButton: ButtonAction("Voltar"));
+                              }
                             },
                             icon: Icon(Icons.download_outlined),
                             color: AppTheme.primaryBgColor,
