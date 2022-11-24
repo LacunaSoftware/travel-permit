@@ -32,7 +32,6 @@ dependencies:
   permission_handler: ^10.2.0
   font_awesome_flutter: ^10.2.1
   flutter_local_notifications: 9.7.1
-  notification_permissions: ^0.6.1
   flutter_barcode_scanner: ^2.0.0
   flutter_progress_hud: ^2.0.2
   flutter_svg: ^1.1.6
