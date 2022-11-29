@@ -1,8 +1,6 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:notification_permissions/notification_permissions.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:travel_permit_reader/util/page_util.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PendingNotification {
   final int id;
@@ -41,13 +39,13 @@ class NotificationApi {
   }
 
   static Future updatePermissionState({bool isReleasePending = true}) async {
-    _permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
+    _permissionStatus = await Permission.notification.status;
 
     if (isReleasePending) tryReleasePending();
   }
 
   static void tryReleasePending() {
-    if (_permissionStatus == PermissionStatus.granted || _permissionStatus == PermissionStatus.provisional) {
+    if (_permissionStatus == PermissionStatus.granted || _permissionStatus == PermissionStatus.limited) {
       for (var i = 0; i < toNotify.length; i++) {
         final notif = toNotify.removeAt(0);
         _notifications.show(notif.id, notif.title, notif.body, _settings, payload: notif.payload);
@@ -55,31 +53,18 @@ class NotificationApi {
     }
   }
 
-  static Future ensureHasPermissions(BuildContext context, Future<dynamic> Function() then) async {
-    if (_permissionStatus != PermissionStatus.denied && _permissionStatus != PermissionStatus.unknown) {
-      await then();
-      return;
-    }
-
-    final positiveButton = () async {
-      await NotificationPermissions.requestNotificationPermissions(iosSettings: const NotificationSettingsIos(sound: true, badge: true, alert: true));
-      await then();
-    };
-
-    PageUtil.showAppDialog(context, "Permissão de notificação necessária.", "Para funcionar corretamente, o aplicativo precisa de permissões para notificar. Clique no botão abaixo para ser redirecionada(o) para as configurações.", positiveButton: ButtonAction("Redirecionar", positiveButton));
-  }
-
-  static Future showNotification({
+  static Future<bool> showNotification({
     int id = 0,
     String title,
     String body,
     String payload,
   }) async {
-    if (_permissionStatus == PermissionStatus.denied || _permissionStatus == PermissionStatus.unknown) {
+    if (_permissionStatus != PermissionStatus.granted && _permissionStatus != PermissionStatus.limited) {
       toNotify.add(PendingNotification(id, title, body, payload));
-      await NotificationPermissions.requestNotificationPermissions(iosSettings: const NotificationSettingsIos(sound: true, badge: true, alert: true));
+      return false;
     } else {
       _notifications.show(id, title, body, _settings, payload: payload);
+      return true;
     }
   }
 }
