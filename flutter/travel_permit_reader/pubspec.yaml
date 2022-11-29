@@ -47,6 +47,7 @@ dependencies:
   convert: ^3.1.1
   url_launcher: 6.0.14
   open_filex: ^4.3.1
+  device_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.11.0

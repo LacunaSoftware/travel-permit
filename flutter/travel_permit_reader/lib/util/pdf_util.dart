@@ -9,6 +9,7 @@ import 'package:travel_permit_reader/api/models.dart';
 import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/util/file_util.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
+import 'package:travel_permit_reader/util/permission_util.dart';
 
 class PdfUtil {
   TravelPermitModel _model;
@@ -29,7 +30,7 @@ class PdfUtil {
 
   Future<String> getTravelPermitPdfPublic() async {
     if (_pdf == null || !await _pdf.exists()) {
-      _pdf = await FileUtil.askForPermissions() ? await getTravelPermitPdf(false) : null;
+      _pdf = await PermissionUtil.checkStoragePermission() ? await getTravelPermitPdf(false) : null;
     } else {
       _pdf = await FileUtil.moveToPublic(_pdf);
     }
