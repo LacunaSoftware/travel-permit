@@ -46,7 +46,8 @@ export enum BioNationality {
 
 export enum BioGender {
 	Female = 'Female',
-	Male = 'Male'
+	Male = 'Male',
+	Others = 'Others'
 }
 
 export enum BioEstadoCivil {
