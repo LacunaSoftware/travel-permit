@@ -351,6 +351,8 @@ class SummaryCard extends StatelessWidget {
         return 'Feminino';
       case BioGenders.male:
         return 'Masculino';
+      case BioGenders.others:
+        return 'Outros';
       default:
         return 'Indefinido';
     }

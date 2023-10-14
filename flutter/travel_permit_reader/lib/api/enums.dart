@@ -35,6 +35,7 @@ extension ParticipantEntitiesExt on ParticipantEntities {
 enum BioGenders {
   male,
   female,
+  others,
   undefined,
 }
 
@@ -43,6 +44,7 @@ extension BioGendersExt on BioGenders {
     return _EnumCommonParser.parse(value, BioGenders.undefined, {
       'm': BioGenders.male,
       'f': BioGenders.female,
+      'o': BioGenders.others,
       'u': BioGenders.undefined,
     });
   }
