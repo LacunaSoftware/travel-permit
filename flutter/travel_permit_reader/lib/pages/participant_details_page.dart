@@ -122,10 +122,35 @@ class ParticipantDetailsPage extends SummaryCard {
 
   List<Widget> buildAddress() {
     List<Widget> details = [];
-    if ([model.streetAddress, model.addressNumber, model.additionalAddressInfo, model.neighborhood, model.addressCity, model.addressState].any((s) => !StringExt.isNullOrEmpty(s))) {
+    if ([
+      model.streetAddress,
+      model.addressNumber,
+      model.additionalAddressInfo,
+      model.neighborhood,
+      model.addressCity,
+      model.addressState,
+      model.addressForeignCityName,
+      model.addressForeignStateName,
+    ].any((s) => !StringExt.isNullOrEmpty(s))) {
       details.addAll([
         buildLabelText('Endereço'),
-        buildDetailsText('${model.streetAddress ?? ''} ${model.addressNumber ?? ''}' + (StringExt.isNullOrEmpty(model.additionalAddressInfo) ? '' : '\n${model.additionalAddressInfo}') + (StringExt.isNullOrEmpty(model.neighborhood) ? '' : '\n${model.neighborhood}') + (StringExt.isNullOrEmpty((model.addressCity ?? '') + (model.addressState ?? '')) ? '' : '\n${model.addressCity ?? ''} - ${model.addressState ?? ''}')),
+        buildDetailsText(
+            '${model.streetAddress ?? ''} ${model.addressNumber ?? ''}' +
+                (StringExt.isNullOrEmpty(model.additionalAddressInfo)
+                    ? ''
+                    : '\n${model.additionalAddressInfo}') +
+                (StringExt.isNullOrEmpty(model.neighborhood)
+                    ? ''
+                    : '\n${model.neighborhood}') +
+                (StringExt.isNullOrEmpty((model.addressCity ?? '') +
+                        (model.addressState ??
+                            model.addressForeignStateName ??
+                            ''))
+                    ? ''
+                    : '\n${model.addressCity ?? ''} - ${model.addressState ?? model.addressForeignStateName ?? ''}') +
+                (StringExt.isNullOrEmpty(model.country)
+                    ? ''
+                    : '\n${model.country}')),
       ]);
     }
 
@@ -133,11 +158,28 @@ class ParticipantDetailsPage extends SummaryCard {
   }
 
   List<Widget> buildGuardianDetails() {
-    return [
+    final guardian = model as GuardianModel;
+
+    List<Widget> details = [
       buildLabelText('Tipo de responsável'),
       buildDetailsText(guardianshipDescription),
       buildDivider(),
     ];
+
+    if (guardian.livedInBrazil != null) {
+      details.addAll([
+        buildLabelText('Informações adicionais'),
+        buildDetailsText(
+          'Morou no Brasil: ' +
+              (guardian.livedInBrazil
+                  ? 'Sim\nÚltima cidade/estado: ${guardian.lastCityInBrazil ?? ''} - ${guardian.lastStateInBrazil ?? ''}'
+                  : 'Não'),
+        ),
+        buildDivider(),
+      ]);
+    }
+
+    return details;
   }
 
   List<Widget> buildUnderageDetails() {
@@ -146,7 +188,7 @@ class ParticipantDetailsPage extends SummaryCard {
 
     if (underage.bioGender != null) {
       details.addAll([
-        buildLabelText('Gênero Biológico'),
+        buildLabelText('Gênero'),
         buildDetailsText(bioGenderDescription),
         buildDivider(),
       ]);

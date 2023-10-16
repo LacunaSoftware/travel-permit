@@ -120,6 +120,9 @@ abstract class ParticipantModel {
   final String addressNumber;
   final String additionalAddressInfo;
   final String neighborhood;
+  final String country;
+  final String addressForeignStateName;
+  final String addressForeignCityName;
 
   ParticipantModel._({
     this.identifier,
@@ -136,6 +139,9 @@ abstract class ParticipantModel {
     this.addressNumber,
     this.additionalAddressInfo,
     this.neighborhood,
+    this.country,
+    this.addressForeignStateName,
+    this.addressForeignCityName,
   });
 }
 
@@ -162,6 +168,9 @@ class AdultModel extends ParticipantModel {
     addressNumber,
     additionalAddressInfo,
     neighborhood,
+    country,
+    addressForeignStateName,
+    addressForeignCityName,
   }) : super._(
           identifier: identifier,
           name: name,
@@ -177,6 +186,9 @@ class AdultModel extends ParticipantModel {
           addressNumber: addressNumber,
           additionalAddressInfo: additionalAddressInfo,
           neighborhood: neighborhood,
+          country: country,
+          addressForeignStateName: addressForeignStateName,
+          addressForeignCityName: addressForeignCityName,
         );
 
   factory AdultModel.fromJson(Map<String, dynamic> json) {
@@ -200,6 +212,9 @@ class AdultModel extends ParticipantModel {
       neighborhood: json['neighborhood'],
       phoneNumber: json['phoneNumber'],
       email: json['email'],
+      country: json['country'],
+      addressForeignStateName: json['addressForeignStateName'],
+      addressForeignCityName: json['addressForeignCityName'],
     );
   }
 }
@@ -208,9 +223,15 @@ class AdultModel extends ParticipantModel {
 
 class GuardianModel extends AdultModel {
   final LegalGuardianTypes guardianship;
+  final bool livedInBrazil;
+  final String lastCityInBrazil;
+  final String lastStateInBrazil;
 
   GuardianModel._({
     this.guardianship,
+    this.livedInBrazil,
+    this.lastCityInBrazil,
+    this.lastStateInBrazil,
     addressCity,
     addressState,
     zipCode,
@@ -228,6 +249,9 @@ class GuardianModel extends AdultModel {
     documentIssuer,
     issueDate,
     photoUrl,
+    country,
+    addressForeignStateName,
+    addressForeignCityName,
   }) : super._(
           addressCity: addressCity,
           addressState: addressState,
@@ -245,6 +269,9 @@ class GuardianModel extends AdultModel {
           documentIssuer: documentIssuer,
           issueDate: issueDate,
           photoUrl: photoUrl,
+          country: country,
+          addressForeignStateName: addressForeignStateName,
+          addressForeignCityName: addressForeignCityName,
         );
 
   factory GuardianModel.fromJson(Map<String, dynamic> json) {
@@ -253,6 +280,9 @@ class GuardianModel extends AdultModel {
     }
     return GuardianModel._(
       guardianship: LegalGuardianTypesExt.fromString(json['guardianship']),
+      livedInBrazil: json['livedInBrazil'],
+      lastCityInBrazil: json['lastCityInBrazil'],
+      lastStateInBrazil: json['lastStateInBrazil'],
       identifier: json['identifier'],
       name: json['name'],
       documentNumber: json['documentNumber'],
@@ -270,6 +300,9 @@ class GuardianModel extends AdultModel {
       phoneNumber: json['phoneNumber'],
       email: json['email'],
       bioId: json['bioId'],
+      country: json['country'],
+      addressForeignStateName: json['addressForeignStateName'],
+      addressForeignCityName: json['addressForeignCityName'],
     );
   }
 }
@@ -301,6 +334,9 @@ class UnderageModel extends ParticipantModel {
     addressNumber,
     additionalAddressInfo,
     neighborhood,
+    country,
+    addressForeignStateName,
+    addressForeignCityName,
   }) : super._(
           identifier: identifier,
           name: name,
@@ -316,6 +352,9 @@ class UnderageModel extends ParticipantModel {
           addressNumber: addressNumber,
           additionalAddressInfo: additionalAddressInfo,
           neighborhood: neighborhood,
+          country: country,
+          addressForeignStateName: addressForeignStateName,
+          addressForeignCityName: addressForeignCityName,
         );
 
   factory UnderageModel.fromJson(Map<String, dynamic> json) {
@@ -341,6 +380,9 @@ class UnderageModel extends ParticipantModel {
       birthDate: DateTime.parse(json['birthDate']),
       cityOfBirth: json['cityOfBirth'],
       stateOfBirth: json['stateOfBirth'],
+      country: json['country'],
+      addressForeignStateName: json['addressForeignStateName'],
+      addressForeignCityName: json['addressForeignCityName'],
     );
   }
 }
