@@ -8,7 +8,7 @@
 						<p class="mb-sm-1"><strong>{{travelPermit.startDate ? "Período de Validade" : "Data de Expiração"}}:</strong></p>
 					</div>
 					<div class="col-12 col-md-6 d-flex justify-content-end">
-						<p>{{(travelPermit.startDate ? (travelPermit.startDate | date: 'dd/MM/yyyy':'UTC') + " à " : "") + (travelPermit.expirationDate | date: 'dd/MM/yyyy':'UTC')}}</p>
+						<p>{{(travelPermit.startDate ? (travelPermit.startDate | date: 'dd/MM/yyyy') + " à " : "") + (travelPermit.expirationDate | date: 'dd/MM/yyyy')}}</p>
 					</div>
 				</div>
 				<div class="row">
@@ -115,7 +115,7 @@
 			<p class="mb-sm-1"><strong>Data de emissão:</strong></p>
 		</div>
 		<div class="col-12 col-md-6 d-flex justify-content-end">
-			<p>{{participant.issueDate | date: 'dd/MM/yyyy':'UTC'}}</p>
+			<p>{{participant.issueDate | date: 'dd/MM/yyyy': 'UTC'}}</p>
 		</div>
 	</div>
 
@@ -142,7 +142,7 @@
 			<p class="mb-sm-1"><strong>Data de nascimento:</strong></p>
 		</div>
 		<div class="col-12 col-md-6 d-flex justify-content-end">
-			<p>{{participant.birthDate | date: 'dd/MM/yyyy':'UTC'}}</p>
+			<p>{{participant.birthDate | date: 'dd/MM/yyyy'}}</p>
 		</div>
 	</div>
 
