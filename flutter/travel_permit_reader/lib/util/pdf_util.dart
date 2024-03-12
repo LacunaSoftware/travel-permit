@@ -196,6 +196,8 @@ class PdfUtil {
         return "masculino";
       case BioGenders.female:
         return "feminino";
+      case BioGenders.others:
+        return "outros";
       default:
         return "";
     }
