@@ -25,7 +25,7 @@ import { DialogReadCodeComponent } from './dialog-read-code/dialog-read-code.com
 import { MatInputModule } from '@angular/material/input';
 import { NgxMaskModule } from 'ngx-mask';
 import { MatButtonModule } from '@angular/material/button';
-import { SystemVersionComponent } from './system-version/system-version.component';
+import { SystemInfoComponent } from './system-version/system-info.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 
@@ -42,7 +42,7 @@ import { HomeComponent } from './home/home.component';
 		GenderPipe,
 		GuardianshipPipe,
 		DialogReadCodeComponent,
-		SystemVersionComponent,
+		SystemInfoComponent,
 		HomeComponent,
 	],
 	imports: [
