@@ -33,10 +33,6 @@ export class HomeComponent implements OnInit {
 
 	ngOnInit() { }
 
-	ngAfterViewInit() {
-		this.initialize(document, "freshchat-js-sdk");
-	}
-
 	openQrCodeScanner() {
 		const dialogRef = this.dialog.open(DialogReadQrCodeComponent, {
 			width: '500px'
@@ -75,7 +71,7 @@ export class HomeComponent implements OnInit {
 		}
 
 		const versionStr = segments[1];
-		let version = versionStr ? parseInt(versionStr) : null;
+		const version = versionStr ? parseInt(versionStr) : null;
 
 		if (!version || version > latestKnownVersion || version < 1) {
 			this.alert("Este não é um QR Code de Autorização Eletrônica de Viagem");
@@ -166,13 +162,12 @@ export class HomeComponent implements OnInit {
 				this.loading = false;
 			}, (err) => {
 				this.loading = false;
-				console.log('Erro ao obter a autorização de viagem', err);
 				this.alert('Ocorreu um erro ao acessar o servidor para obter os dados completos da autorização de viagem. Você terá acesso somente aos dados contidos no QR Code.');
 			});
 	}
 
 	private alert(message: string, title?: string, useMessageAsHtml?: boolean, disableClose?: boolean): Promise<any> {
-		let dialogRef = this.dialog.open(DialogAlertComponent, {
+		const dialogRef = this.dialog.open(DialogAlertComponent, {
 			width: '600px',
 			disableClose: disableClose,
 			data: {
@@ -184,25 +179,4 @@ export class HomeComponent implements OnInit {
 
 		return dialogRef.afterClosed().toPromise().then(() => { });
 	};
-
-	private initialize(i, t) {
-		var e;
-		i.getElementById(t)
-			? this.initFreshChat()
-			: ((e = i.createElement("script")).id = t, e.async = !0, e.src = "https://wchat.freshchat.com/js/widget.js", e.onload = (() => this.initFreshChat()), i.head.appendChild(e))
-	}
-
-	private initFreshChat() {
-		(window as any).fcWidget.init({
-			config: {
-				cssNames: {
-					widget: "custom_fc_frame"
-				}
-			},
-			token: '',
-			host: 'https://wchat.freshchat.com',
-			siteId: 'VALIDACAOAEV'
-		});
-	}
-
 }
