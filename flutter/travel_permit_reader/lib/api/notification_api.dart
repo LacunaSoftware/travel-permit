@@ -6,7 +6,7 @@ class PendingNotification {
   final int id;
   final String title;
   final String body;
-  final String payload;
+  final String? payload;
 
   PendingNotification(this.id, this.title, this.body, this.payload);
 }
@@ -24,7 +24,7 @@ class NotificationApi {
   );
 
   static final List<PendingNotification> toNotify = [];
-  static PermissionStatus _permissionStatus;
+  static PermissionStatus? _permissionStatus;
 
   static Future init({bool initScheduled = false}) async {
     final settings = InitializationSettings(android: AndroidInitializationSettings('@drawable/notif_icon'), iOS: IOSInitializationSettings());
@@ -34,7 +34,7 @@ class NotificationApi {
     updatePermissionState(isReleasePending: false);
   }
 
-  static void onClickedNotification(String payload) {
+  static void onClickedNotification(String? payload) {
     if (payload != null) OpenFilex.open(payload);
   }
 
@@ -55,9 +55,9 @@ class NotificationApi {
 
   static Future<bool> showNotification({
     int id = 0,
-    String title,
-    String body,
-    String payload,
+    required String title,
+    required String body,
+    String? payload,
   }) async {
     if (_permissionStatus != PermissionStatus.granted && _permissionStatus != PermissionStatus.limited) {
       toNotify.add(PendingNotification(id, title, body, payload));

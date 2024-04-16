@@ -31,16 +31,16 @@ class HomePage extends StatelessWidget {
         return;
       }
 
-      progress.show();
+      progress?.show();
       final data = QRCodeData.parse(code);
 
       if (!data.verify()) {
         PageUtil.showAppDialog(context, 'QR Code Recusado', 'A assinatura do QR code está inválida.');
-        progress.dismiss();
+        progress?.dismiss();
         return;
       }
 
-      TravelPermitModel travelPermitModel;
+      TravelPermitModel? travelPermitModel;
       dynamic requestException;
       try {
         travelPermitModel = await CnbClient().getTravelPermitInfo(data.documentKey);
@@ -50,11 +50,11 @@ class HomePage extends StatelessWidget {
 
       travelPermitModel = travelPermitModel ?? TravelPermitModel.fromQRCode(data);
 
-      await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(travelPermitModel, onlineRequestException: requestException)));
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(travelPermitModel!, onlineRequestException: requestException)));
 
-      progress.dismiss();
+      progress?.dismiss();
     } catch (ex) {
-      progress.dismiss();
+      progress?.dismiss();
       _handleError(context, ex);
     }
   }
@@ -72,13 +72,13 @@ class HomePage extends StatelessWidget {
         return;
       }
 
-      progress.show();
+      progress?.show();
       final model = await CnbClient().getTravelPermitInfo(documentKey);
 
       await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
-      progress.dismiss();
+      progress?.dismiss();
     } catch (ex) {
-      progress.dismiss();
+      progress?.dismiss();
       _handleError(context, ex);
     }
   }
@@ -252,14 +252,14 @@ class HomePage extends StatelessWidget {
 
 class ValidationButton extends StatelessWidget {
   const ValidationButton({
-    this.icon,
-    this.text,
+    required this.icon,
+    required this.text,
     this.action,
   });
 
   final IconData icon;
   final String text;
-  final Function action;
+  final VoidCallback? action;
 
   @override
   Widget build(BuildContext context) {

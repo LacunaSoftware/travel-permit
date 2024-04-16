@@ -22,8 +22,15 @@ class CnbClient {
       final response = await http.get(url);
 
       if (response.statusCode == 422) {
-        final error = CnbErrorModel.fromJson(json.decode(response.body));
-        error == null ? throw TPException('Error decoding 422 response', TPErrorCodes.cnbClientDecodeResponseError) : throw TPException(error.message, TPErrorCodes.cnbClientResponseError);
+        final bodyJson = json.decode(response.body);
+
+        if (bodyJson == null) {
+          throw TPException('Error decoding 422 response',
+              TPErrorCodes.cnbClientDecodeResponseError);
+        }
+
+        final error = CnbErrorModel.fromJson(bodyJson);
+        throw TPException(error.message, TPErrorCodes.cnbClientResponseError);
       } else if (response.statusCode != 200) {
         throw TPException('CnbClient response for key $documentKey: (${response.statusCode}) ${response.reasonPhrase}', TPErrorCodes.cnbClientRequestError);
       }

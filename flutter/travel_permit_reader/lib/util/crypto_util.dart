@@ -31,10 +31,10 @@ extension ECSignatureExt on ECSignature {
     // }
 
     final ecdsaSigValue = ASN1Sequence.fromBytes(signature);
-    final r = (ecdsaSigValue.elements[0] as ASN1Integer).integer;
-    final s = (ecdsaSigValue.elements[1] as ASN1Integer).integer;
+    final r = (ecdsaSigValue.elements?[0] as ASN1Integer).integer;
+    final s = (ecdsaSigValue.elements?[1] as ASN1Integer).integer;
 
-    return ECSignature(r, s);
+    return ECSignature(r!, s!);
   }
 }
 
