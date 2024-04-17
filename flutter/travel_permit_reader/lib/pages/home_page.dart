@@ -173,32 +173,6 @@ class HomePage extends StatelessWidget {
                           child: SvgPicture.asset(
                             "assets/img/AEVFooter.svg",
                           )),
-                      Container(
-                          height: PageUtil.getScreenHeight(context, 0.03),
-                          width: PageUtil.getScreenWidth(context),
-                          color: Color(0xFFE3E3E3),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: PageUtil.getScreenHeight(context, 0.02),
-                                padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
-                                child: SvgPicture.asset(
-                                  "assets/img/LacunaFooter.svg",
-                                ),
-                              ),
-                              Text(
-                                'by Lacuna Software',
-                                style: TextStyle(
-                                  fontSize: PageUtil.getScreenHeight(context, 0.013),
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.7,
-                                  color: AppTheme.defaultFgColor,
-                                ),
-                              ),
-                            ],
-                          )),
                     ],
                   ),
                 ),
