@@ -16,7 +16,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
   final focusnode = FocusNode();
   final maskFormatter = new MaskTextInputFormatter(mask: '#####-#####-#####-#####', filter: {"#": RegExp(r'[A-Z0-9]')});
   bool focused = false;
-  String _documentKey;
+  String? _documentKey;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
       keyboardType: TextInputType.text,
       inputFormatters: [new UpperCaseTextFormatter(), maskFormatter],
       validator: (value) {
-        if (value.isEmpty) {
+        if (value?.isEmpty ?? true) {
           return 'Digite o código';
         }
         return null;
@@ -130,8 +130,8 @@ class _EnterKeyPageState extends State<EnterKeyPage> {
         ]));
   }
 
-  void _submit([String rawInputvalue]) {
-    if (!_formKey.currentState.validate()) {
+  void _submit([String? rawInputvalue]) {
+    if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
     _documentKey = maskFormatter.getUnmaskedText();
@@ -148,7 +148,7 @@ class UpperCaseTextFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     return TextEditingValue(
-      text: newValue.text?.toUpperCase(),
+      text: newValue.text.toUpperCase(),
       selection: newValue.selection,
     );
   }

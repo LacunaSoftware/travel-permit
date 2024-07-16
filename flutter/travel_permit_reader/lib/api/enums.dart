@@ -4,7 +4,7 @@ enum TravelPermitTypes {
 }
 
 extension TravelPermitTypesExt on TravelPermitTypes {
-  static TravelPermitTypes fromString(String value) {
+  static TravelPermitTypes? fromString(String? value) {
     return _EnumCommonParser.parse(value, null, {
       'd': TravelPermitTypes.domestic,
       'i': TravelPermitTypes.international,
@@ -21,7 +21,7 @@ enum ParticipantEntities {
 }
 
 extension ParticipantEntitiesExt on ParticipantEntities {
-  static ParticipantEntities fromString(String value) {
+  static ParticipantEntities? fromString(String value) {
     return _EnumCommonParser.parse(value, null, {
       'g': ParticipantEntities.guardian,
       'e': ParticipantEntities.escort,
@@ -40,7 +40,7 @@ enum BioGenders {
 }
 
 extension BioGendersExt on BioGenders {
-  static BioGenders fromString(String value) {
+  static BioGenders? fromString(String? value) {
     return _EnumCommonParser.parse(value, BioGenders.undefined, {
       'm': BioGenders.male,
       'f': BioGenders.female,
@@ -60,7 +60,7 @@ enum LegalGuardianTypes {
 }
 
 extension LegalGuardianTypesExt on LegalGuardianTypes {
-  static LegalGuardianTypes fromString(String value) {
+  static LegalGuardianTypes? fromString(String? value) {
     return _EnumCommonParser.parse(value, null, {
       'm': LegalGuardianTypes.mother,
       'f': LegalGuardianTypes.father,
@@ -82,7 +82,7 @@ enum IdDocumentTypes {
 }
 
 extension IdDocumentTypesExt on IdDocumentTypes {
-  static IdDocumentTypes fromString(String value) {
+  static IdDocumentTypes? fromString(String? value) {
     return _EnumCommonParser.parse(value, null, {
       'i': IdDocumentTypes.idCard,
       't': IdDocumentTypes.professionalCard,
@@ -124,13 +124,19 @@ enum ParticipantTypes {
 //-------------------------------------------------------------------
 
 class _EnumCommonParser {
-  static T parse<T>(String value, T defaultValue, Map<String, T> parseMap) {
-    var type = parseMap.values.firstWhere(
-        (t) => t.toString().toLowerCase() == '$T.$value'.toLowerCase(),
-        orElse: () => defaultValue);
+  static T? parse<T>(String? value, T? defaultValue, Map<String, T> parseMap) {
+    var type = null;
+    try {
+      type = parseMap.values.firstWhere(
+          (t) => t.toString().toLowerCase() == '$T.$value'.toLowerCase(),
+          orElse: () => defaultValue!,
+      );
+    } catch (_) {
+      type = defaultValue;
+    }
     if (type != defaultValue) {
       return type;
     }
-    return parseMap[(value ?? '').toLowerCase()] ?? defaultValue;
+    return parseMap[value?.toLowerCase()] ?? defaultValue;
   }
 }

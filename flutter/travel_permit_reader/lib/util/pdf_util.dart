@@ -13,26 +13,26 @@ import 'package:travel_permit_reader/util/permission_util.dart';
 
 class PdfUtil {
   TravelPermitModel _model;
-  File _pdf;
+  File? _pdf;
 
-  CnbClient _cnbClient;
+  CnbClient? _cnbClient;
   CnbClient get cnbClient {
     return _cnbClient ??= CnbClient();
   }
 
   PdfUtil(this._model);
 
-  Future<String> getTravelPermitPdfPrivate() async {
-    if (_pdf == null || !await _pdf.exists()) _pdf = await getTravelPermitPdf(true);
+  Future<String?> getTravelPermitPdfPrivate() async {
+    if (_pdf == null || !await _pdf!.exists()) _pdf = await getTravelPermitPdf(true);
 
     return _pdf?.path;
   }
 
-  Future<String> getTravelPermitPdfPublic() async {
-    if (_pdf == null || !await _pdf.exists()) {
+  Future<String?> getTravelPermitPdfPublic() async {
+    if (_pdf == null || !await _pdf!.exists()) {
       _pdf = await PermissionUtil.checkStoragePermission() ? await getTravelPermitPdf(false) : null;
     } else {
-      _pdf = await FileUtil.moveToPublic(_pdf);
+      _pdf = await FileUtil.moveToPublic(_pdf!);
     }
 
     return _pdf?.path;
@@ -43,7 +43,7 @@ class PdfUtil {
   Future<File> generateTravelPermitOffline(bool isTemp) async {
     // Initialising variables
     final isInternational = _model.type == TravelPermitTypes.international;
-    final startDate = _model.startDate?.toLocal()?.toDateString();
+    final startDate = _model.startDate?.toLocal().toDateString();
     final expirationDate = _model.expirationDate.toLocal().toDateString();
 
     final helvetica = pw.Font.helvetica();
@@ -66,13 +66,15 @@ class PdfUtil {
     final List<pw.TextSpan> personsInfos = [];
 
     /// Required Guardian
-    addSpan(personsInfos, 'Eu, ', font12);
-    addGuardianInfo(_model.requiredGuardian, personsInfos, font12, bold12);
+    if (_model.requiredGuardian != null) {
+      addSpan(personsInfos, 'Eu, ', font12);
+      addGuardianInfo(_model.requiredGuardian!, personsInfos, font12, bold12);
+    }
 
     /// Optional Guardian
     if (_model.optionalGuardian != null) {
       addSpan(personsInfos, ' e eu, ', font12);
-      addGuardianInfo(_model.optionalGuardian, personsInfos, font12, bold12);
+      addGuardianInfo(_model.optionalGuardian!, personsInfos, font12, bold12);
     }
 
     /// We/I authorise
@@ -83,17 +85,19 @@ class PdfUtil {
     }
 
     /// Underage
-    addSpan(personsInfos, _model.underage.name, bold12);
-    addSpan(personsInfos, ', nascido(a) em ${_model.underage.birthDate.toLocal().toDateString()}', font12);
-    addSpan(personsInfos, ', sexo ${getGenderStr(_model.underage.bioGender)}', font12);
-    addDocumentPhrase(_model.underage, personsInfos, font12);
+    if (_model.underage != null) {
+      addSpan(personsInfos, _model.underage!.name, bold12);
+      addSpan(personsInfos, ', nascido(a) em ${_model.underage!.birthDate?.toLocal().toDateString()}', font12);
+      addSpan(personsInfos, ', sexo ${getGenderStr(_model.underage!.bioGender)}', font12);
+      addDocumentPhrase(_model.underage!, personsInfos, font12);
+    }
 
     /// Escort
     if (_model.escort != null) {
       addSpan(personsInfos, isInternational ? ', na companhia de ' : ', desde que acompanhada(o) de ', font12);
-      addSpan(personsInfos, _model.escort.name, bold12);
+      addSpan(personsInfos, _model.escort!.name, bold12);
 
-      addDocumentPhrase(_model.escort, personsInfos, font12);
+      addDocumentPhrase(_model.escort!, personsInfos, font12);
     }
 
     addSpan(personsInfos, '.', font12);
@@ -116,13 +120,13 @@ class PdfUtil {
 
     // Validation Code and QRCode
     final List<pw.Widget> codeInfo = [];
-    codeInfo.add(pw.Column(children: [pw.Paragraph(text: 'Código de Validação:\n${formatValidationCode(_model.key)}', textAlign: pw.TextAlign.center, style: pw.TextStyle(font: helvetica, fontSize: 10), margin: pw.EdgeInsets.only(top: 10, bottom: 2)), pw.BarcodeWidget(data: _model.qrcodeData, barcode: pw.Barcode.qrCode(), width: 150, height: 150)]));
+    codeInfo.add(pw.Column(children: [pw.Paragraph(text: 'Código de Validação:\n${formatValidationCode(_model.key)}', textAlign: pw.TextAlign.center, style: pw.TextStyle(font: helvetica, fontSize: 10), margin: pw.EdgeInsets.only(top: 10, bottom: 2)), pw.BarcodeWidget(data: _model.qrcodeData!, barcode: pw.Barcode.qrCode(), width: 150, height: 150)]));
 
     codeInfo.add(pw.Paragraph(text: "A autenticidade desse documento pode ser confirmada no endereço eletrônico https://aev.e-notariado.org.br ou pelo app AEV - Autorização de Viagens e-notariado, disponível nas lojas Google Play ou App Store.", style: font11, margin: pw.EdgeInsets.only(top: 20)));
 
     // Finishing PDF
     final structure = [pw.Container(child: pw.Column(children: doc), margin: pw.EdgeInsets.fromLTRB(40, 5, 40, 0)), pw.Column(children: codeInfo)];
-    final name = "${_model.underage.name.replaceAll(RegExp(r'[^A-Za-zÀ-ÖØ-öø-ÿ0-9_ -]'), '_')} - Autorização de Viagem.pdf";
+    final name = "${_model.underage?.name.replaceAll(RegExp(r'[^A-Za-zÀ-ÖØ-öø-ÿ0-9_ -]'), '_')} - Autorização de Viagem.pdf";
     return createFromWidgets(structure, name, isTemp);
   }
 
@@ -133,7 +137,7 @@ class PdfUtil {
     return FileUtil.createFromBytes(pdfBytes, pdfName, isTemp);
   }
 
-  Future<pw.Image> getImage(String asset, {double width, double height}) async {
+  Future<pw.Image> getImage(String asset, {required double width, required double height}) async {
     final imgData = await rootBundle.load('assets/img/$asset');
     final memImg = pw.MemoryImage(imgData.buffer.asUint8List());
     return pw.Image(memImg, width: width, height: height);
@@ -158,7 +162,7 @@ class PdfUtil {
     }).join('-');
   }
 
-  String getDocumentTypeStr(IdDocumentTypes type) {
+  String getDocumentTypeStr(IdDocumentTypes? type) {
     switch (type) {
       case IdDocumentTypes.idCard:
         return "do RG";
@@ -175,7 +179,7 @@ class PdfUtil {
     }
   }
 
-  String getResponsibilityStr(LegalGuardianTypes type) {
+  String getResponsibilityStr(LegalGuardianTypes? type) {
     switch (type) {
       case LegalGuardianTypes.mother:
         return "mãe";
@@ -190,7 +194,7 @@ class PdfUtil {
     }
   }
 
-  String getGenderStr(BioGenders gender) {
+  String getGenderStr(BioGenders? gender) {
     switch (gender) {
       case BioGenders.male:
         return "masculino";

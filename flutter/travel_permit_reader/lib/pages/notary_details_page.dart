@@ -5,7 +5,7 @@ import 'package:travel_permit_reader/util/page_util.dart';
 
 class NotaryDetailsPage extends StatelessWidget {
   final NotaryModel notaryModel;
-  const NotaryDetailsPage({Key key, this.notaryModel}) : super(key: key);
+  const NotaryDetailsPage({Key? key, required this.notaryModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class NotaryDetailsPage extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(top: 5, bottom: 5), child: Text(label.toUpperCase(), style: AppTheme.headlineStyle));
   }
 
-  Widget buildDetailsText(String detail) {
+  Widget buildDetailsText(String? detail) {
     return Padding(padding: EdgeInsets.only(left: 10, bottom: 2), child: Text(detail ?? '', style: AppTheme.bodyStyle));
   }
 }

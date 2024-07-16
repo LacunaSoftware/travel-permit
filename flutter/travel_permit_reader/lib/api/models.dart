@@ -1,32 +1,31 @@
 import 'package:travel_permit_reader/api/enums.dart';
-import 'package:travel_permit_reader/tp_exception.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 import 'package:travel_permit_reader/util/qrcode_data.dart';
 
 class TravelPermitModel {
   final String key;
-  final DateTime startDate;
+  final DateTime? startDate;
   final DateTime expirationDate;
-  final TravelPermitTypes type;
-  final GuardianModel requiredGuardian;
-  final GuardianModel optionalGuardian;
-  final AdultModel escort;
-  final UnderageModel underage;
-  final NotaryModel notary;
+  final TravelPermitTypes? type;
+  final GuardianModel? requiredGuardian;
+  final GuardianModel? optionalGuardian;
+  final AdultModel? escort;
+  final UnderageModel? underage;
+  final NotaryModel? notary;
   final bool isOffline;
-  final String qrcodeData;
+  final String? qrcodeData;
 
   TravelPermitModel._({
-    this.key,
+    required this.key,
     this.startDate,
-    this.expirationDate,
+    required this.expirationDate,
     this.type,
     this.requiredGuardian,
     this.optionalGuardian,
     this.escort,
     this.underage,
     this.notary,
-    this.isOffline,
+    required this.isOffline,
     this.qrcodeData,
   });
 
@@ -39,11 +38,21 @@ class TravelPermitModel {
             : DateTime.parse(json['startDate']),
         expirationDate: DateTime.parse(json['expirationDate']),
         type: TravelPermitTypesExt.fromString(json['type']),
-        requiredGuardian: GuardianModel.fromJson(json['requiredGuardian']),
-        optionalGuardian: GuardianModel.fromJson(json['optionalGuardian']),
-        escort: AdultModel.fromJson(json['escort']),
-        underage: UnderageModel.fromJson(json['underage']),
-        notary: NotaryModel.fromJson(json['notary']));
+        requiredGuardian: json['requiredGuardian'] == null
+            ? null
+            : GuardianModel.fromJson(json['requiredGuardian']),
+        optionalGuardian: json['optionalGuardian'] == null
+            ? null
+            : GuardianModel.fromJson(json['optionalGuardian']),
+        escort: json['escort'] == null
+            ? null
+            : AdultModel.fromJson(json['escort']),
+        underage: json['underage'] == null
+            ? null
+            : UnderageModel.fromJson(json['underage']),
+        notary: json['notary'] == null
+            ? null
+            : NotaryModel.fromJson(json['notary']));
   }
 
   factory TravelPermitModel.fromQRCode(QRCodeData data) {
@@ -52,7 +61,7 @@ class TravelPermitModel {
       key: data.documentKey,
       startDate: StringExt.isNullOrEmpty(data.startDate)
           ? null
-          : DateTime.parse(data.startDate),
+          : DateTime.parse(data.startDate!),
       expirationDate: DateTime.parse(data.expirationDate),
       type: TravelPermitTypesExt.fromString(data.travelPermitType),
       //-------------------------------------------------------------------
@@ -63,9 +72,9 @@ class TravelPermitModel {
               documentNumber: data.requiredGuardianDocumentNumber,
               documentIssuer: data.requiredGuardianDocumentIssuer,
               documentType: IdDocumentTypesExt.fromString(
-                  data.requiredGuardianDocumentType),
+                  data.requiredGuardianDocumentType!),
               guardianship: LegalGuardianTypesExt.fromString(
-                  data.requiredGuardianGuardianship)),
+                  data.requiredGuardianGuardianship!)),
       //-------------------------------------------------------------------
       optionalGuardian: StringExt.isNullOrEmpty(data.optionalGuardianName)
           ? null
@@ -96,7 +105,7 @@ class TravelPermitModel {
               documentIssuer: data.underageDocumentIssuer,
               documentType:
                   IdDocumentTypesExt.fromString(data.underageDocumentType),
-              birthDate: DateTime.parse(data.underageBirthDate),
+              birthDate: DateTime.parse(data.underageBirthDate!),
               bioGender: BioGendersExt.fromString(data.underageBioGender)),
       qrcodeData: data.getQRCodeData(),
     );
@@ -106,27 +115,27 @@ class TravelPermitModel {
 //-------------------------------------------------------------------
 
 abstract class ParticipantModel {
-  final String identifier;
+  final String? identifier;
   final String name;
-  final String documentNumber;
-  final IdDocumentTypes documentType;
-  final String documentIssuer;
-  final DateTime issueDate;
-  final String photoUrl;
-  final String addressCity;
-  final String addressState;
-  final String zipCode;
-  final String streetAddress;
-  final String addressNumber;
-  final String additionalAddressInfo;
-  final String neighborhood;
-  final String country;
-  final String addressForeignStateName;
-  final String addressForeignCityName;
+  final String? documentNumber;
+  final IdDocumentTypes? documentType;
+  final String? documentIssuer;
+  final DateTime? issueDate;
+  final String? photoUrl;
+  final String? addressCity;
+  final String? addressState;
+  final String? zipCode;
+  final String? streetAddress;
+  final String? addressNumber;
+  final String? additionalAddressInfo;
+  final String? neighborhood;
+  final String? country;
+  final String? addressForeignStateName;
+  final String? addressForeignCityName;
 
   ParticipantModel._({
     this.identifier,
-    this.name,
+    required this.name,
     this.documentNumber,
     this.documentType,
     this.documentIssuer,
@@ -148,8 +157,8 @@ abstract class ParticipantModel {
 //-------------------------------------------------------------------
 
 class AdultModel extends ParticipantModel {
-  final String phoneNumber;
-  final String email;
+  final String? phoneNumber;
+  final String? email;
 
   AdultModel._({
     this.phoneNumber,
@@ -192,9 +201,6 @@ class AdultModel extends ParticipantModel {
         );
 
   factory AdultModel.fromJson(Map<String, dynamic> json) {
-    if (json == null) {
-      return null;
-    }
     return AdultModel._(
       identifier: json['identifier'],
       name: json['name'],
@@ -222,10 +228,10 @@ class AdultModel extends ParticipantModel {
 //-------------------------------------------------------------------
 
 class GuardianModel extends AdultModel {
-  final LegalGuardianTypes guardianship;
-  final bool livedInBrazil;
-  final String lastCityInBrazil;
-  final String lastStateInBrazil;
+  final LegalGuardianTypes? guardianship;
+  final bool? livedInBrazil;
+  final String? lastCityInBrazil;
+  final String? lastStateInBrazil;
 
   GuardianModel._({
     this.guardianship,
@@ -275,9 +281,6 @@ class GuardianModel extends AdultModel {
         );
 
   factory GuardianModel.fromJson(Map<String, dynamic> json) {
-    if (json == null) {
-      return null;
-    }
     return GuardianModel._(
       guardianship: LegalGuardianTypesExt.fromString(json['guardianship']),
       livedInBrazil: json['livedInBrazil'],
@@ -310,10 +313,10 @@ class GuardianModel extends AdultModel {
 //-------------------------------------------------------------------
 
 class UnderageModel extends ParticipantModel {
-  final BioGenders bioGender;
-  final DateTime birthDate;
-  final String cityOfBirth;
-  final String stateOfBirth;
+  final BioGenders? bioGender;
+  final DateTime? birthDate;
+  final String? cityOfBirth;
+  final String? stateOfBirth;
 
   UnderageModel._({
     this.bioGender,
@@ -358,9 +361,6 @@ class UnderageModel extends ParticipantModel {
         );
 
   factory UnderageModel.fromJson(Map<String, dynamic> json) {
-    if (json == null) {
-      return null;
-    }
     return UnderageModel._(
       identifier: json['identifier'],
       name: json['name'],
@@ -392,17 +392,18 @@ class UnderageModel extends ParticipantModel {
 class CnbErrorModel {
   final String message;
   final CnbErrorCodes code;
-  CnbErrorModel._({this.message, this.code});
+  CnbErrorModel._({required this.message, required this.code});
   factory CnbErrorModel.fromJson(Map<String, dynamic> json) {
     try {
-      if (json == null) {
-        throw TPException('Null parameter: json');
-      }
       return CnbErrorModel._(
           message: json['message'],
           code: CnbErrorCodesExt.fromString(json['code']));
     } catch (ex) {}
-    return null;
+
+    return CnbErrorModel._(
+      message: 'Ocorreu um erro deconhecido',
+      code: CnbErrorCodes.unknown,
+    );
   }
 }
 
@@ -420,15 +421,12 @@ class TypedParticipant {
 class NotaryModel {
   final String name;
   final String cns;
-  final String ownerName;
-  final String phoneNumber;
+  final String? ownerName;
+  final String? phoneNumber;
 
-  NotaryModel._({this.name, this.cns, this.ownerName, this.phoneNumber});
+  NotaryModel._({required this.name, required this.cns, this.ownerName, this.phoneNumber});
 
   factory NotaryModel.fromJson(Map<String, dynamic> json) {
-    if (json == null) {
-      return null;
-    }
     return NotaryModel._(
         name: json['name'],
         cns: json['cns'],

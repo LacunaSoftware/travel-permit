@@ -31,7 +31,7 @@ class AppTheme {
     final ThemeData theme = ThemeData(
       primaryColor: primaryBgColor,
       textTheme: TextTheme(
-        headline1: headlineStyle,
+        displayLarge: headlineStyle,
       ),
     );
 
@@ -50,7 +50,7 @@ class PageUtil {
     return MediaQuery.of(context).size.height * percentage;
   }
 
-  static void showAppDialog(BuildContext context, String title, String message, {ButtonAction positiveButton, ButtonAction negativeButton}) {
+  static void showAppDialog(BuildContext context, String title, String message, {ButtonAction? positiveButton, ButtonAction? negativeButton}) {
     final List<Widget> actions = [];
     actions.add(_buildButton(context, positiveButton, 'OK'));
 
@@ -77,13 +77,13 @@ class PageUtil {
     );
   }
 
-  static TextButton _buildButton(BuildContext context, ButtonAction bt, String defaultText) {
+  static TextButton _buildButton(BuildContext context, ButtonAction? bt, String defaultText) {
     return TextButton(
         child: Text(bt?.text ?? defaultText),
         onPressed: () {
           Navigator.of(context).pop();
           if (bt?.onPressed != null) {
-            bt.onPressed();
+            bt!.onPressed!();
           }
         });
   }
@@ -92,12 +92,12 @@ class PageUtil {
 //-------------------------------------------------------------------
 
 class BackgroundScaffold extends StatelessWidget {
-  const BackgroundScaffold({this.body, this.color = AppTheme.primaryBgColor, this.imagePath, this.appBar});
+  const BackgroundScaffold({required this.body, this.color = AppTheme.primaryBgColor, this.imagePath, this.appBar});
 
   final Widget body;
   final Color color;
-  final String imagePath;
-  final AppBar appBar;
+  final String? imagePath;
+  final AppBar? appBar;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,7 @@ class BackgroundScaffold extends StatelessWidget {
               children: <Widget>[
                 Container(
                   child: SvgPicture.asset(
-                    imagePath,
+                    imagePath!,
                     fit: BoxFit.none,
                   ),
                 ),
@@ -126,19 +126,19 @@ class BackgroundScaffold extends StatelessWidget {
 
 class ButtonAction {
   final String text;
-  final Function onPressed;
+  final Function? onPressed;
   const ButtonAction(this.text, [this.onPressed]);
 }
 
 //-------------------------------------------------------------------
 
 extension StringExt on String {
-  static bool isNullOrEmpty(String str) {
+  static bool isNullOrEmpty(String? str) {
     return str == null || str == "";
   }
 
-  static String formatCpf(String cpf) {
-    return cpf?.length == 11 ? '${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9, 11)}' : cpf;
+  static String? formatCpf(String? cpf) {
+    return cpf?.length == 11 ? '${cpf!.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9, 11)}' : cpf;
   }
 }
 
