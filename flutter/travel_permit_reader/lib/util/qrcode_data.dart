@@ -7,38 +7,38 @@ import 'package:travel_permit_reader/util/crypto_util.dart';
 class QRCodeData {
   final int version;
   final String documentKey;
-  final String startDate;
+  final String? startDate;
   final String expirationDate;
-  final String travelPermitType;
-  final String requiredGuardianName;
-  final String requiredGuardianDocumentNumber;
-  final String requiredGuardianDocumentIssuer;
-  final String requiredGuardianDocumentType;
-  final String requiredGuardianGuardianship;
-  final String optionalGuardianName;
-  final String optionalGuardianDocumentNumber;
-  final String optionalGuardianDocumentIssuer;
-  final String optionalGuardianDocumentType;
-  final String optionalGuardianGuardianship;
-  final String escortName;
-  final String escortDocumentNumber;
-  final String escortDocumentIssuer;
-  final String escortDocumentType;
-  final String underageName;
-  final String underageDocumentNumber;
-  final String underageDocumentIssuer;
-  final String underageDocumentType;
-  final String underageBirthDate;
-  final String underageBioGender;
+  final String? travelPermitType;
+  final String? requiredGuardianName;
+  final String? requiredGuardianDocumentNumber;
+  final String? requiredGuardianDocumentIssuer;
+  final String? requiredGuardianDocumentType;
+  final String? requiredGuardianGuardianship;
+  final String? optionalGuardianName;
+  final String? optionalGuardianDocumentNumber;
+  final String? optionalGuardianDocumentIssuer;
+  final String? optionalGuardianDocumentType;
+  final String? optionalGuardianGuardianship;
+  final String? escortName;
+  final String? escortDocumentNumber;
+  final String? escortDocumentIssuer;
+  final String? escortDocumentType;
+  final String? underageName;
+  final String? underageDocumentNumber;
+  final String? underageDocumentIssuer;
+  final String? underageDocumentType;
+  final String? underageBirthDate;
+  final String? underageBioGender;
   final Uint8List signature;
 
-  List<String> _segments;
+  List<String>? _segments;
 
   QRCodeData._(
-      {this.version,
-      this.documentKey,
+      {required this.version,
+      required this.documentKey,
       this.startDate,
-      this.expirationDate,
+      required this.expirationDate,
       this.travelPermitType,
       this.requiredGuardianName,
       this.requiredGuardianDocumentNumber,
@@ -60,7 +60,7 @@ class QRCodeData {
       this.underageDocumentType,
       this.underageBirthDate,
       this.underageBioGender,
-      this.signature});
+      required this.signature});
 
   static const _magicPrefix = 'LTP';
   static const _latestKnownVersion = 3;
@@ -115,7 +115,7 @@ class QRCodeData {
         escortDocumentNumber: _decodeField(segments[index++]),
         escortDocumentIssuer: _decodeField(segments[index++]),
         escortDocumentType: _decodeField(segments[index++]),
-        signature: hex.decode(segments[index++]),
+        signature: Uint8List.fromList(hex.decode(segments[index++])),
       );
       data._segments = segments;
       return data;
@@ -134,14 +134,14 @@ class QRCodeData {
 
   Uint8List _getTbsData() {
     return Uint8List.fromList(utf8.encode(
-        _segments.getRange(0, _segments.length - 1).join(_segmentSeparator)));
+        _segments!.getRange(0, _segments!.length - 1).join(_segmentSeparator)));
   }
 
   String getQRCodeData() {
-    return _segments.join(_segmentSeparator);
+    return _segments!.join(_segmentSeparator);
   }
 
-  static String _decodeField(String value) {
+  static String? _decodeField(String value) {
     return value == "" ? null : value.replaceAll(_spaceMarker, " ");
   }
 }

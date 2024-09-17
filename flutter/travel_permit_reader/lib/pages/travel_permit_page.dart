@@ -27,7 +27,7 @@ class TravelPermitPage extends StatefulWidget {
 //-------------------------------------------------------------------
 
 class _TravelPermitPageState extends State<TravelPermitPage> {
-  String get typeDescription {
+  String? get typeDescription {
     switch (widget.model.type) {
       case TravelPermitTypes.domestic:
         return 'Viagem Nacional';
@@ -38,7 +38,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     }
   }
 
-  PdfUtil _pdfUtil;
+  PdfUtil? _pdfUtil;
   PdfUtil get pdfUtil {
     return _pdfUtil ??= PdfUtil(widget.model);
   }
@@ -52,10 +52,10 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     }
 
     var participants = <TypedParticipant>[
-      if (widget.model.escort != null) TypedParticipant(widget.model.escort, ParticipantTypes.escort),
-      if (widget.model.underage != null) TypedParticipant(widget.model.underage, ParticipantTypes.underage),
-      if (widget.model.requiredGuardian != null) TypedParticipant(widget.model.requiredGuardian, ParticipantTypes.guardian1),
-      if (widget.model.optionalGuardian != null) TypedParticipant(widget.model.optionalGuardian, ParticipantTypes.guardian2),
+      if (widget.model.escort != null) TypedParticipant(widget.model.escort!, ParticipantTypes.escort),
+      if (widget.model.underage != null) TypedParticipant(widget.model.underage!, ParticipantTypes.underage),
+      if (widget.model.requiredGuardian != null) TypedParticipant(widget.model.requiredGuardian!, ParticipantTypes.guardian1),
+      if (widget.model.optionalGuardian != null) TypedParticipant(widget.model.optionalGuardian!, ParticipantTypes.guardian2),
     ];
 
     return BackgroundScaffold(
@@ -190,13 +190,13 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                 size: 30,
                 color: AppTheme.defaultFgColor,
               )),
-          Text(typeDescription)
+          Text(typeDescription ?? '')
         ]));
   }
 
   Widget _buildPermitValidityState() {
     final now = DateTime.now();
-    final isExpired = now.isAfterDateOnly(widget.model.expirationDate) || (widget.model.startDate != null && now.isBeforeDateOnly(widget.model.startDate));
+    final isExpired = now.isAfterDateOnly(widget.model.expirationDate) || (widget.model.startDate != null && now.isBeforeDateOnly(widget.model.startDate!));
     return BaseCard(
       color: isExpired ? AppTheme.alertColor : AppTheme.successColor,
       child: Row(
@@ -220,7 +220,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                       ]
                     : <TextSpan>[
                         new TextSpan(text: isExpired ? 'Fora do período de ' : 'Vigente de '),
-                        new TextSpan(text: '${widget.model.startDate.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
+                        new TextSpan(text: '${widget.model.startDate?.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
                       ],
               ),
             ),
@@ -239,7 +239,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                 context,
                 MaterialPageRoute(
                     builder: (c) => NotaryDetailsPage(
-                          notaryModel: widget.model.notary,
+                          notaryModel: widget.model.notary!,
                         ))),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,9 +262,9 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
                 ]),
                 buildDivider(),
                 SizedBox(height: 4),
-                Text(widget.model.notary.name, style: AppTheme.bodyStyle, overflow: TextOverflow.ellipsis),
+                Text(widget.model.notary!.name, style: AppTheme.bodyStyle, overflow: TextOverflow.ellipsis),
                 SizedBox(height: 4),
-                Text('CNS: ${widget.model.notary.cns}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+                Text('CNS: ${widget.model.notary!.cns}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
               ],
             )));
   }
@@ -276,7 +276,7 @@ class BaseCard extends StatelessWidget {
   final Color color;
   final Widget child;
 
-  const BaseCard({Key key, this.color, this.child}) : super(key: key);
+  const BaseCard({Key? key, required this.color, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +290,7 @@ class SummaryCard extends StatelessWidget {
   final TypedParticipant typedParticipant;
   final bool isOffline;
 
-  const SummaryCard({Key key, this.typedParticipant, this.isOffline}) : super(key: key);
+  const SummaryCard({Key? key, required this.typedParticipant, this.isOffline = false}) : super(key: key);
 
   ParticipantModel get model => typedParticipant.participant;
 
@@ -309,7 +309,7 @@ class SummaryCard extends StatelessWidget {
     }
   }
 
-  IconData get participantIcon {
+  IconData? get participantIcon {
     switch (typedParticipant.type) {
       case ParticipantTypes.guardian1:
       case ParticipantTypes.guardian2:
@@ -351,6 +351,8 @@ class SummaryCard extends StatelessWidget {
         return 'Feminino';
       case BioGenders.male:
         return 'Masculino';
+      case BioGenders.others:
+        return 'Outros';
       default:
         return 'Indefinido';
     }
@@ -403,7 +405,7 @@ class SummaryCard extends StatelessWidget {
                 Text(model.name, style: AppTheme.bodyStyle),
                 SizedBox(height: 8),
                 Text('$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
-                if (underage?.birthDate != null) Text('Nascimento: ${underage.birthDate.toDateString()} ${underage?.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+                if (underage?.birthDate != null) Text('Nascimento: ${underage!.birthDate!.toDateString()} ${underage.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
               ],
             )));
   }

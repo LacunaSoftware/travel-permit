@@ -15,7 +15,7 @@ class FileUtil {
   static Future<File> createFromBytes(Uint8List bytes, String name, bool isTemp) async {
     final folder = await (isTemp ? sysPaths.getTemporaryDirectory() : getDownloadDir());
 
-    String path = p.join(folder.path, name);
+    String path = p.join(folder?.path ?? '', name);
     if (!isTemp) {
       path = await getFileUniquePath(path);
     }
@@ -23,25 +23,25 @@ class FileUtil {
     return await File(path).writeAsBytes(bytes, flush: true);
   }
 
-  static String getFilenameFromHeader(String header) {
-    final splits = header.split('filename');
-    switch (splits.length) {
+  static String? getFilenameFromHeader(String? header) {
+    final splits = header?.split('filename');
+    switch (splits?.length) {
       case 2:
-        return splits[1].split('"')[1];
+        return splits![1].split('"')[1];
       case 3:
-        final typeName = splits[2].substring(2).split("''");
+        final typeName = splits![2].substring(2).split("''");
         return typeName[0] == "UTF-8" ? Uri.decodeFull(typeName[1]) : splits[1].split('"')[1];
       default:
         return null;
     }
   }
 
-  static Future<File> moveToPublic(File pdf) async {
+  static Future<File?> moveToPublic(File pdf) async {
     if (!await PermissionUtil.checkStoragePermission()) return null;
 
-    final downloadPath = (await getDownloadDir()).path;
+    final downloadPath = (await getDownloadDir())?.path;
     if (p.dirname(pdf.path) != downloadPath) {
-      final newPath = await getFileUniquePath(p.join(downloadPath, p.basename(pdf.path)));
+      final newPath = await getFileUniquePath(p.join(downloadPath ?? '', p.basename(pdf.path)));
       final publicPdf = await pdf.copy(newPath);
       await pdf.delete();
       pdf = publicPdf;
@@ -50,8 +50,8 @@ class FileUtil {
     return pdf;
   }
 
-  static Future<Directory> getDownloadDir() async {
-    Directory directory;
+  static Future<Directory?> getDownloadDir() async {
+    Directory? directory;
 
     if (Platform.isIOS) {
       directory = await sysPaths.getApplicationDocumentsDirectory();

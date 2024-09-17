@@ -31,6 +31,15 @@ export interface TravelPermitParticipantOfflineModel {
 
 export interface TravelPermitGuardianModel extends TravelPermitAdultModel {
 	guardianship: LegalGuardianTypes;
+	livedInBrazil?: boolean;
+	lastCityInBrazil?: string;
+	lastStateInBrazil?: Uf;
+}
+
+export interface TravelPermitAdultModel extends TravelPermitParticipantModel {
+	phoneNumber: string;
+	email: string;
+	bioId: string;
 }
 
 export interface TravelPermitUnderageModel extends TravelPermitParticipantModel {
@@ -38,12 +47,6 @@ export interface TravelPermitUnderageModel extends TravelPermitParticipantModel 
 	birthDate: string;
 	cityOfBirth: string;
 	stateOfBirth: Uf;
-}
-
-export interface TravelPermitAdultModel extends TravelPermitParticipantModel {
-	phoneNumber: string;
-	email: string;
-	bioId: string;
 }
 
 export interface TravelPermitParticipantModel {
@@ -54,12 +57,15 @@ export interface TravelPermitParticipantModel {
 	documentIssuer: string;
 	issueDate: string;
 	zipCode: string;
+	country?: string;
+	addressState: Uf;
+	addressForeignStateName?: string;
+	addressCity: string;
+	addressForeignCityName?: string;
+	neighborhood: string;
 	streetAddress: string;
 	addressNumber: string;
 	additionalAddressInfo: string;
-	neighborhood: string;
-	addressCity: string;
-	addressState: Uf;
 }
 
 export interface TravelPermitModel {
