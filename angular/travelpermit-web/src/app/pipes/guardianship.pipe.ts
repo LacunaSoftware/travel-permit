@@ -8,7 +8,7 @@ export class GuardianshipPipe implements PipeTransform {
 
   transform(value: LegalGuardianTypes | string, ...args: unknown[]): unknown {
     if (!value) {
-			return '';
+			return 'Sem parentesco';
 		}
     switch(value) {
 			case LegalGuardianTypes.Father:

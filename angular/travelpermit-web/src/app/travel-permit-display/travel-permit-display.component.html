@@ -40,19 +40,19 @@
 	
 			<div *ngIf="travelPermit.escort?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante', showKinship: travelPermit.isJudiciaryTravelPermit }">
 				</ng-template>
 			</div>
 
 			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.requiredGuardian, title: 'Reponsável Legal 1' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.requiredGuardian, title: 'Reponsável Legal 1', guardian: true }">
 				</ng-template>
 			</div>
 	
 			<div *ngIf="travelPermit.optionalGuardian?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.optionalGuardian, title: 'Reponsável Legal 2' }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.optionalGuardian, title: 'Reponsável Legal 2', guardian: true }">
 				</ng-template>
 			</div>
 		</div>
@@ -60,7 +60,7 @@
 	
 </ng-container>
 
-<ng-template #participantDisplay let-participant="participant" let-title="title">
+<ng-template #participantDisplay let-participant="participant" let-title="title" let-guardian="guardian" let-showKinship="showKinship">
 	<div class="flex-grow-1">
 		<h4 class="text-primary"><strong>{{title}}</strong></h4>
 	</div>
@@ -152,9 +152,9 @@
 		</div>
 	</div>
 
-	<div class="row" *ngIf="participant.guardianship">
+	<div class="row" *ngIf="guardian || showKinship">
 		<div class="col-12 col-md-6">
-			<p class="mb-sm-1"><strong>Responsabilidade:</strong></p>
+			<p class="mb-sm-1"><strong>{{(showKinship ? "Grau de parentesco:" : "Responsabilidade:")}}</strong></p>
 		</div>
 		<div class="col-12 col-md-6 d-flex justify-content-end">
 			<p>{{participant.guardianship | guardianship}}</p>
