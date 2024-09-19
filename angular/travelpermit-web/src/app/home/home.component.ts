@@ -22,6 +22,10 @@ export class HomeComponent implements OnInit {
 	segments: string[];
 	loading: boolean = false;
 
+	readonly VERSION_2_SEGMENTS = 26;
+	readonly VERSION_3_SEGMENTS = 27;
+	readonly VERSION_4_SEGMENTS = 29;
+
 	constructor(
 		private dialog: MatDialog,
 		private http: HttpClient,
@@ -77,8 +81,9 @@ export class HomeComponent implements OnInit {
 			this.alert("Este não é um QR Code de Autorização Eletrônica de Viagem");
 		}
 
-		if ((version <= 2 && segments.length != 26) ||
-			(version == 3 && segments.length != 29)) {
+		if ((version <= 2 && segments.length != this.VERSION_2_SEGMENTS) ||
+			(version == 3 && segments.length != this.VERSION_3_SEGMENTS) ||
+			(version == 4 && segments.length != this.VERSION_4_SEGMENTS)) {
 			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
 		}
 
@@ -118,10 +123,10 @@ export class HomeComponent implements OnInit {
 					documentNumber: this.decodeField(segments[index++]),
 					documentIssuer: this.decodeField(segments[index++]),
 					documentType: this.decodeField(segments[index++]) as BioDocumentType,
-					guardianship: this.decodeField(segments[index++]) as LegalGuardianTypes,
+					guardianship: version == 4 ? this.decodeField(segments[index++]) as LegalGuardianTypes : null,
 				},
+				isJudiciaryTravelPermit: version == 4 ? this.decodeField(segments[index++]) == "1" ? true : false : null,
 				signature: this.decodeField(segments[index++]),
-				isJudiciaryTravelPermit: this.decodeField(segments[index++]) == "1" ? true : false,
 			}
 
 			this.segments = segments;
