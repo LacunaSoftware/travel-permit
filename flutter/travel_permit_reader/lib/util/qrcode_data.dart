@@ -24,12 +24,14 @@ class QRCodeData {
   final String? escortDocumentNumber;
   final String? escortDocumentIssuer;
   final String? escortDocumentType;
+  final String? escortGuardianship;
   final String? underageName;
   final String? underageDocumentNumber;
   final String? underageDocumentIssuer;
   final String? underageDocumentType;
   final String? underageBirthDate;
   final String? underageBioGender;
+  final bool? isJudiciaryTravelPermit;
   final Uint8List signature;
 
   List<String>? _segments;
@@ -54,12 +56,14 @@ class QRCodeData {
       this.escortDocumentNumber,
       this.escortDocumentIssuer,
       this.escortDocumentType,
+      this.escortGuardianship,
       this.underageName,
       this.underageDocumentNumber,
       this.underageDocumentIssuer,
       this.underageDocumentType,
       this.underageBirthDate,
       this.underageBioGender,
+      this.isJudiciaryTravelPermit,
       required this.signature});
 
   static const _magicPrefix = 'LTP';
@@ -75,21 +79,18 @@ class QRCodeData {
     try {
       final segments = code.split(_segmentSeparator);
       if (segments.isEmpty || segments.first != _magicPrefix) {
-        throw TPException(
-            'Unknown QR code format', TPErrorCodes.qrCodeUnknownFormat);
+        throw TPException('Unknown QR code format', TPErrorCodes.qrCodeUnknownFormat);
       }
 
       final version = int.parse(segments[1]);
       if (version > _latestKnownVersion || version < 1) {
-        throw TPException('Unknown QR code version: $version',
-            TPErrorCodes.qrCodeUnknownVersion);
+        throw TPException('Unknown QR code version: $version', TPErrorCodes.qrCodeUnknownVersion);
       }
 
       if ((version <= 2 && segments.length != _version_2_segments) ||
           (version == 3 && segments.length != _version_3_segments) ||
           (version == 4 && segments.length != _version_4_segments)) {
-        throw TPException(
-            'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
+        throw TPException('QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
       }
 
       var index = 2;
@@ -120,6 +121,8 @@ class QRCodeData {
         escortDocumentNumber: _decodeField(segments[index++]),
         escortDocumentIssuer: _decodeField(segments[index++]),
         escortDocumentType: _decodeField(segments[index++]),
+        escortGuardianship: version >= 4 ? _decodeField(segments[index++]) : null,
+        isJudiciaryTravelPermit: version >= 4 ? _decodeBoolean(segments[index++]) : null,
         signature: Uint8List.fromList(hex.decode(segments[index++])),
       );
       data._segments = segments;
@@ -127,8 +130,7 @@ class QRCodeData {
     } on TPException {
       rethrow;
     } catch (ex) {
-      throw TPException(
-          'Error decoding QR code: $ex', TPErrorCodes.qrCodeDecodeError);
+      throw TPException('Error decoding QR code: $ex', TPErrorCodes.qrCodeDecodeError);
     }
   }
 
@@ -138,8 +140,7 @@ class QRCodeData {
   }
 
   Uint8List _getTbsData() {
-    return Uint8List.fromList(utf8.encode(
-        _segments!.getRange(0, _segments!.length - 1).join(_segmentSeparator)));
+    return Uint8List.fromList(utf8.encode(_segments!.getRange(0, _segments!.length - 1).join(_segmentSeparator)));
   }
 
   String getQRCodeData() {
@@ -148,5 +149,9 @@ class QRCodeData {
 
   static String? _decodeField(String value) {
     return value == "" ? null : value.replaceAll(_spaceMarker, " ");
+  }
+
+  static bool _decodeBoolean(String value) {
+    return _decodeField(value) == "1";
   }
 }
