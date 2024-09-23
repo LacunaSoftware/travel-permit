@@ -93,7 +93,7 @@ export class HomeComponent implements OnInit {
 			const data: TravelPermitOfflineModel = {
 				version: version,
 				key: segments[index++],
-				startDate: version == 3 ? this.decodeField(segments[index++]) : null,
+				startDate: version >= 3 ? this.decodeField(segments[index++]) : null,
 				expirationDate: this.decodeField(segments[index++]),
 				type: this.decodeField(segments[index++]) as TravelPermitTypes,
 				requiredGuardian: {
@@ -123,9 +123,9 @@ export class HomeComponent implements OnInit {
 					documentNumber: this.decodeField(segments[index++]),
 					documentIssuer: this.decodeField(segments[index++]),
 					documentType: this.decodeField(segments[index++]) as BioDocumentType,
-					guardianship: version == 4 ? this.decodeField(segments[index++]) as LegalGuardianTypes : null,
+					guardianship: version >= 4 ? this.decodeField(segments[index++]) as LegalGuardianTypes : null,
 				},
-				isJudiciaryTravelPermit: version == 4 ? this.decodeField(segments[index++]) == "1" ? true : false : null,
+				isJudiciaryTravelPermit: version >= 4 ? this.decodeField(segments[index++]) == "1" ? true : false : null,
 				signature: this.decodeField(segments[index++]),
 			}
 
