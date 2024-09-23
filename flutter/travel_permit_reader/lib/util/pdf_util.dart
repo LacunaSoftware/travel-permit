@@ -96,6 +96,10 @@ class PdfUtil {
     if (_model.escort != null) {
       addSpan(personsInfos, isInternational ? ', na companhia de ' : ', desde que acompanhada(o) de ', font12);
       addSpan(personsInfos, _model.escort!.name, bold12);
+      if (_model.escort!.guardianship != null) {
+        addSpan(personsInfos, ', na qualidade de ', font12);
+        addSpan(personsInfos, '${getResponsibilityStr(_model.escort!.guardianship)}', bold12);
+      }
 
       addDocumentPhrase(_model.escort!, personsInfos, font12);
     }
@@ -189,6 +193,8 @@ class PdfUtil {
         return "tutor";
       case LegalGuardianTypes.guardian:
         return "guardião";
+      case LegalGuardianTypes.unrelated:
+        return "sem parentesco";
       default:
         return "";
     }
