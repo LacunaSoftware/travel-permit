@@ -63,9 +63,13 @@ class QRCodeData {
       required this.signature});
 
   static const _magicPrefix = 'LTP';
-  static const _latestKnownVersion = 3;
+  static const _latestKnownVersion = 4;
   static const _segmentSeparator = '%';
   static const _spaceMarker = '+';
+
+  static const _version_2_segments = 26;
+  static const _version_3_segments = 27;
+  static const _version_4_segments = 29;
 
   factory QRCodeData.parse(String code) {
     try {
@@ -81,8 +85,9 @@ class QRCodeData {
             TPErrorCodes.qrCodeUnknownVersion);
       }
 
-      if ((version <= 2 && segments.length != 26) ||
-          (version == 3 && segments.length != 27)) {
+      if ((version <= 2 && segments.length != _version_2_segments) ||
+          (version == 3 && segments.length != _version_3_segments) ||
+          (version == 4 && segments.length != _version_4_segments)) {
         throw TPException(
             'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
       }
@@ -92,7 +97,7 @@ class QRCodeData {
       final data = QRCodeData._(
         version: version,
         documentKey: segments[index++],
-        startDate: version == 3 ? segments[index++] : null,
+        startDate: version >= 3 ? segments[index++] : null,
         expirationDate: segments[index++],
         travelPermitType: _decodeField(segments[index++]),
         requiredGuardianName: _decodeField(segments[index++]),
