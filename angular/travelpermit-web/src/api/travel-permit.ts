@@ -74,8 +74,25 @@ export interface TravelPermitModel {
 	expirationDate: string;
 	type: TravelPermitTypes;
 	isRemoteTravelPermit: boolean;
+	canBeHostedOnEmergency: boolean;
 	requiredGuardian: TravelPermitGuardianModel;
 	optionalGuardian: TravelPermitGuardianModel;
 	underage: TravelPermitUnderageModel;
 	escort: TravelPermitAdultModel;
+}
+
+export interface JudiciaryTravelPermitModel extends TravelPermitModel {
+	judge: JudiciaryTravelPermitJudgeModel;
+	authorizedByJudge: boolean;
+}
+
+export interface JudiciaryTravelPermitJudgeModel {
+	name: string;
+	email: string;
+	identifier: string;
+}
+
+export interface TravelPermitValidationModel {
+	travelPermit: TravelPermitModel;
+	judiciaryTravelPermit: JudiciaryTravelPermitModel;
 }

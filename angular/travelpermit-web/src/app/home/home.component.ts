@@ -1,16 +1,15 @@
-import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { latestKnownVersion, magicPrefix, segmentSeparator, spaceMarker } from 'src/api/constants';
 import { CryptoHelper } from 'src/api/crypto';
 import { BioDocumentType, BioGender, LegalGuardianTypes, TravelPermitTypes } from 'src/api/enums';
-import { TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
-import { environment } from 'src/environments/environment';
+import { JudiciaryTravelPermitModel, TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
 import { DialogAlertComponent } from '../dialog-alert/dialog-alert.component';
 import { DialogReadCodeComponent } from '../dialog-read-code/dialog-read-code.component';
 import { DialogReadQrCodeComponent } from '../dialog-read-qr-code/dialog-read-qr-code.component';
+import { DocumentService } from '../services/document.service';
 
 @Component({
 	selector: 'app-home',
@@ -19,12 +18,13 @@ import { DialogReadQrCodeComponent } from '../dialog-read-qr-code/dialog-read-qr
 })
 export class HomeComponent implements OnInit {
 	travelPermit: TravelPermitModel | TravelPermitOfflineModel;
+	judiciaryTravelPermit: JudiciaryTravelPermitModel;
 	segments: string[];
 	loading: boolean = false;
 
 	constructor(
 		private dialog: MatDialog,
-		private http: HttpClient,
+		private documentService: DocumentService,
 		private matIconRegistry: MatIconRegistry,
 		private domSanitizer: DomSanitizer
 	) {
@@ -154,13 +154,18 @@ export class HomeComponent implements OnInit {
 
 	private loadOnlineData(docKey: string) {
 		this.loading = true;
-		this.http.get<TravelPermitModel>(`${environment.cnbEndpoint}/api/documents/keys/${docKey}/travel-permit`)
+		this.documentService.getTravelPermitInfo(docKey)
 			.subscribe((tp) => {
-				tp.key = docKey;
-				this.travelPermit = tp;
+				if (tp.judiciaryTravelPermit) {
+					this.travelPermit = tp.judiciaryTravelPermit;
+					this.judiciaryTravelPermit = tp.judiciaryTravelPermit;
+				} else {
+					this.travelPermit = tp.travelPermit;
+				}
+				this.travelPermit.key = docKey;
 				console.log('Loaded travel permit', tp);
 				this.loading = false;
-			}, (err) => {
+			}, () => {
 				this.loading = false;
 				this.alert('Ocorreu um erro ao acessar o servidor para obter os dados completos da autorização de viagem. Você terá acesso somente aos dados contidos no QR Code.');
 			});
