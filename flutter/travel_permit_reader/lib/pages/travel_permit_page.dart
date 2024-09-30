@@ -296,6 +296,10 @@ class SummaryCard extends StatelessWidget {
 
   ParticipantModel get model => typedParticipant.participant;
 
+  bool get isJudge {
+    return typedParticipant.type == ParticipantTypes.judge;
+  }
+
   String get participantDescription {
     switch (typedParticipant.type) {
       case ParticipantTypes.guardian1:
@@ -409,7 +413,7 @@ class SummaryCard extends StatelessWidget {
                 SizedBox(height: 4),
                 Text(model.name, style: AppTheme.bodyStyle),
                 SizedBox(height: 8),
-                Text('$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+                if (documentTypeDescription != '') Text('$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
                 if (underage?.birthDate != null) Text('Nascimento: ${underage!.birthDate!.toDateString()} ${underage.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
               ],
             )));
