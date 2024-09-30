@@ -56,7 +56,7 @@
 	
 			<div *ngIf="travelPermit.escort?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante', showKinship: travelPermit.isJudiciaryTravelPermit }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante', showKinship: travelPermit.escort.guardianship }">
 				</ng-template>
 			</div>
 
