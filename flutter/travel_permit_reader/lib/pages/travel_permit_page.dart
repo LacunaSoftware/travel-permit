@@ -41,7 +41,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
 
   PdfUtil? _pdfUtil;
   PdfUtil get pdfUtil {
-    return _pdfUtil ??= PdfUtil(widget.model);
+    return _pdfUtil ??= PdfUtil(widget.model, widget.judiciaryModel);
   }
 
   @override

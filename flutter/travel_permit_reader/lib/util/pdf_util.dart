@@ -13,6 +13,7 @@ import 'package:travel_permit_reader/util/permission_util.dart';
 
 class PdfUtil {
   TravelPermitModel _model;
+  JudiciaryTravelPermitModel? _judiciaryModel;
   File? _pdf;
 
   CnbClient? _cnbClient;
@@ -20,7 +21,7 @@ class PdfUtil {
     return _cnbClient ??= CnbClient();
   }
 
-  PdfUtil(this._model);
+  PdfUtil(this._model, this._judiciaryModel);
 
   Future<String?> getTravelPermitPdfPrivate() async {
     if (_pdf == null || !await _pdf!.exists()) _pdf = await getTravelPermitPdf(true);
@@ -45,6 +46,7 @@ class PdfUtil {
     final isInternational = _model.type == TravelPermitTypes.international;
     final startDate = _model.startDate?.toLocal().toDateString();
     final expirationDate = _model.expirationDate.toLocal().toDateString();
+    final isAuthorizedByJudge = _judiciaryModel?.judge?.name != null && _judiciaryModel?.notary?.name != null;
 
     final helvetica = pw.Font.helvetica();
     final font11 = pw.TextStyle(font: helvetica, fontSize: 11);
@@ -65,20 +67,27 @@ class PdfUtil {
     // Main Info Paragraph Opening
     final List<pw.TextSpan> personsInfos = [];
 
+    // Judge
+    if (isAuthorizedByJudge) {
+      addSpan(personsInfos, 'O(a) MM. Juiz(a) de Direito Dr.(a) ', font12);
+      addSpan(personsInfos, _judiciaryModel!.judge!.name, bold12);
+      addSpan(personsInfos, ', na qualidade de responsável pelo(a) ', font12);
+      addSpan(personsInfos, _judiciaryModel!.notary!.name, bold12);
+    }
+
     /// Required Guardian
-    if (_model.requiredGuardian != null) {
+    if (_model.requiredGuardian != null && !isAuthorizedByJudge) {
       addSpan(personsInfos, 'Eu, ', font12);
-      addGuardianInfo(_model.requiredGuardian!, personsInfos, font12, bold12);
     }
 
     /// Optional Guardian
-    if (_model.optionalGuardian != null) {
+    if (_model.optionalGuardian != null && !isAuthorizedByJudge) {
       addSpan(personsInfos, ' e eu, ', font12);
       addGuardianInfo(_model.optionalGuardian!, personsInfos, font12, bold12);
     }
 
     /// We/I authorise
-    addSpan(personsInfos, ', ${_model.optionalGuardian != null ? "AUTORIZAMOS" : "AUTORIZO"} ' + 'a circular livremente ${startDate == null ? "até" : "no período de $startDate a"} $expirationDate' + ', ${isInternational ? "em território internacional," : "dentro do território nacional,"} ', font12);
+    addSpan(personsInfos, ', ${_model.optionalGuardian != null && !isAuthorizedByJudge ? "AUTORIZAMOS" : "AUTORIZO"} ' + 'a circular livremente ${startDate == null ? "até" : "no período de $startDate a"} $expirationDate' + ', ${isInternational ? "em território internacional," : "dentro do território nacional,"} ', font12);
 
     if (_model.escort == null) {
       addSpan(personsInfos, 'desacompanhado(a), ', font12);
