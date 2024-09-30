@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
 
 	readonly VERSION_2_SEGMENTS = 26;
 	readonly VERSION_3_SEGMENTS = 27;
-	readonly VERSION_4_SEGMENTS = 29;
+	readonly VERSION_4_SEGMENTS = 28;
 
 	constructor(
 		private dialog: MatDialog,
@@ -125,7 +125,6 @@ export class HomeComponent implements OnInit {
 					documentType: this.decodeField(segments[index++]) as BioDocumentType,
 					guardianship: version >= 4 ? this.decodeField(segments[index++]) as LegalGuardianTypes : null,
 				},
-				isJudiciaryTravelPermit: version >= 4 ? this.decodeField(segments[index++]) == "1" ? true : false : null,
 				signature: this.decodeField(segments[index++]),
 			}
 
