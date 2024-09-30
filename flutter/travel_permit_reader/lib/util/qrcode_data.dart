@@ -31,7 +31,8 @@ class QRCodeData {
   final String? underageDocumentType;
   final String? underageBirthDate;
   final String? underageBioGender;
-  final bool? isJudiciaryTravelPermit;
+  final String? judgeName;
+  final String? organizationName;
   final Uint8List signature;
 
   List<String>? _segments;
@@ -63,7 +64,8 @@ class QRCodeData {
       this.underageDocumentType,
       this.underageBirthDate,
       this.underageBioGender,
-      this.isJudiciaryTravelPermit,
+      this.judgeName,
+      this.organizationName,
       required this.signature});
 
   static const _magicPrefix = 'LTP';
@@ -73,7 +75,7 @@ class QRCodeData {
 
   static const _version_2_segments = 26;
   static const _version_3_segments = 27;
-  static const _version_4_segments = 29;
+  static const _version_4_segments = 30;
 
   factory QRCodeData.parse(String code) {
     try {
@@ -122,6 +124,8 @@ class QRCodeData {
         escortDocumentIssuer: _decodeField(segments[index++]),
         escortDocumentType: _decodeField(segments[index++]),
         escortGuardianship: version >= 4 ? _decodeField(segments[index++]) : null,
+        judgeName: version >= 4 ? _decodeField(segments[index++]) : null,
+        organizationName: version >= 4 ? _decodeField(segments[index++]) : null,
         signature: Uint8List.fromList(hex.decode(segments[index++])),
       );
       data._segments = segments;
