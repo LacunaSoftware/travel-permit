@@ -31,7 +31,6 @@ class QRCodeData {
   final String? underageDocumentType;
   final String? underageBirthDate;
   final String? underageBioGender;
-  final bool? isJudiciaryTravelPermit;
   final Uint8List signature;
 
   List<String>? _segments;
@@ -63,7 +62,6 @@ class QRCodeData {
       this.underageDocumentType,
       this.underageBirthDate,
       this.underageBioGender,
-      this.isJudiciaryTravelPermit,
       required this.signature});
 
   static const _magicPrefix = 'LTP';
@@ -73,7 +71,7 @@ class QRCodeData {
 
   static const _version_2_segments = 26;
   static const _version_3_segments = 27;
-  static const _version_4_segments = 29;
+  static const _version_4_segments = 28;
 
   factory QRCodeData.parse(String code) {
     try {

@@ -112,7 +112,6 @@ class TravelPermitModel {
               birthDate: DateTime.parse(data.underageBirthDate!),
               bioGender: BioGendersExt.fromString(data.underageBioGender)),
       qrcodeData: data.getQRCodeData(),
-      isJudiciaryTravelPermit: data.isJudiciaryTravelPermit,
     );
   }
 }
