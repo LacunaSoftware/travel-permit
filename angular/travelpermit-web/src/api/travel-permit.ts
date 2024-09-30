@@ -10,7 +10,17 @@ export interface TravelPermitOfflineModel {
 	optionalGuardian: GuardianOfflineModel;
 	escort: TravelPermitParticipantOfflineModel;
 	underage: UnderageOfflineModel;
+	judge: JudgeOfflineModel;
+	organization: OrganizationOfflineModel;
 	signature: string;
+}
+
+export interface JudgeOfflineModel {
+	name: string;
+}
+
+export interface OrganizationOfflineModel {
+	name: string;
 }
 
 export interface GuardianOfflineModel extends TravelPermitParticipantOfflineModel {

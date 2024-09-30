@@ -18,6 +18,10 @@ export class TravelPermitDisplayComponent implements OnInit {
 	get canBeHostedOnEmergency() {
 		return (this.travelPermit as TravelPermitModel)?.canBeHostedOnEmergency;
 	}
+
+	get authorizedByJudge() {
+		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge.name;
+	}
 	
 	loading: boolean = false;
 

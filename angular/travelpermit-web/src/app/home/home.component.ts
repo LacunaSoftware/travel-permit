@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { latestKnownVersion, magicPrefix, segmentSeparator, spaceMarker } from 'src/api/constants';
+import { latestKnownVersion, magicPrefix, segmentSeparator, spaceMarker, version2Segments, version3Segments, version4Segments } from 'src/api/constants';
 import { CryptoHelper } from 'src/api/crypto';
 import { BioDocumentType, BioGender, LegalGuardianTypes, TravelPermitTypes } from 'src/api/enums';
 import { JudiciaryTravelPermitModel, TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
@@ -77,8 +77,10 @@ export class HomeComponent implements OnInit {
 			this.alert("Este não é um QR Code de Autorização Eletrônica de Viagem");
 		}
 
-		if ((version <= 2 && segments.length != 26) ||
-			(version == 3 && segments.length != 27)) {
+		if ((version <= 2 && segments.length != version2Segments)
+			|| (version == 3 && segments.length != version3Segments)
+			|| (version == 4 && segments.length != version4Segments)
+		) {
 			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
 		}
 
@@ -88,7 +90,7 @@ export class HomeComponent implements OnInit {
 			const data: TravelPermitOfflineModel = {
 				version: version,
 				key: segments[index++],
-				startDate: version == 3 ? this.decodeField(segments[index++]) : null,
+				startDate: version >= 3 ? this.decodeField(segments[index++]) : null,
 				expirationDate: this.decodeField(segments[index++]),
 				type: this.decodeField(segments[index++]) as TravelPermitTypes,
 				requiredGuardian: {
@@ -119,6 +121,12 @@ export class HomeComponent implements OnInit {
 					documentIssuer: this.decodeField(segments[index++]),
 					documentType: this.decodeField(segments[index++]) as BioDocumentType,
 				},
+				judge: version >= 4 ? {
+					name: this.decodeField(segments[index++]),
+				} : null,
+				organization: version >= 4 ?{
+					name: this.decodeField(segments[index++]),
+				} : null,
 				signature: this.decodeField(segments[index++])
 			}
 
