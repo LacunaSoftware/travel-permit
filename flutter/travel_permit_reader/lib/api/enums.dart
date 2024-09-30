@@ -123,6 +123,7 @@ enum ParticipantTypes {
   guardian2,
   escort,
   underage,
+  judge,
 }
 
 //-------------------------------------------------------------------

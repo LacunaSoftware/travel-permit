@@ -16,9 +16,10 @@ import '../tp_exception.dart';
 
 class TravelPermitPage extends StatefulWidget {
   final TravelPermitModel model;
+  final JudiciaryTravelPermitModel? judiciaryModel;
   final dynamic onlineRequestException;
 
-  TravelPermitPage(this.model, {this.onlineRequestException});
+  TravelPermitPage(this.model, this.judiciaryModel, {this.onlineRequestException});
 
   @override
   _TravelPermitPageState createState() => _TravelPermitPageState();
@@ -54,6 +55,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     var participants = <TypedParticipant>[
       if (widget.model.escort != null) TypedParticipant(widget.model.escort!, ParticipantTypes.escort),
       if (widget.model.underage != null) TypedParticipant(widget.model.underage!, ParticipantTypes.underage),
+      if (widget.judiciaryModel?.judge != null) TypedParticipant(widget.judiciaryModel!.judge!, ParticipantTypes.judge),
       if (widget.model.requiredGuardian != null) TypedParticipant(widget.model.requiredGuardian!, ParticipantTypes.guardian1),
       if (widget.model.optionalGuardian != null) TypedParticipant(widget.model.optionalGuardian!, ParticipantTypes.guardian2),
     ];
@@ -304,6 +306,8 @@ class SummaryCard extends StatelessWidget {
         return 'Acompanhante';
       case ParticipantTypes.underage:
         return 'Menor';
+      case ParticipantTypes.judge:
+        return 'Juiz autorizador';
       default:
         return '';
     }
@@ -313,6 +317,7 @@ class SummaryCard extends StatelessWidget {
     switch (typedParticipant.type) {
       case ParticipantTypes.guardian1:
       case ParticipantTypes.guardian2:
+      case ParticipantTypes.judge:
         return Icons.person;
       case ParticipantTypes.escort:
         return Icons.escalator_warning;
