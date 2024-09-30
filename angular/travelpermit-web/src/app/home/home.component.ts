@@ -77,10 +77,9 @@ export class HomeComponent implements OnInit {
 			this.alert("Este não é um QR Code de Autorização Eletrônica de Viagem");
 		}
 
-		if ((version <= 2 && segments.length != version2Segments)
-			|| (version == 3 && segments.length != version3Segments)
-			|| (version == 4 && segments.length != version4Segments)
-		) {
+		if ((version <= 2 && segments.length != version2Segments) ||
+			(version == 3 && segments.length != version3Segments) ||
+			(version == 4 && segments.length != version4Segments)) {
 			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
 		}
 
@@ -120,6 +119,7 @@ export class HomeComponent implements OnInit {
 					documentNumber: this.decodeField(segments[index++]),
 					documentIssuer: this.decodeField(segments[index++]),
 					documentType: this.decodeField(segments[index++]) as BioDocumentType,
+					guardianship: version >= 4 ? this.decodeField(segments[index++]) as LegalGuardianTypes : null,
 				},
 				judge: version >= 4 ? {
 					name: this.decodeField(segments[index++]),
@@ -127,7 +127,7 @@ export class HomeComponent implements OnInit {
 				organization: version >= 4 ?{
 					name: this.decodeField(segments[index++]),
 				} : null,
-				signature: this.decodeField(segments[index++])
+				signature: this.decodeField(segments[index++]),
 			}
 
 			this.segments = segments;

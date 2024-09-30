@@ -8,7 +8,7 @@ export interface TravelPermitOfflineModel {
 	type: string;
 	requiredGuardian: GuardianOfflineModel;
 	optionalGuardian: GuardianOfflineModel;
-	escort: TravelPermitParticipantOfflineModel;
+	escort: EscortOfflineModel;
 	underage: UnderageOfflineModel;
 	judge: JudgeOfflineModel;
 	organization: OrganizationOfflineModel;
@@ -24,6 +24,10 @@ export interface OrganizationOfflineModel {
 }
 
 export interface GuardianOfflineModel extends TravelPermitParticipantOfflineModel {
+	guardianship: string;
+}
+
+export interface EscortOfflineModel extends TravelPermitParticipantOfflineModel {
 	guardianship: string;
 }
 
@@ -44,6 +48,10 @@ export interface TravelPermitGuardianModel extends TravelPermitAdultModel {
 	livedInBrazil?: boolean;
 	lastCityInBrazil?: string;
 	lastStateInBrazil?: Uf;
+}
+
+export interface TravelPermitEscortModel extends TravelPermitAdultModel {
+	guardianship: LegalGuardianTypes;
 }
 
 export interface TravelPermitAdultModel extends TravelPermitParticipantModel {
@@ -88,7 +96,7 @@ export interface TravelPermitModel {
 	requiredGuardian: TravelPermitGuardianModel;
 	optionalGuardian: TravelPermitGuardianModel;
 	underage: TravelPermitUnderageModel;
-	escort: TravelPermitAdultModel;
+	escort: TravelPermitEscortModel;
 }
 
 export interface JudiciaryTravelPermitModel extends TravelPermitModel {
