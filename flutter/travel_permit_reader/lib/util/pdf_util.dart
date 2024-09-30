@@ -193,8 +193,10 @@ class PdfUtil {
         return "tutor";
       case LegalGuardianTypes.guardian:
         return "guardião";
-      case LegalGuardianTypes.unrelated:
-        return "sem parentesco";
+      case LegalGuardianTypes.thirdPartyRelated:
+        return "terceiro com parentesco";
+      case LegalGuardianTypes.thirdPartyNotRelated:
+        return "terceiro sem parentesco";
       default:
         return "";
     }

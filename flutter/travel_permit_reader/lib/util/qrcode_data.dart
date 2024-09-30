@@ -122,7 +122,6 @@ class QRCodeData {
         escortDocumentIssuer: _decodeField(segments[index++]),
         escortDocumentType: _decodeField(segments[index++]),
         escortGuardianship: version >= 4 ? _decodeField(segments[index++]) : null,
-        isJudiciaryTravelPermit: version >= 4 ? _decodeBoolean(segments[index++]) : null,
         signature: Uint8List.fromList(hex.decode(segments[index++])),
       );
       data._segments = segments;

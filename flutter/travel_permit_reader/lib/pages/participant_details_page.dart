@@ -30,8 +30,10 @@ class ParticipantDetailsPage extends SummaryCard {
         return 'Mãe';
       case LegalGuardianTypes.tutor:
         return 'Tutor';
-      case LegalGuardianTypes.unrelated:
-        return 'Sem parentesco';
+      case LegalGuardianTypes.thirdPartyRelated:
+        return 'Terceiro com parentesco';
+      case LegalGuardianTypes.thirdPartyNotRelated:
+        return 'Terceiro sem parentesco';
       default:
         return 'Indefinido';
     }

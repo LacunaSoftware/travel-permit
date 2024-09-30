@@ -57,7 +57,8 @@ enum LegalGuardianTypes {
   father,
   tutor,
   guardian,
-  unrelated,
+  thirdPartyRelated,
+  thirdPartyNotRelated,
 }
 
 extension LegalGuardianTypesExt on LegalGuardianTypes {
@@ -67,7 +68,8 @@ extension LegalGuardianTypesExt on LegalGuardianTypes {
       'f': LegalGuardianTypes.father,
       't': LegalGuardianTypes.tutor,
       'g': LegalGuardianTypes.guardian,
-      'u': LegalGuardianTypes.unrelated,
+      'r': LegalGuardianTypes.thirdPartyRelated,
+      's': LegalGuardianTypes.thirdPartyNotRelated,
     });
   }
 }
