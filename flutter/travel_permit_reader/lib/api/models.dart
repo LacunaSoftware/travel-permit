@@ -595,7 +595,7 @@ class TravelPermitValidationInfo {
   factory TravelPermitValidationInfo.fromQRCode(QRCodeData data) {
     return TravelPermitValidationInfo._(
       travelPermit: TravelPermitModel.fromQRCode(data),
-      judiciaryTravelPermit: null,
+      judiciaryTravelPermit: JudiciaryTravelPermitModel.fromQRCode(data),
     );
   }
 }
