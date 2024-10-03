@@ -181,19 +181,53 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     PageUtil.showAppDialog(context, title, message);
   }
 
+  Widget _buildDestinationInfo(bool isDestinationSpecific) {
+    final country = widget.judiciaryModel?.destination?.country ?? '';
+    final state = widget.judiciaryModel?.destination?.state ?? '';
+    final city = widget.judiciaryModel?.destination?.city ?? '';
+
+    final cityState =
+        (city.isNotEmpty && state.isNotEmpty) ? '$city, $state' : city + state;
+
+    return isDestinationSpecific
+        ? Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(country, style: AppTheme.bodyStyle),
+                StringExt.isNullOrEmpty(cityState)
+                    ? Container()
+                    : Text(cityState),
+              ],
+            ),
+          )
+        : Container();
+  }
+
   Widget _buildTravelPermitType() {
+    final isDestinationSpecific =
+        widget.judiciaryModel?.destination?.type == DestinationTypes.specific;
+
     return BaseCard(
         color: AppTheme.accentFgColor,
-        child: Row(children: [
-          Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.card_travel,
-                size: 30,
-                color: AppTheme.defaultFgColor,
-              )),
-          Text(typeDescription ?? '')
-        ]));
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Icon(
+                    Icons.card_travel,
+                    size: 30,
+                    color: AppTheme.defaultFgColor,
+                  )),
+              Text(typeDescription ?? '')
+            ]),
+            isDestinationSpecific ? buildDivider() : Container(),
+            _buildDestinationInfo(isDestinationSpecific),
+          ],
+        ));
   }
 
   Widget _buildPermitValidityState() {
