@@ -47,6 +47,13 @@ class PdfUtil {
     final startDate = _model.startDate?.toLocal().toDateString();
     final expirationDate = _model.expirationDate.toLocal().toDateString();
     final isAuthorizedByJudge = _judiciaryModel?.judge?.name != null && _judiciaryModel?.notary?.name != null;
+    final isSpecific =
+        _judiciaryModel?.destination?.type == DestinationTypes.specific;
+    final destination = [
+      _judiciaryModel?.destination?.city,
+      _judiciaryModel?.destination?.state,
+      _judiciaryModel?.destination?.country
+    ].where((part) => part?.isNotEmpty ?? false).join(', ');
 
     final helvetica = pw.Font.helvetica();
     final font11 = pw.TextStyle(font: helvetica, fontSize: 11);
@@ -87,7 +94,20 @@ class PdfUtil {
     }
 
     /// We/I authorise
-    addSpan(personsInfos, ', ${_model.optionalGuardian != null && !isAuthorizedByJudge ? "AUTORIZAMOS" : "AUTORIZO"} ' + 'a circular livremente ${startDate == null ? "até" : "no período de $startDate a"} $expirationDate' + ', ${isInternational ? "em território internacional," : "dentro do território nacional,"} ', font12);
+    if (isSpecific) {
+      addSpan(
+          personsInfos,
+          ', ${_model.optionalGuardian != null && !isAuthorizedByJudge ? "AUTORIZAMOS" : "AUTORIZO"} ' +
+              'a embarcar em rota para ${destination} ${startDate == null ? "até" : "no período de $startDate a"} $expirationDate ',
+          font12);
+    } else {
+      addSpan(
+          personsInfos,
+          ', ${_model.optionalGuardian != null && !isAuthorizedByJudge ? "AUTORIZAMOS" : "AUTORIZO"} ' +
+              'a circular livremente ${startDate == null ? "até" : "no período de $startDate a"} $expirationDate' +
+              ', ${isInternational ? "em território internacional," : "dentro do território nacional,"} ',
+          font12);
+    }
 
     if (_model.escort == null) {
       addSpan(personsInfos, 'desacompanhado(a), ', font12);
