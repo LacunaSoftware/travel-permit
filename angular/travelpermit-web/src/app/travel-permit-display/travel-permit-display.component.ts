@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { DestinationTypes, TravelPermitTypes } from 'src/api/enums';
 import { TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
 import { environment } from 'src/environments/environment';
 
@@ -12,6 +13,8 @@ import { environment } from 'src/environments/environment';
 export class TravelPermitDisplayComponent implements OnInit {
 	@Input()
 	travelPermit: TravelPermitModel | TravelPermitOfflineModel;
+	readonly DestinationTypes = DestinationTypes;
+	readonly TravelPermitTypes = TravelPermitTypes;
 	
 	loading: boolean = false;
 

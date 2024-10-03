@@ -106,6 +106,11 @@ export enum TravelPermitTypes {
 	Domestic = "Domestic"
 }
 
+export enum DestinationTypes {
+	AnyDestination = 'AnyDestination',
+	Specific = 'Specific'
+}
+
 export enum Uf {
 	AC = 'AC',
 	AL = 'AL',

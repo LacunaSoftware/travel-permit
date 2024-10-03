@@ -5,7 +5,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { latestKnownVersion, magicPrefix, segmentSeparator, spaceMarker } from 'src/api/constants';
 import { CryptoHelper } from 'src/api/crypto';
-import { BioDocumentType, BioGender, LegalGuardianTypes, TravelPermitTypes } from 'src/api/enums';
+import { BioDocumentType, BioGender, DestinationTypes, LegalGuardianTypes, TravelPermitTypes } from 'src/api/enums';
 import { TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
 import { environment } from 'src/environments/environment';
 import { DialogAlertComponent } from '../dialog-alert/dialog-alert.component';
@@ -96,6 +96,7 @@ export class HomeComponent implements OnInit {
 				startDate: version >= 3 ? this.decodeField(segments[index++]) : null,
 				expirationDate: this.decodeField(segments[index++]),
 				type: this.decodeField(segments[index++]) as TravelPermitTypes,
+				
 				requiredGuardian: {
 					name: this.decodeField(segments[index++]),
 					documentNumber: this.decodeField(segments[index++]),
@@ -127,6 +128,10 @@ export class HomeComponent implements OnInit {
 				},
 				isJudiciaryTravelPermit: version >= 4 ? this.decodeField(segments[index++]) == "1" ? true : false : null,
 				signature: this.decodeField(segments[index++]),
+				destinationType: version >= 4 ? this.decodeField(segments[index++]) as DestinationTypes : null,
+				country: version >= 4 ? this.decodeField(segments[index++]) : null,
+				state: version >= 4 ? this.decodeField(segments[index++]) : null,
+				city: version >= 4 ? this.decodeField(segments[index++]) : null
 			}
 
 			this.segments = segments;
@@ -165,7 +170,6 @@ export class HomeComponent implements OnInit {
 			.subscribe((tp) => {
 				tp.key = docKey;
 				this.travelPermit = tp;
-				console.log('Loaded travel permit', tp);
 				this.loading = false;
 			}, (err) => {
 				this.loading = false;

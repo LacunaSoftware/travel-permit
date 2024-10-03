@@ -1,14 +1,16 @@
 <ngx-loading [show]="loading"></ngx-loading>
-<ng-container  *ngIf="travelPermit">
+<ng-container *ngIf="travelPermit">
 	<div class="d-flex flex-column">
 		<div class="row pt-3">
 			<div class="col-12 col-md-6 px-md-5 pt-4 pt-md-0">
 				<div class="row">
 					<div class="col-12 col-md-6">
-						<p class="mb-sm-1"><strong>{{travelPermit.startDate ? "Período de Validade" : "Data de Expiração"}}:</strong></p>
+						<p class="mb-sm-1"><strong>{{travelPermit.startDate ? "Período de Validade" : "Data de
+								Expiração"}}:</strong></p>
 					</div>
 					<div class="col-12 col-md-6 d-flex justify-content-end">
-						<p>{{(travelPermit.startDate ? (travelPermit.startDate | date: 'dd/MM/yyyy') + " à " : "") + (travelPermit.expirationDate | date: 'dd/MM/yyyy')}}</p>
+						<p>{{(travelPermit.startDate ? (travelPermit.startDate | date: 'dd/MM/yyyy') + " à " : "") +
+							(travelPermit.expirationDate | date: 'dd/MM/yyyy')}}</p>
 					</div>
 				</div>
 				<div class="row">
@@ -17,6 +19,54 @@
 					</div>
 					<div class="col-12 col-md-8 d-flex justify-content-end">
 						<p>{{travelPermit.type | travelPermitType}}</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12 col-md-4">
+						<h4 class="mb-sm-1"><strong>Tipo de Destino:</strong></h4>
+					</div>
+					<div class="col-12 col-md-8 d-flex justify-content-end">
+						<p>{{travelPermit.destinationType | destinationType}}</p>
+					</div>
+				</div>
+
+				<div *ngIf="travelPermit.type === TravelPermitTypes.Domestic && travelPermit.destinationType === DestinationTypes.Specific">
+					<div class="row">
+						<div class="col-12 col-md-4">
+							<h4 class="mb-sm-1"><strong>Pais:</strong></h4>
+						</div>
+						<div class="col-12 col-md-8 d-flex justify-content-end">
+							<p>{{travelPermit.country}}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12 col-md-4">
+							<h4 class="mb-sm-1"><strong>Estado:</strong></h4>
+						</div>
+						<div class="col-12 col-md-8 d-flex justify-content-end">
+							<p>{{travelPermit.state}}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12 col-md-4">
+							<h4 class="mb-sm-1"><strong>Cidade:</strong></h4>
+						</div>
+						<div class="col-12 col-md-8 d-flex justify-content-end">
+							<p>{{travelPermit.city}}</p>
+						</div>
+					</div>
+				</div>
+
+				<div *ngIf="travelPermit.type === TravelPermitTypes.International && travelPermit.destinationType === DestinationTypes.Specific">
+					<div class="row">
+						<div class="col-12 col-md-4">
+							<h4 class="mb-sm-1"><strong>Pais:</strong></h4>
+						</div>
+						<div class="col-12 col-md-8 d-flex justify-content-end">
+							<p>{{travelPermit.country}}</p>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -37,7 +87,7 @@
 					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.underage, title: 'Menor' }">
 				</ng-template>
 			</div>
-	
+
 			<div *ngIf="travelPermit.escort?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
 					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante', showKinship: travelPermit.isJudiciaryTravelPermit }">
@@ -49,7 +99,7 @@
 					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.requiredGuardian, title: 'Reponsável Legal 1', guardian: true }">
 				</ng-template>
 			</div>
-	
+
 			<div *ngIf="travelPermit.optionalGuardian?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
 					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.optionalGuardian, title: 'Reponsável Legal 2', guardian: true }">
@@ -57,17 +107,19 @@
 			</div>
 		</div>
 	</div>
-	
+
 </ng-container>
 
-<ng-template #participantDisplay let-participant="participant" let-title="title" let-guardian="guardian" let-showKinship="showKinship">
+<ng-template #participantDisplay let-participant="participant" let-title="title" let-guardian="guardian"
+	let-showKinship="showKinship">
 	<div class="flex-grow-1">
 		<h4 class="text-primary"><strong>{{title}}</strong></h4>
 	</div>
 
 	<div *ngIf="isOnline" class="row justify-content-center">
 		<div class="w-md-30 p-3">
-			<img [src]="participant.pictureLocation || '/assets/img/participant-placeholder.png'" style="width:100%; border-radius: 5px;" />
+			<img [src]="participant.pictureLocation || '/assets/img/participant-placeholder.png'"
+				style="width:100%; border-radius: 5px;" />
 		</div>
 	</div>
 
@@ -148,7 +200,8 @@
 			<p class="mb-sm-1"><strong>Naturalidade:</strong></p>
 		</div>
 		<div class="col-12 col-md-6 d-flex justify-content-end">
-			<p>{{participant.cityOfBirth}}<ng-container *ngIf="participant.stateOfBirth"> - {{participant.stateOfBirth}}</ng-container></p>
+			<p>{{participant.cityOfBirth}}<ng-container *ngIf="participant.stateOfBirth"> -
+					{{participant.stateOfBirth}}</ng-container></p>
 		</div>
 	</div>
 
@@ -164,8 +217,7 @@
 	<mat-expansion-panel *ngIf="participant.zipCode" class="box-group mat-elevation-z0 travel-permit-group mt-3">
 		<mat-expansion-panel-header class="expansion-panel-header-padding">
 			<h3 class="mb-0">
-				<strong
-					class="text-dark">Endereço</strong>
+				<strong class="text-dark">Endereço</strong>
 			</h3>
 		</mat-expansion-panel-header>
 
@@ -183,76 +235,83 @@
 			</div>
 		</div>
 
-		<div *ngIf="participant.streetAddress" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+		<div *ngIf="participant.streetAddress"
+			class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
 			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					<strong>Logradouro:</strong>
 				</p>
 			</div>
 
-			<div  class="d-flex flex-row align-items-center">
+			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					{{participant.streetAddress}}
 				</p>
 			</div>
 		</div>
 
-		<div *ngIf="participant.addressNumber" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+		<div *ngIf="participant.addressNumber"
+			class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
 			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					<strong>Número:</strong>
 				</p>
 			</div>
 
-			<div  class="d-flex flex-row align-items-center">
+			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					{{participant.addressNumber}}
 				</p>
 			</div>
 		</div>
 
-		<div *ngIf="participant.additionalAddressInfo" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+		<div *ngIf="participant.additionalAddressInfo"
+			class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
 			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					<strong>Complemento:</strong>
 				</p>
 			</div>
 
-			<div  class="d-flex flex-row align-items-center">
+			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					{{participant.additionalAddressInfo}}
 				</p>
 			</div>
 		</div>
 
-		<div *ngIf="participant.neighborhood" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+		<div *ngIf="participant.neighborhood"
+			class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
 			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					<strong>Bairro:</strong>
 				</p>
 			</div>
 
-			<div  class="d-flex flex-row align-items-center">
+			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					{{participant.neighborhood}}
 				</p>
 			</div>
 		</div>
-		
-		<div *ngIf="participant.addressCity" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+
+		<div *ngIf="participant.addressCity"
+			class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
 			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					<strong>Cidade:</strong>
 				</p>
 			</div>
 
-			<div  class="d-flex flex-row align-items-center">
+			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
-					{{participant.addressCity}}<ng-container *ngIf="participant.addressState || participant.addressForeignStateName"> - {{participant.addressState || participant.addressForeignStateName}}</ng-container>
+					{{participant.addressCity}}<ng-container
+						*ngIf="participant.addressState || participant.addressForeignStateName"> -
+						{{participant.addressState || participant.addressForeignStateName}}</ng-container>
 				</p>
 			</div>
 		</div>
-		
+
 		<div *ngIf="participant.country" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
 			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
@@ -260,7 +319,7 @@
 				</p>
 			</div>
 
-			<div  class="d-flex flex-row align-items-center">
+			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					{{participant.country}}
 				</p>
@@ -269,15 +328,16 @@
 
 	</mat-expansion-panel>
 
-	<mat-expansion-panel *ngIf="participant.phoneNumber || participant.email" class="box-group mat-elevation-z0 travel-permit-group">
+	<mat-expansion-panel *ngIf="participant.phoneNumber || participant.email"
+		class="box-group mat-elevation-z0 travel-permit-group">
 		<mat-expansion-panel-header class="expansion-panel-header-padding">
 			<h3 class="mb-0">
-				<strong
-					class="text-dark">Dados de Contato</strong>
+				<strong class="text-dark">Dados de Contato</strong>
 			</h3>
 		</mat-expansion-panel-header>
 
-		<div *ngIf="participant.phoneNumber" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+		<div *ngIf="participant.phoneNumber"
+			class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
 			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					<strong>Telefone:</strong>
@@ -304,10 +364,11 @@
 				</p>
 			</div>
 		</div>
-		
+
 	</mat-expansion-panel>
 
-	<mat-expansion-panel *ngIf="participant.livedInBrazil != null" class="box-group mat-elevation-z0 travel-permit-group mt-3">
+	<mat-expansion-panel *ngIf="participant.livedInBrazil != null"
+		class="box-group mat-elevation-z0 travel-permit-group mt-3">
 		<mat-expansion-panel-header class="expansion-panel-header-padding">
 			<h3 class="mb-0">
 				<strong class="text-dark">Informações adicionais</strong>
@@ -321,27 +382,29 @@
 				</p>
 			</div>
 
-			<div  class="d-flex flex-row align-items-center">
+			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					{{participant.livedInBrazil ? "Sim" : "Não"}}
 				</p>
 			</div>
 		</div>
 
-		<div *ngIf="participant.livedInBrazil && participant.lastCityInBrazil" class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
+		<div *ngIf="participant.livedInBrazil && participant.lastCityInBrazil"
+			class="d-flex flex-row justify-content-between align-items-center w-100 mb-3">
 			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
 					<strong>Última cidade e estado</strong>
 				</p>
 			</div>
 
-			<div  class="d-flex flex-row align-items-center">
+			<div class="d-flex flex-row align-items-center">
 				<p class="mb-0">
-					{{participant.lastCityInBrazil}}<ng-container *ngIf="participant.lastStateInBrazil"> - {{participant.lastStateInBrazil}}</ng-container>
+					{{participant.lastCityInBrazil}}<ng-container *ngIf="participant.lastStateInBrazil"> -
+						{{participant.lastStateInBrazil}}</ng-container>
 				</p>
 			</div>
 		</div>
 
 	</mat-expansion-panel>
-	
-</ng-template>	
+
+</ng-template>
