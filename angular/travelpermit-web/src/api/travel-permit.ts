@@ -15,7 +15,8 @@ export interface TravelPermitOfflineModel {
 	escort: EscortOfflineModel;
 	underage: UnderageOfflineModel;
 	signature: string;
-	isJudiciaryTravelPermit: boolean;
+	judge: string;
+	organization: string;
 }
 
 export interface GuardianOfflineModel extends TravelPermitParticipantOfflineModel {
