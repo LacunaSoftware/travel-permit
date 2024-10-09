@@ -85,6 +85,7 @@ class PdfUtil {
     /// Required Guardian
     if (_model.requiredGuardian != null && !isAuthorizedByJudge) {
       addSpan(personsInfos, 'Eu, ', font12);
+      addGuardianInfo(_model.requiredGuardian!, personsInfos, font12, bold12);
     }
 
     /// Optional Guardian
@@ -116,8 +117,12 @@ class PdfUtil {
     /// Underage
     if (_model.underage != null) {
       addSpan(personsInfos, _model.underage!.name, bold12);
-      addSpan(personsInfos, ', nascido(a) em ${_model.underage!.birthDate?.toLocal().toDateString()}', font12);
-      addSpan(personsInfos, ', sexo ${getGenderStr(_model.underage!.bioGender)}', font12);
+      addSpan(
+          personsInfos,
+          ', nascido(a) em ${_model.underage!.birthDate?.toDateString()}',
+          font12);
+      addSpan(personsInfos,
+          ', sexo ${getGenderStr(_model.underage!.bioGender)}', font12);
       addDocumentPhrase(_model.underage!, personsInfos, font12);
     }
 
