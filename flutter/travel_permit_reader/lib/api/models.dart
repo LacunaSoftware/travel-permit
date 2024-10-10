@@ -9,11 +9,12 @@ class TravelPermitModel {
   final TravelPermitTypes? type;
   final GuardianModel? requiredGuardian;
   final GuardianModel? optionalGuardian;
-  final AdultModel? escort;
+  final EscortModel? escort;
   final UnderageModel? underage;
   final NotaryModel? notary;
   final bool isOffline;
   final String? qrcodeData;
+  final bool? isJudiciaryTravelPermit;
 
   TravelPermitModel._({
     required this.key,
@@ -27,6 +28,7 @@ class TravelPermitModel {
     this.notary,
     required this.isOffline,
     this.qrcodeData,
+    this.isJudiciaryTravelPermit,
   });
 
   factory TravelPermitModel.fromJson(String key, Map<String, dynamic> json) {
@@ -34,25 +36,27 @@ class TravelPermitModel {
         isOffline: false,
         key: key,
         startDate: StringExt.isNullOrEmpty(json['startDate'])
-            ? null
-            : DateTime.parse(json['startDate']),
+          ? null
+          : DateTime.parse(json['startDate']),
         expirationDate: DateTime.parse(json['expirationDate']),
         type: TravelPermitTypesExt.fromString(json['type']),
         requiredGuardian: json['requiredGuardian'] == null
-            ? null
-            : GuardianModel.fromJson(json['requiredGuardian']),
+          ? null
+          : GuardianModel.fromJson(json['requiredGuardian']),
         optionalGuardian: json['optionalGuardian'] == null
-            ? null
-            : GuardianModel.fromJson(json['optionalGuardian']),
+          ? null
+          : GuardianModel.fromJson(json['optionalGuardian']),
         escort: json['escort'] == null
-            ? null
-            : AdultModel.fromJson(json['escort']),
+          ? null
+          : EscortModel.fromJson(json['escort']),
         underage: json['underage'] == null
-            ? null
-            : UnderageModel.fromJson(json['underage']),
+          ? null
+          : UnderageModel.fromJson(json['underage']),
         notary: json['notary'] == null
-            ? null
-            : NotaryModel.fromJson(json['notary']));
+          ? null
+          : NotaryModel.fromJson(json['notary']),
+        isJudiciaryTravelPermit: json['isJudiciaryTravelPermit'],
+    );
   }
 
   factory TravelPermitModel.fromQRCode(QRCodeData data) {
@@ -89,12 +93,12 @@ class TravelPermitModel {
       //-------------------------------------------------------------------
       escort: StringExt.isNullOrEmpty(data.escortName)
           ? null
-          : AdultModel._(
+          : EscortModel._(
               name: data.escortName,
               documentNumber: data.escortDocumentNumber,
               documentIssuer: data.escortDocumentIssuer,
-              documentType:
-                  IdDocumentTypesExt.fromString(data.escortDocumentType),
+              documentType: IdDocumentTypesExt.fromString(data.escortDocumentType),
+              guardianship: LegalGuardianTypesExt.fromString(data.escortGuardianship),
             ),
       //-------------------------------------------------------------------
       underage: StringExt.isNullOrEmpty(data.underageName)
@@ -108,6 +112,7 @@ class TravelPermitModel {
               birthDate: DateTime.parse(data.underageBirthDate!),
               bioGender: BioGendersExt.fromString(data.underageBioGender)),
       qrcodeData: data.getQRCodeData(),
+      isJudiciaryTravelPermit: data.isJudiciaryTravelPermit,
     );
   }
 }
@@ -221,6 +226,80 @@ class AdultModel extends ParticipantModel {
       country: json['country'],
       addressForeignStateName: json['addressForeignStateName'],
       addressForeignCityName: json['addressForeignCityName'],
+    );
+  }
+}
+
+//-------------------------------------------------------------------
+
+class EscortModel extends AdultModel {
+  final LegalGuardianTypes? guardianship;
+
+  EscortModel._({
+    this.guardianship,
+    phoneNumber,
+    email,
+    identifier,
+    name,
+    documentNumber,
+    documentType,
+    documentIssuer,
+    issueDate,
+    photoUrl,
+    addressCity,
+    addressState,
+    zipCode,
+    streetAddress,
+    addressNumber,
+    additionalAddressInfo,
+    neighborhood,
+    country,
+    addressForeignStateName,
+    addressForeignCityName,
+  }) : super._(
+          phoneNumber: phoneNumber,
+          email: email,
+          identifier: identifier,
+          name: name,
+          documentNumber: documentNumber,
+          documentType: documentType,
+          documentIssuer: documentIssuer,
+          issueDate: issueDate,
+          photoUrl: photoUrl,
+          addressCity: addressCity,
+          addressState: addressState,
+          zipCode: zipCode,
+          streetAddress: streetAddress,
+          addressNumber: addressNumber,
+          additionalAddressInfo: additionalAddressInfo,
+          neighborhood: neighborhood,
+          country: country,
+          addressForeignStateName: addressForeignStateName,
+          addressForeignCityName: addressForeignCityName,
+        );
+
+  factory EscortModel.fromJson(Map<String, dynamic> json) {
+    return EscortModel._(
+      identifier: json['identifier'],
+      name: json['name'],
+      documentNumber: json['documentNumber'],
+      documentType: IdDocumentTypesExt.fromString(json['documentType']),
+      documentIssuer: json['documentIssuer'],
+      issueDate: DateTime.parse(json['issueDate']),
+      photoUrl: json['pictureLocation'],
+      addressCity: json['addressCity'],
+      addressState: json['addressState'],
+      zipCode: json['zipCode'],
+      streetAddress: json['streetAddress'],
+      addressNumber: json['addressNumber'],
+      additionalAddressInfo: json['additionalAddressInfo'],
+      neighborhood: json['neighborhood'],
+      phoneNumber: json['phoneNumber'],
+      email: json['email'],
+      country: json['country'],
+      addressForeignStateName: json['addressForeignStateName'],
+      addressForeignCityName: json['addressForeignCityName'],
+      guardianship: LegalGuardianTypesExt.fromString(json['guardianship']),
     );
   }
 }

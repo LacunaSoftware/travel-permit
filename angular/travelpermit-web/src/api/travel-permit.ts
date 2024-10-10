@@ -10,7 +10,17 @@ export interface TravelPermitOfflineModel {
 	optionalGuardian: GuardianOfflineModel;
 	escort: EscortOfflineModel;
 	underage: UnderageOfflineModel;
+	judge: JudgeOfflineModel;
+	organization: OrganizationOfflineModel;
 	signature: string;
+}
+
+export interface JudgeOfflineModel {
+	name: string;
+}
+
+export interface OrganizationOfflineModel {
+	name: string;
 }
 
 export interface GuardianOfflineModel extends TravelPermitParticipantOfflineModel {
@@ -82,9 +92,25 @@ export interface TravelPermitModel {
 	expirationDate: string;
 	type: TravelPermitTypes;
 	isRemoteTravelPermit: boolean;
+	canBeHostedOnEmergency: boolean;
 	requiredGuardian: TravelPermitGuardianModel;
 	optionalGuardian: TravelPermitGuardianModel;
 	underage: TravelPermitUnderageModel;
 	escort: TravelPermitEscortModel;
-	isJudiciaryTravelPermit: boolean;
+}
+
+export interface JudiciaryTravelPermitModel extends TravelPermitModel {
+	judge: JudiciaryTravelPermitJudgeModel;
+	authorizedByJudge: boolean;
+}
+
+export interface JudiciaryTravelPermitJudgeModel {
+	name: string;
+	email: string;
+	identifier: string;
+}
+
+export interface TravelPermitValidationModel {
+	travelPermit: TravelPermitModel;
+	judiciaryTravelPermit: JudiciaryTravelPermitModel;
 }
