@@ -401,6 +401,29 @@ class SummaryCard extends StatelessWidget {
     }
   }
 
+  String get getGuardianshipStr {
+    if (model is! EscortModel && model is! GuardianModel) {
+      return '';
+    }
+
+    switch ((model as EscortModel).guardianship) {
+      case LegalGuardianTypes.mother:
+        return "Mãe";
+      case LegalGuardianTypes.father:
+        return "Pai";
+      case LegalGuardianTypes.tutor:
+        return "Tutor";
+      case LegalGuardianTypes.guardian:
+        return "Guardião";
+      case LegalGuardianTypes.thirdPartyRelated:
+        return "Terceiro com parentesco";
+      case LegalGuardianTypes.thirdPartyNotRelated:
+        return "Terceiro sem parentesco";
+      default:
+        return "";
+    }
+  }
+
   Widget wrapTappable(BuildContext context, Widget child) {
     return isOffline
         ? Container(child: child)
@@ -449,6 +472,7 @@ class SummaryCard extends StatelessWidget {
                 SizedBox(height: 8),
                 if (documentTypeDescription != '') Text('$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
                 if (underage?.birthDate != null) Text('Nascimento: ${underage!.birthDate!.toDateString()} ${underage.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+                if (getGuardianshipStr.isNotEmpty) Text('Parentesco: ${getGuardianshipStr}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
               ],
             )));
   }
