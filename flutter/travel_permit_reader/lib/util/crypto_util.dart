@@ -6,10 +6,18 @@ import 'package:pointycastle/pointycastle.dart';
 class CryptoUtil {
   static ECDomainParameters _ecDomain = ECCurve_secp256r1();
 
+  // PRODUCTION
+  // static ECPublicKey _publicKeyV1 = ECPublicKey(
+  //     _ecDomain.curve.createPoint(
+  //         BigIntExt.fromBase64('Mq1pD1R4qu6xjpIvarG54zOnGrAqvMbsq9Fvo8kns4s='),
+  //         BigIntExt.fromBase64('1c53A4cKVXCtFucnC7Z54uNPzEHrVxgu3tJVhQNv19U=')),
+  //     _ecDomain);
+
+  // HOMOLOGATION
   static ECPublicKey _publicKeyV1 = ECPublicKey(
       _ecDomain.curve.createPoint(
-          BigIntExt.fromBase64('Mq1pD1R4qu6xjpIvarG54zOnGrAqvMbsq9Fvo8kns4s='),
-          BigIntExt.fromBase64('1c53A4cKVXCtFucnC7Z54uNPzEHrVxgu3tJVhQNv19U=')),
+          BigIntExt.fromBase64('hebj9X2FaROdv/g8iFhdk5ecfg6+lyaSTU9Jw2JOp8Q='),
+          BigIntExt.fromBase64('A+jzLgtvtjAUpbNgNmBe3RZDHt1Ip8D9fte+Of17tNQ=')),
       _ecDomain);
 
   static bool verifySignature(Uint8List signature, Uint8List tbsData) {

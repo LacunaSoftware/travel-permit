@@ -1,9 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { DestinationTypes, TravelPermitTypes } from 'src/api/enums';
-import { TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
+import { JudiciaryTravelPermitModel, TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
 import { environment } from 'src/environments/environment';
+import { DocumentService } from '../services/document.service';
 
 @Component({
 	selector: 'app-travel-permit-display',
@@ -15,6 +13,17 @@ export class TravelPermitDisplayComponent implements OnInit {
 	travelPermit: TravelPermitModel | TravelPermitOfflineModel;
 	readonly DestinationTypes = DestinationTypes;
 	readonly TravelPermitTypes = TravelPermitTypes;
+
+	@Input()
+	judiciaryTravelPermit: JudiciaryTravelPermitModel;
+
+	get canBeHostedOnEmergency() {
+		return (this.travelPermit as TravelPermitModel)?.canBeHostedOnEmergency;
+	}
+
+	get authorizedByJudge() {
+		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge.name;
+	}
 	
 	loading: boolean = false;
 
@@ -23,7 +32,7 @@ export class TravelPermitDisplayComponent implements OnInit {
 	}
 
 	constructor(
-		private http: HttpClient,
+		private documentService: DocumentService,
 	) { }
 
 	ngOnInit() {
@@ -32,13 +41,9 @@ export class TravelPermitDisplayComponent implements OnInit {
 	download() {
 		this.loading = true;
 
-		this.getDownloadTicket(this.travelPermit.key).subscribe(m => {
+		this.documentService.getDownloadTicket(this.travelPermit.key).subscribe(m => {
 			document.location.href = environment.cnbEndpoint + m.location;
 			this.loading = false;
 		}, _ => this.loading = false);
-	}
-
-	getDownloadTicket(key: string): Observable<{location: string}> {
-		return this.http.get<{location: string}>(`${environment.cnbEndpoint}/api/documents/keys/${key}/ticket?type=Signatures`);
 	}
 }

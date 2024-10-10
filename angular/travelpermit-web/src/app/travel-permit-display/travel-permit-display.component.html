@@ -69,6 +69,22 @@
 						</div>
 					</div>
 				</div>
+				<div class="row" *ngIf="canBeHostedOnEmergency != null">
+					<div class="col-12 col-md-4">
+						<h4 class="mb-sm-1"><strong>Hospedagem de menor:</strong></h4>
+					</div>
+					<div class="col-12 col-md-8 d-flex justify-content-end">
+						<p>{{canBeHostedOnEmergency ? 'Sim' : 'Não'}}</p>
+					</div>
+				</div>
+				<div class="row" *ngIf="authorizedByJudge">
+					<div class="col-12 col-md-4">
+						<h4 class="mb-sm-1"><strong>Autorizado por:</strong></h4>
+					</div>
+					<div class="col-12 col-md-8 d-flex justify-content-end">
+						<p>{{judiciaryTravelPermit.authorizedByJudge ? 'Juiz' : 'Responsável legal'}}</p>
+					</div>
+				</div>
 			</div>
 
 			<a *ngIf="isOnline" class="col-12 col-md-6 px-md-5 pt-4 pt-md-0 pointer" (click)="download()">
@@ -90,11 +106,11 @@
 
 			<div *ngIf="travelPermit.escort?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante'}">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante', showKinship: travelPermit.escort.guardianship }">
 				</ng-template>
 			</div>
 
-			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
+			<div class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0" *ngIf="travelPermit.requiredGuardian?.name">
 				<ng-template
 					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.requiredGuardian, title: 'Reponsável Legal 1', guardian: true }">
 				</ng-template>

@@ -29,6 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { SystemInfoComponent } from './system-version/system-info.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
+import { DocumentService } from './services/document.service';
 
 
 @NgModule({
@@ -65,7 +66,9 @@ import { HomeComponent } from './home/home.component';
 		NgxLoadingModule.forRoot({}),
 		AppRoutingModule
 	],
-	providers: [],
+	providers: [
+		DocumentService,
+	],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

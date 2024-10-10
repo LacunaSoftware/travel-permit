@@ -98,7 +98,9 @@ export enum LegalGuardianTypes {
 	Mother = 'Mother',
 	Father = 'Father',
 	Tutor = 'Tutor',
-	Guardian = 'Guardian'
+	Guardian = 'Guardian',
+	ThirdPartyRelated = 'ThirdPartyRelated',
+	ThirdPartyNotRelated = 'ThirdPartyNotRelated',
 }
 
 export enum TravelPermitTypes {
