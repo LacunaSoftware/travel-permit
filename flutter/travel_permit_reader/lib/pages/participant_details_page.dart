@@ -44,7 +44,7 @@ class ParticipantDetailsPage extends SummaryCard {
     List<Widget> details = [
       buildLabelText('Nome'),
       buildDetailsText(model.name),
-      buildPicture(),
+      if (!isJudge) buildPicture(),
       buildDivider(),
     ];
     if (!StringExt.isNullOrEmpty(model.identifier)) {
@@ -57,9 +57,14 @@ class ParticipantDetailsPage extends SummaryCard {
 
     details.addAll([
       buildLabelText(documentTypeDescription),
-      buildDetailsText('${model.documentNumber} (${model.documentIssuer})\nEmitido em ${model.issueDate?.toDateString()}'),
-      buildDivider(),
     ]);
+
+    if (!isJudge) {
+      details.addAll([
+        buildDetailsText('${model.documentNumber} (${model.documentIssuer})\nEmitido em ${model.issueDate?.toDateString()}'),
+        buildDivider(),
+      ]);
+    }
 
     if (model is GuardianModel) {
       details.addAll(buildGuardianDetails());

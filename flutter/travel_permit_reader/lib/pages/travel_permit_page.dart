@@ -16,9 +16,10 @@ import '../tp_exception.dart';
 
 class TravelPermitPage extends StatefulWidget {
   final TravelPermitModel model;
+  final JudiciaryTravelPermitModel? judiciaryModel;
   final dynamic onlineRequestException;
 
-  TravelPermitPage(this.model, {this.onlineRequestException});
+  TravelPermitPage(this.model, this.judiciaryModel, {this.onlineRequestException});
 
   @override
   _TravelPermitPageState createState() => _TravelPermitPageState();
@@ -40,7 +41,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
 
   PdfUtil? _pdfUtil;
   PdfUtil get pdfUtil {
-    return _pdfUtil ??= PdfUtil(widget.model);
+    return _pdfUtil ??= PdfUtil(widget.model, widget.judiciaryModel);
   }
 
   @override
@@ -54,6 +55,7 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     var participants = <TypedParticipant>[
       if (widget.model.escort != null) TypedParticipant(widget.model.escort!, ParticipantTypes.escort),
       if (widget.model.underage != null) TypedParticipant(widget.model.underage!, ParticipantTypes.underage),
+      if (widget.judiciaryModel?.judge != null) TypedParticipant(widget.judiciaryModel!.judge!, ParticipantTypes.judge),
       if (widget.model.requiredGuardian != null) TypedParticipant(widget.model.requiredGuardian!, ParticipantTypes.guardian1),
       if (widget.model.optionalGuardian != null) TypedParticipant(widget.model.optionalGuardian!, ParticipantTypes.guardian2),
     ];
@@ -179,19 +181,53 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
     PageUtil.showAppDialog(context, title, message);
   }
 
+  Widget _buildDestinationInfo(bool isDestinationSpecific) {
+    final country = widget.judiciaryModel?.destination?.country ?? '';
+    final state = widget.judiciaryModel?.destination?.state ?? '';
+    final city = widget.judiciaryModel?.destination?.city ?? '';
+
+    final cityState =
+        (city.isNotEmpty && state.isNotEmpty) ? '$city, $state' : city + state;
+
+    return isDestinationSpecific
+        ? Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(country, style: AppTheme.bodyStyle),
+                StringExt.isNullOrEmpty(cityState)
+                    ? Container()
+                    : Text(cityState),
+              ],
+            ),
+          )
+        : Container();
+  }
+
   Widget _buildTravelPermitType() {
+    final isDestinationSpecific =
+        widget.judiciaryModel?.destination?.type == DestinationTypes.specific;
+
     return BaseCard(
         color: AppTheme.accentFgColor,
-        child: Row(children: [
-          Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.card_travel,
-                size: 30,
-                color: AppTheme.defaultFgColor,
-              )),
-          Text(typeDescription ?? '')
-        ]));
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Icon(
+                    Icons.card_travel,
+                    size: 30,
+                    color: AppTheme.defaultFgColor,
+                  )),
+              Text(typeDescription ?? '')
+            ]),
+            isDestinationSpecific ? buildDivider() : Container(),
+            _buildDestinationInfo(isDestinationSpecific),
+          ],
+        ));
   }
 
   Widget _buildPermitValidityState() {
@@ -294,6 +330,10 @@ class SummaryCard extends StatelessWidget {
 
   ParticipantModel get model => typedParticipant.participant;
 
+  bool get isJudge {
+    return typedParticipant.type == ParticipantTypes.judge;
+  }
+
   String get participantDescription {
     switch (typedParticipant.type) {
       case ParticipantTypes.guardian1:
@@ -304,6 +344,8 @@ class SummaryCard extends StatelessWidget {
         return 'Acompanhante';
       case ParticipantTypes.underage:
         return 'Menor';
+      case ParticipantTypes.judge:
+        return 'Juiz autorizador';
       default:
         return '';
     }
@@ -313,6 +355,7 @@ class SummaryCard extends StatelessWidget {
     switch (typedParticipant.type) {
       case ParticipantTypes.guardian1:
       case ParticipantTypes.guardian2:
+      case ParticipantTypes.judge:
         return Icons.person;
       case ParticipantTypes.escort:
         return Icons.escalator_warning;
@@ -404,7 +447,7 @@ class SummaryCard extends StatelessWidget {
                 SizedBox(height: 4),
                 Text(model.name, style: AppTheme.bodyStyle),
                 SizedBox(height: 8),
-                Text('$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
+                if (documentTypeDescription != '') Text('$documentTypeDescription: ${model.documentNumber} (${model.documentIssuer})', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
                 if (underage?.birthDate != null) Text('Nascimento: ${underage!.birthDate!.toDateString()} ${underage.bioGender != BioGenders.undefined ? '\n' + bioGenderDescription : ''}', textAlign: TextAlign.left, style: AppTheme.body2Sytle),
               ],
             )));
