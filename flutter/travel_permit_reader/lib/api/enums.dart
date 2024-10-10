@@ -133,8 +133,8 @@ class _EnumCommonParser {
     var type = null;
     try {
       type = parseMap.values.firstWhere(
-          (t) => t.toString().toLowerCase() == '$T.$value'.toLowerCase(),
-          orElse: () => defaultValue!,
+        (t) => t.toString().toLowerCase() == '$T.$value'.toLowerCase(),
+        orElse: () => defaultValue!,
       );
     } catch (_) {
       type = defaultValue;
@@ -145,3 +145,7 @@ class _EnumCommonParser {
     return parseMap[value?.toLowerCase()] ?? defaultValue;
   }
 }
+
+//-------------------------------------------------------------------
+
+enum DestinationTypes { specific, any }
