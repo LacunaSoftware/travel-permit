@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { JudiciaryTravelPermitModel, TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
 import { environment } from 'src/environments/environment';
 import { DocumentService } from '../services/document.service';
+import { DestinationTypes, TravelPermitTypes } from 'src/api/enums';
 
 @Component({
 	selector: 'app-travel-permit-display',
@@ -22,7 +23,7 @@ export class TravelPermitDisplayComponent implements OnInit {
 	}
 
 	get authorizedByJudge() {
-		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge.name;
+		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge?.name || null;
 	}
 	
 	loading: boolean = false;

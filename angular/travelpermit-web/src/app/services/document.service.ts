@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { TravelPermitValidationModel } from 'src/api/travel-permit';
 import { environment } from 'src/environments/environment';
 
-const apiRoute = '/api/documents';
+const apiRoute = 'api/documents';
 
 @Injectable({
 	providedIn: 'root'

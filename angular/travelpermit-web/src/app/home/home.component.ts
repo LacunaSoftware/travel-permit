@@ -133,8 +133,6 @@ export class HomeComponent implements OnInit {
 				organization: version >= 4 ?{
 					name: this.decodeField(segments[index++]),
 				} : null,
-				judge: version >= 4 ? this.decodeField(segments[index++]) : null,
-				organization: version >= 4 ? this.decodeField(segments[index++]) : null,
 				destinationType: version >= 4 ? this.decodeField(segments[index++]) as DestinationTypes : null,
 				country: version >= 4 ? this.decodeField(segments[index++]) : null,
 				state: version >= 4 ? this.decodeField(segments[index++]) : null,
@@ -177,7 +175,7 @@ export class HomeComponent implements OnInit {
 		this.documentService.getTravelPermitInfo(docKey)
 			.subscribe((tp) => {
 				if (tp.judiciaryTravelPermit) {
-					this.travelPermit = tp.judiciaryTravelPermit;
+					this.travelPermit = tp.travelPermit;
 					this.judiciaryTravelPermit = tp.judiciaryTravelPermit;
 				} else {
 					this.travelPermit = tp.travelPermit;
