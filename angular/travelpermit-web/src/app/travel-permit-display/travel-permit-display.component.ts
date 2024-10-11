@@ -23,7 +23,7 @@ export class TravelPermitDisplayComponent implements OnInit {
 	}
 
 	get authorizedByJudge() {
-		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge?.name || null;
+		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge?.name;
 	}
 	
 	loading: boolean = false;
