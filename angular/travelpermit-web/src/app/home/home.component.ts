@@ -124,12 +124,11 @@ export class HomeComponent implements OnInit {
 				judge: version >= 4 ? {
 					name: this.decodeField(segments[index++]),
 				} : null,
-				organization: version >= 4 ?{
+				organization: version >= 4 ? {
 					name: this.decodeField(segments[index++]),
 				} : null,
-				signature: this.decodeField(segments[index++]),
+				signature: this.decodeField(segments[segments.length - 1]),
 			}
-
 			this.segments = segments;
 			this.verifyOfflineData(data);
 		} catch (ex) {
@@ -137,6 +136,7 @@ export class HomeComponent implements OnInit {
 			console.log(ex);
 		}
 	}
+	
 
 	private verifyOfflineData(offlineUnverifiedData: TravelPermitOfflineModel) {
 		CryptoHelper.verifyTPSignature(offlineUnverifiedData.signature, this.segments)
