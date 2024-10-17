@@ -97,7 +97,6 @@ export class HomeComponent implements OnInit {
 				startDate: version >= 3 ? this.decodeField(segments[index++]) : null,
 				expirationDate: this.decodeField(segments[index++]),
 				type: this.decodeField(segments[index++]) as TravelPermitTypes,
-				
 				requiredGuardian: {
 					name: this.decodeField(segments[index++]),
 					documentNumber: this.decodeField(segments[index++]),
@@ -130,14 +129,14 @@ export class HomeComponent implements OnInit {
 				judge: version >= 4 ? {
 					name: this.decodeField(segments[index++]),
 				} : null,
-				organization: version >= 4 ?{
+				organization: version >= 4 ? {
 					name: this.decodeField(segments[index++]),
 				} : null,
 				destinationType: version >= 4 ? this.decodeField(segments[index++]) as DestinationTypes : null,
 				country: version >= 4 ? this.decodeField(segments[index++]) : null,
 				state: version >= 4 ? this.decodeField(segments[index++]) : null,
 				city: version >= 4 ? this.decodeField(segments[index++]) : null,
-				signature: this.decodeField(segments[index++]),
+				signature: this.decodeField(segments[segments.length - 1]),
 			}
 
 			this.segments = segments;
@@ -175,11 +174,9 @@ export class HomeComponent implements OnInit {
 		this.documentService.getTravelPermitInfo(docKey)
 			.subscribe((tp) => {
 				if (tp.judiciaryTravelPermit) {
-					this.travelPermit = tp.travelPermit;
 					this.judiciaryTravelPermit = tp.judiciaryTravelPermit;
-				} else {
-					this.travelPermit = tp.travelPermit;
 				}
+				this.travelPermit = tp.travelPermit;
 				this.travelPermit.key = docKey;
 				console.log('Loaded travel permit', tp);
 				this.loading = false;

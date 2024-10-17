@@ -6,4 +6,4 @@ export const ecFieldLength = 32;
 
 export const version2Segments = 26;
 export const version3Segments = 27;
-export const version4Segments = 30;
+export const version4Segments = 34;
