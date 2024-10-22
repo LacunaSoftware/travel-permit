@@ -29,17 +29,8 @@
 					</div>
 				</div>
 
-				<div *ngIf="travelPermit.destinationType === DestinationTypes.Specific">
-					<div *ngIf="travelPermit.type === TravelPermitTypes.International" class="row">
-						<div class="col-12 col-md-4">
-							<h4 class="mb-sm-1"><strong>Pais:</strong></h4>
-						</div>
-						<div class="col-12 col-md-8 d-flex justify-content-end">
-							<p>{{travelPermit.country}}</p>
-						</div>
-					</div>
-
-					<div *ngIf="travelPermit.type === TravelPermitTypes.Domestic" class="row">
+				<div *ngIf="travelPermit.destinationType === DestinationTypes.Specific && travelPermit.type === TravelPermitTypes.Domestic">
+					<div class="row">
 						<div class="col-12 col-md-4">
 							<h4 class="mb-sm-1"><strong>Estado:</strong></h4>
 						</div>
@@ -48,7 +39,7 @@
 						</div>
 					</div>
 
-					<div *ngIf="travelPermit.type === TravelPermitTypes.Domestic" class="row">
+					<div class="row">
 						<div class="col-12 col-md-4">
 							<h4 class="mb-sm-1"><strong>Cidade:</strong></h4>
 						</div>
@@ -61,7 +52,7 @@
 				<div *ngIf="travelPermit.type === TravelPermitTypes.International && travelPermit.destinationType === DestinationTypes.Specific">
 					<div class="row">
 						<div class="col-12 col-md-4">
-							<h4 class="mb-sm-1"><strong>Pais:</strong></h4>
+							<h4 class="mb-sm-1"><strong>País:</strong></h4>
 						</div>
 						<div class="col-12 col-md-8 d-flex justify-content-end">
 							<p>{{travelPermit.country}}</p>
