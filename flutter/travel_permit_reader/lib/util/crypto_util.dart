@@ -16,8 +16,8 @@ class CryptoUtil {
   // HOMOLOGATION
   static ECPublicKey _publicKeyV1 = ECPublicKey(
       _ecDomain.curve.createPoint(
-          BigIntExt.fromBase64('hebj9X2FaROdv/g8iFhdk5ecfg6+lyaSTU9Jw2JOp8Q='),
-          BigIntExt.fromBase64('A+jzLgtvtjAUpbNgNmBe3RZDHt1Ip8D9fte+Of17tNQ=')),
+          BigIntExt.fromBase64('jYRkRf9yEeSKa2vT6B3QlaxRj23quRaXw/FBbuzPEQw='),
+          BigIntExt.fromBase64('iT6/b8wVsCcBd4ulqXlIUWkvY/8QscmK7vJS1wpPHls=')),
       _ecDomain);
 
   static bool verifySignature(Uint8List signature, Uint8List tbsData) {
