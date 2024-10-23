@@ -248,15 +248,28 @@ class _TravelPermitPageState extends State<TravelPermitPage> {
           Flexible(
             child: RichText(
               text: new TextSpan(
-                style: new TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: Colors.white),
+                style: new TextStyle(
+fontSize: 15,
+fontWeight: FontWeight.w400,
+color: Colors.white),
                 children: widget.model.startDate == null
                     ? <TextSpan>[
-                        new TextSpan(text: isExpired ? 'Expirou em ' : 'Vigente até '),
-                        new TextSpan(text: '${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
+                        new TextSpan(
+text: isExpired ? 'Expirou em ' : 'Vigente até '),
+                        new TextSpan(
+text:
+'${widget.model.expirationDate.toDateString()}',
+style: TextStyle(fontWeight: FontWeight.w700)),
                       ]
                     : <TextSpan>[
-                        new TextSpan(text: isExpired ? 'Fora do período de ' : 'Vigente de '),
-                        new TextSpan(text: '${widget.model.startDate?.toLocal().toDateString()} à ${widget.model.expirationDate.toLocal().toDateString()}', style: TextStyle(fontWeight: FontWeight.w700)),
+                        new TextSpan(
+text: isExpired
+? 'Fora do período de '
+: 'Vigente de '),
+                        new TextSpan(
+text:
+'${widget.model.startDate?.toDateString()} à ${widget.model.expirationDate.toDateString()}',
+style: TextStyle(fontWeight: FontWeight.w700)),
                       ],
               ),
             ),
@@ -406,7 +419,11 @@ class SummaryCard extends StatelessWidget {
       return '';
     }
 
-    switch ((model as EscortModel).guardianship) {
+    final guardianship = model is EscortModel
+        ? (model as EscortModel).guardianship
+        : (model as GuardianModel).guardianship;
+
+    switch (guardianship) {
       case LegalGuardianTypes.mother:
         return "Mãe";
       case LegalGuardianTypes.father:
