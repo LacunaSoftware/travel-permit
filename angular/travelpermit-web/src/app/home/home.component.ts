@@ -184,11 +184,12 @@ export class HomeComponent implements OnInit {
 		this.documentService.getTravelPermitInfo(docKey)
 			.subscribe((tp) => {
 				if (tp.judiciaryTravelPermit) {
-					this.judiciaryTravelPermit = tp.judiciaryTravelPermit;
+					this.travelPermit = tp.judiciaryTravelPermit;
 				}
-				this.travelPermit = tp.travelPermit;
+				else {
+					this.travelPermit = tp.travelPermit;
+				}
 				this.travelPermit.key = docKey;
-				console.log('Loaded travel permit', tp);
 				this.loading = false;
 			}, () => {
 				this.loading = false;
