@@ -43,7 +43,7 @@ class HomePage extends StatelessWidget {
       TravelPermitValidationInfo? travelPermitModel;
       dynamic requestException;
       try {
-        travelPermitModel = await CnbClient().getTravelPermitInfo(data.documentKey);
+        travelPermitModel = await CnbClient().getTravelPermitInfo(data.documentKey, isEndpointV2: data.version >= 4);
       } catch (ex) {
         requestException = ex;
       }
