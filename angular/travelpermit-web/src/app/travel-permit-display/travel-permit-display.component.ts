@@ -25,8 +25,16 @@ export class TravelPermitDisplayComponent implements OnInit {
 	get authorizedByJudge() {
 		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge?.name;
 	}
-	
-	loading: boolean = false;
+
+	get judgeName() {
+		return this.judiciaryTravelPermit?.judge?.name || (this.travelPermit as TravelPermitOfflineModel)?.judge?.name;
+	}
+
+	get notaryName() {
+		return this.judiciaryTravelPermit?.notary?.name || (this.travelPermit as TravelPermitOfflineModel)?.notary?.name;
+	}
+
+	loading = false;
 
 	get isOnline(): boolean {
 		return !this.travelPermit['version'];

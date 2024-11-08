@@ -20,7 +20,7 @@
 						<p>{{travelPermit.type | travelPermitType}}</p>
 					</div>
 				</div>
-				<div class="row">
+				<div class="row" *ngIf="travelPermit.destinationType">
 					<div class="col-12 col-md-4">
 						<h4 class="mb-sm-1"><strong>Tipo de Destino:</strong></h4>
 					</div>
@@ -73,6 +73,14 @@
 					</div>
 					<div class="col-12 col-md-8 d-flex justify-content-end">
 						<p>{{authorizedByJudge ? 'Juiz' : 'Responsável legal'}}</p>
+					</div>
+				</div>
+				<div class="row" *ngIf="judgeName">
+					<div class="col-12 col-md-4">
+						<h4 class="mb-sm-1"><strong>Juiz responsável pelo {{notaryName}}:</strong></h4>
+					</div>
+					<div class="col-12 col-md-8 d-flex justify-content-end">
+						<p>{{judgeName}}</p>
 					</div>
 				</div>
 			</div>
