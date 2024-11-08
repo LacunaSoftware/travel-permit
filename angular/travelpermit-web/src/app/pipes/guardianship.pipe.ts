@@ -25,10 +25,10 @@ export class GuardianshipPipe implements PipeTransform {
 				return 'Tutor';
 			case LegalGuardianTypes.ThirdPartyRelated:
 			case 'R':
-				return "Terceiro com parentesco";
+				return 'Terceiro com parentesco';
 			case LegalGuardianTypes.ThirdPartyNotRelated:
 			case 'S':
-				return "Terceiro sem parentesco";
+				return 'Terceiro sem parentesco';
 			default:
 				return value;
 		}

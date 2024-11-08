@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
-import { latestKnownVersion, magicPrefix, segmentSeparator, spaceMarker, version2Segments, version3Segments, version4Segments } from 'src/api/constants';
+import {
+	latestKnownVersion, magicPrefix, segmentSeparator, spaceMarker, version2Segments, version3Segments, version4Segments,
+} from 'src/api/constants';
 import { CryptoHelper } from 'src/api/crypto';
-import { BioDocumentType, BioGender, LegalGuardianTypes, TravelPermitTypes } from 'src/api/enums';
+import { BioDocumentType, BioGender, DestinationTypes, LegalGuardianTypes, TravelPermitTypes } from 'src/api/enums';
 import { JudiciaryTravelPermitModel, TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
 import { DialogAlertComponent } from '../dialog-alert/dialog-alert.component';
 import { DialogReadCodeComponent } from '../dialog-read-code/dialog-read-code.component';
@@ -20,7 +22,12 @@ export class HomeComponent implements OnInit {
 	travelPermit: TravelPermitModel | TravelPermitOfflineModel;
 	judiciaryTravelPermit: JudiciaryTravelPermitModel;
 	segments: string[];
-	loading: boolean = false;
+	loading = false;
+
+	readonly VERSION_2_SEGMENTS = 26;
+	readonly VERSION_3_SEGMENTS = 27;
+	readonly VERSION_4_SEGMENTS = 34;
+
 
 	constructor(
 		private dialog: MatDialog,
@@ -64,34 +71,33 @@ export class HomeComponent implements OnInit {
 	}
 
 	parseQrCodeData(code: string) {
-
 		const segments = code.split(segmentSeparator);
 		if (segments.length == 0 || segments[0] != magicPrefix) {
-			this.alert("Este não é um QR Code de Autorização Eletrônica de Viagem");
+			this.alert('Este não é um QR Code de Autorização Eletrônica de Viagem');
 		}
 
 		const versionStr = segments[1];
 		const version = versionStr ? parseInt(versionStr) : null;
 
 		if (!version || version > latestKnownVersion || version < 1) {
-			this.alert("Este não é um QR Code de Autorização Eletrônica de Viagem");
+			this.alert('Este não é um QR Code de Autorização Eletrônica de Viagem');
 		}
 
 		if ((version <= 2 && segments.length != version2Segments) ||
 			(version == 3 && segments.length != version3Segments) ||
 			(version == 4 && segments.length != version4Segments)) {
-			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
+			this.alert('Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação');
 		}
 
 		try {
 			let index = 2;
 
 			const data: TravelPermitOfflineModel = {
-				version: version,
+				version,
 				key: segments[index++],
 				startDate: version >= 3 ? this.decodeField(segments[index++]) : null,
 				expirationDate: this.decodeField(segments[index++]),
-				type: this.decodeField(segments[index++]) as TravelPermitTypes,
+				type: this.decodeTravelPermitTypes(this.decodeField(segments[index++])) as TravelPermitTypes,
 				requiredGuardian: {
 					name: this.decodeField(segments[index++]),
 					documentNumber: this.decodeField(segments[index++]),
@@ -124,19 +130,23 @@ export class HomeComponent implements OnInit {
 				judge: version >= 4 ? {
 					name: this.decodeField(segments[index++]),
 				} : null,
-				organization: version >= 4 ? {
+				notary: version >= 4 ? {
 					name: this.decodeField(segments[index++]),
 				} : null,
+				destinationType: version >= 4 ? this.decodeDestinationTypes(this.decodeField(segments[index++])) : null,
+				country: version >= 4 ? this.decodeField(segments[index++]) : null,
+				state: version >= 4 ? this.decodeField(segments[index++]) : null,
+				city: version >= 4 ? this.decodeField(segments[index++]) : null,
 				signature: this.decodeField(segments[segments.length - 1]),
-			}
+			};
+
 			this.segments = segments;
 			this.verifyOfflineData(data);
 		} catch (ex) {
-			this.alert("Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação");
+			this.alert('Houve um problema ao decodificar o QR Code. Por favor tente digitar o código de validação');
 			console.log(ex);
 		}
 	}
-	
 
 	private verifyOfflineData(offlineUnverifiedData: TravelPermitOfflineModel) {
 		CryptoHelper.verifyTPSignature(offlineUnverifiedData.signature, this.segments)
@@ -157,7 +167,15 @@ export class HomeComponent implements OnInit {
 	}
 
 	private decodeField(value: string) {
-		return value == "" ? null : value.replace(spaceMarker, " ");
+		return value == '' ? null : value.replace(spaceMarker, ' ');
+	}
+
+	private decodeDestinationTypes(value: string) {
+		return value == 'A' ? DestinationTypes.AnyDestination : (value == 'S' ? DestinationTypes.Specific : DestinationTypes.AnyDestination);
+	}
+
+	private decodeTravelPermitTypes(value: string) {
+		return value == 'D' ? TravelPermitTypes.Domestic : (value == 'I' ? TravelPermitTypes.International : value);
 	}
 
 	private loadOnlineData(docKey: string) {
@@ -166,12 +184,11 @@ export class HomeComponent implements OnInit {
 			.subscribe((tp) => {
 				if (tp.judiciaryTravelPermit) {
 					this.travelPermit = tp.judiciaryTravelPermit;
-					this.judiciaryTravelPermit = tp.judiciaryTravelPermit;
-				} else {
+				}
+				else {
 					this.travelPermit = tp.travelPermit;
 				}
 				this.travelPermit.key = docKey;
-				console.log('Loaded travel permit', tp);
 				this.loading = false;
 			}, () => {
 				this.loading = false;
@@ -182,14 +199,14 @@ export class HomeComponent implements OnInit {
 	private alert(message: string, title?: string, useMessageAsHtml?: boolean, disableClose?: boolean): Promise<any> {
 		const dialogRef = this.dialog.open(DialogAlertComponent, {
 			width: '600px',
-			disableClose: disableClose,
+			disableClose,
 			data: {
-				message: message,
-				title: title,
-				useMessageAsHtml: useMessageAsHtml
+				message,
+				title,
+				useMessageAsHtml
 			}
 		});
 
 		return dialogRef.afterClosed().toPromise().then(() => { });
-	};
+	}
 }

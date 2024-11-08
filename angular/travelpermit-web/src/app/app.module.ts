@@ -17,6 +17,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TravelPermitDisplayComponent } from './travel-permit-display/travel-permit-display.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { TravelPermitTypePipe } from './pipes/travel-permit-type.pipe';
+import { DestinationTypePipe } from './pipes/destination-type.pipe';
 import { BioDocumentTypePipe } from './pipes/bio-document-type.pipe';
 import { CpfPipe } from './pipes/cpf.pipe';
 import { GenderPipe } from './pipes/gender.pipe';
@@ -38,6 +39,7 @@ import { DocumentService } from './services/document.service';
 		DialogAlertComponent,
 		TravelPermitDisplayComponent,
 		TravelPermitTypePipe,
+		DestinationTypePipe,
 		BioDocumentTypePipe,
 		CpfPipe,
 		GenderPipe,

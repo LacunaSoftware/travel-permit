@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { JudiciaryTravelPermitModel, TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
 import { environment } from 'src/environments/environment';
 import { DocumentService } from '../services/document.service';
+import { DestinationTypes, TravelPermitTypes } from 'src/api/enums';
 
 @Component({
 	selector: 'app-travel-permit-display',
@@ -11,6 +12,8 @@ import { DocumentService } from '../services/document.service';
 export class TravelPermitDisplayComponent implements OnInit {
 	@Input()
 	travelPermit: TravelPermitModel | TravelPermitOfflineModel;
+	readonly DestinationTypes = DestinationTypes;
+	readonly TravelPermitTypes = TravelPermitTypes;
 
 	@Input()
 	judiciaryTravelPermit: JudiciaryTravelPermitModel;
@@ -20,10 +23,18 @@ export class TravelPermitDisplayComponent implements OnInit {
 	}
 
 	get authorizedByJudge() {
-		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge.name;
+		return this.judiciaryTravelPermit?.authorizedByJudge || !!(this.travelPermit as TravelPermitOfflineModel)?.judge?.name;
 	}
-	
-	loading: boolean = false;
+
+	get judgeName() {
+		return this.judiciaryTravelPermit?.judge?.name || (this.travelPermit as TravelPermitOfflineModel)?.judge?.name;
+	}
+
+	get notaryName() {
+		return this.judiciaryTravelPermit?.notary?.name || (this.travelPermit as TravelPermitOfflineModel)?.notary?.name;
+	}
+
+	loading = false;
 
 	get isOnline(): boolean {
 		return !this.travelPermit['version'];

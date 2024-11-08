@@ -1,4 +1,4 @@
-import { BioDocumentType, BioGender, LegalGuardianTypes, TravelPermitTypes, Uf } from "./enums";
+import { BioDocumentType, BioGender, DestinationTypes, LegalGuardianTypes, TravelPermitTypes, Uf } from './enums';
 
 export interface TravelPermitOfflineModel {
 	version: number;
@@ -6,12 +6,16 @@ export interface TravelPermitOfflineModel {
 	startDate?: string;
 	expirationDate: string;
 	type: string;
+	destinationType: string;
+	country: string;
+	state: string;
+	city: string;
 	requiredGuardian: GuardianOfflineModel;
 	optionalGuardian: GuardianOfflineModel;
 	escort: EscortOfflineModel;
 	underage: UnderageOfflineModel;
 	judge: JudgeOfflineModel;
-	organization: OrganizationOfflineModel;
+	notary: OrganizationOfflineModel;
 	signature: string;
 }
 
@@ -91,6 +95,10 @@ export interface TravelPermitModel {
 	startDate?: string;
 	expirationDate: string;
 	type: TravelPermitTypes;
+	destinationType: DestinationTypes;
+	country: string;
+	state: string;
+	city: string;
 	isRemoteTravelPermit: boolean;
 	canBeHostedOnEmergency: boolean;
 	requiredGuardian: TravelPermitGuardianModel;
@@ -101,6 +109,7 @@ export interface TravelPermitModel {
 
 export interface JudiciaryTravelPermitModel extends TravelPermitModel {
 	judge: JudiciaryTravelPermitJudgeModel;
+	notary: OrganizationOfflineModel;
 	authorizedByJudge: boolean;
 }
 

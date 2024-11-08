@@ -2,24 +2,24 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { TravelPermitTypes } from 'src/api/enums';
 
 @Pipe({
-  name: 'travelPermitType'
+	name: 'travelPermitType'
 })
 export class TravelPermitTypePipe implements PipeTransform {
 
-  transform(value: TravelPermitTypes | string, ...args: unknown[]): unknown {
-    if (!value) {
+	transform(value: TravelPermitTypes | string, ...args: unknown[]): unknown {
+		if (!value) {
 			return '';
 		}
-    switch(value) {
+		switch (value) {
 			case TravelPermitTypes.Domestic:
 			case 'D':
 				return 'Nacional';
 			case TravelPermitTypes.International:
 			case 'I':
 				return 'Internacional';
-			default: 
+			default:
 				return value;
 		}
-  }
+	}
 
 }
