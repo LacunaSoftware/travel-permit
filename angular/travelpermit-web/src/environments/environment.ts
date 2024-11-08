@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
+	production: false,
 	cnbEndpoint: 'https://assinatura-hml.e-notariado.org.br',
 	ecKey: {
 		x: 'jYRkRf9yEeSKa2vT6B3QlaxRj23quRaXw_FBbuzPEQw',

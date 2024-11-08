@@ -16,11 +16,11 @@ export class DocumentService {
 	) { }
 
 	getTravelPermitInfo(key: string): Observable<TravelPermitValidationModel> {
-		return this.http.get<TravelPermitValidationModel>(`${environment.cnbEndpoint}/${apiRoute}/v2/keys/${key}/travel-permit`)
+		return this.http.get<TravelPermitValidationModel>(`${environment.cnbEndpoint}/${apiRoute}/v2/keys/${key}/travel-permit`);
 	}
- 
-	getDownloadTicket(key: string): Observable<{location: string}> {
-		return this.http.get<{location: string}>(`${environment.cnbEndpoint}/${apiRoute}/keys/${key}/ticket?type=Signatures`);
+
+	getDownloadTicket(key: string): Observable<{ location: string }> {
+		return this.http.get<{ location: string }>(`${environment.cnbEndpoint}/${apiRoute}/keys/${key}/ticket?type=Signatures`);
 	}
 
 }

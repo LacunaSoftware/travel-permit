@@ -104,8 +104,8 @@ export enum LegalGuardianTypes {
 }
 
 export enum TravelPermitTypes {
-	International = "International",
-	Domestic = "Domestic"
+	International = 'International',
+	Domestic = 'Domestic'
 }
 
 export enum DestinationTypes {
