@@ -623,6 +623,10 @@ class TravelPermitValidationInfo {
         ? TravelPermitModel.fromJson(key, json['travelPermit'])
         : null;
 
+    if (json['travelPermit'] == null && json['judiciaryTravelPermit'] == null) {
+      travelPermit =
+          TravelPermitModel.fromJson(key, json);
+    }
     if (json['judiciaryTravelPermit'] != null) {
       travelPermit =
           TravelPermitModel.fromJson(key, json['judiciaryTravelPermit']);
