@@ -104,7 +104,7 @@
 
 			<div *ngIf="travelPermit.escort?.name" class="col-12 col-md-6 px-md-5 pb-md-4 pt-4 pt-md-0">
 				<ng-template
-					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante', showKinship: travelPermit.escort.guardianship }">
+					*ngTemplateOutlet="participantDisplay; context: { participant: travelPermit.escort, title: 'Acompanhante' }">
 				</ng-template>
 			</div>
 
@@ -218,7 +218,7 @@
 		</div>
 	</div>
 
-	<div class="row" *ngIf="guardian">
+	<div class="row" *ngIf="participant.guardianship">
 		<div class="col-12 col-md-6">
 			<p class="mb-sm-1"><strong>{{(participant.guardianship ? "Grau de parentesco:" : "Responsabilidade:")}}</strong></p>
 		</div>
