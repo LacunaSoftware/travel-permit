@@ -2,17 +2,17 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { BioDocumentType } from 'src/api/enums';
 
 @Pipe({
-  name: 'bioDocumentType'
+	name: 'bioDocumentType'
 })
 export class BioDocumentTypePipe implements PipeTransform {
 
-	
-  transform(value: BioDocumentType | string): unknown {
+
+	transform(value: BioDocumentType | string): unknown {
 		if (!value) {
 			return '';
 		}
 
-    switch (value) {
+		switch (value) {
 			case BioDocumentType.IdCard:
 			case 'I':
 				return 'RG';
@@ -28,9 +28,9 @@ export class BioDocumentTypePipe implements PipeTransform {
 			case BioDocumentType.ReservistCard:
 			case 'R':
 				return 'Carteira de Reservista';
-			default: 
+			default:
 				return value;
 		}
-  }
+	}
 
 }

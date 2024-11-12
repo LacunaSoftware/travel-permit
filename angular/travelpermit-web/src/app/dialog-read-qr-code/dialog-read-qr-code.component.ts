@@ -11,7 +11,7 @@ export class DialogReadQrCodeComponent implements OnInit {
 
 
 	form: FormGroup;
-	loading: boolean = false;
+	loading = false;
 
 	constructor(
 		private fb: FormBuilder,
@@ -22,17 +22,17 @@ export class DialogReadQrCodeComponent implements OnInit {
 		this.form = this.fb.group({
 			qrCodeData: null,
 		});
-		
+
 		this.form.controls.qrCodeData.valueChanges.subscribe((v: string) => {
 			if (v) {
 				this.loading = true;
-				if (v.endsWith("\r\n") || v.endsWith("\n")) {
-					this.dialogRef.close(v.replace(/(\r\n|\n|\r)/gm, ""));
+				if (v.endsWith('\r\n') || v.endsWith('\n')) {
+					this.dialogRef.close(v.replace(/(\r\n|\n|\r)/gm, ''));
 				}
 			} else {
 				this.loading = false;
 			}
-		})
+		});
 	}
 
 	onBlur() {

@@ -9,18 +9,29 @@ class ParticipantDetailsPage extends SummaryCard {
   const ParticipantDetailsPage({Key? key, required TypedParticipant typedParticipant}) : super(key: key, typedParticipant: typedParticipant);
 
   String get guardianshipDescription {
-    if (model is! GuardianModel) {
+    LegalGuardianTypes? guardianship = null;
+
+    if (model is GuardianModel) {
+      guardianship = (model as GuardianModel).guardianship;
+    } else if (model is EscortModel) {
+      guardianship = (model as EscortModel).guardianship;
+    }
+
+    if (guardianship == null) {
       return '';
     }
-    switch ((model as GuardianModel).guardianship) {
+
+    switch (guardianship) {
       case LegalGuardianTypes.father:
         return 'Pai';
       case LegalGuardianTypes.guardian:
-        return 'Responável';
+        return 'Responsável';
       case LegalGuardianTypes.mother:
         return 'Mãe';
       case LegalGuardianTypes.tutor:
         return 'Tutor';
+      case LegalGuardianTypes.unrelated:
+        return 'Sem parentesco';
       default:
         return 'Indefinido';
     }
@@ -50,6 +61,10 @@ class ParticipantDetailsPage extends SummaryCard {
 
     if (model is GuardianModel) {
       details.addAll(buildGuardianDetails());
+    }
+
+    if (model is EscortModel) {
+      details.addAll(buildEscortDetails());
     }
 
     if (model is AdultModel) {
@@ -180,6 +195,14 @@ class ParticipantDetailsPage extends SummaryCard {
     }
 
     return details;
+  }
+
+  List<Widget> buildEscortDetails() {
+    return [
+      buildLabelText('Grau de parentesco'),
+      buildDetailsText(guardianshipDescription),
+      buildDivider(),
+    ];
   }
 
   List<Widget> buildUnderageDetails() {

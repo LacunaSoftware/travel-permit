@@ -1,4 +1,4 @@
-import { BioDocumentType, BioGender, LegalGuardianTypes, TravelPermitTypes, Uf } from "./enums";
+import { BioDocumentType, BioGender, DestinationTypes, LegalGuardianTypes, TravelPermitTypes, Uf } from './enums';
 
 export interface TravelPermitOfflineModel {
 	version: number;
@@ -6,14 +6,32 @@ export interface TravelPermitOfflineModel {
 	startDate?: string;
 	expirationDate: string;
 	type: string;
+	destinationType: string;
+	country: string;
+	state: string;
+	city: string;
 	requiredGuardian: GuardianOfflineModel;
 	optionalGuardian: GuardianOfflineModel;
-	escort: TravelPermitParticipantOfflineModel;
+	escort: EscortOfflineModel;
 	underage: UnderageOfflineModel;
+	judge: JudgeOfflineModel;
+	notary: OrganizationOfflineModel;
 	signature: string;
 }
 
+export interface JudgeOfflineModel {
+	name: string;
+}
+
+export interface OrganizationOfflineModel {
+	name: string;
+}
+
 export interface GuardianOfflineModel extends TravelPermitParticipantOfflineModel {
+	guardianship: string;
+}
+
+export interface EscortOfflineModel extends TravelPermitParticipantOfflineModel {
 	guardianship: string;
 }
 
@@ -34,6 +52,10 @@ export interface TravelPermitGuardianModel extends TravelPermitAdultModel {
 	livedInBrazil?: boolean;
 	lastCityInBrazil?: string;
 	lastStateInBrazil?: Uf;
+}
+
+export interface TravelPermitEscortModel extends TravelPermitAdultModel {
+	guardianship: LegalGuardianTypes;
 }
 
 export interface TravelPermitAdultModel extends TravelPermitParticipantModel {
@@ -73,9 +95,31 @@ export interface TravelPermitModel {
 	startDate?: string;
 	expirationDate: string;
 	type: TravelPermitTypes;
+	destinationType: DestinationTypes;
+	country: string;
+	state: string;
+	city: string;
 	isRemoteTravelPermit: boolean;
+	canBeHostedOnEmergency: boolean;
 	requiredGuardian: TravelPermitGuardianModel;
 	optionalGuardian: TravelPermitGuardianModel;
 	underage: TravelPermitUnderageModel;
-	escort: TravelPermitAdultModel;
+	escort: TravelPermitEscortModel;
+}
+
+export interface JudiciaryTravelPermitModel extends TravelPermitModel {
+	judge: JudiciaryTravelPermitJudgeModel;
+	notary: OrganizationOfflineModel;
+	authorizedByJudge: boolean;
+}
+
+export interface JudiciaryTravelPermitJudgeModel {
+	name: string;
+	email: string;
+	identifier: string;
+}
+
+export interface TravelPermitValidationModel {
+	travelPermit: TravelPermitModel;
+	judiciaryTravelPermit: JudiciaryTravelPermitModel;
 }
