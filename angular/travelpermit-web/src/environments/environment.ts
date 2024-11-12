@@ -2,12 +2,21 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+// export const environment = {
+//   production: false,
+// 	cnbEndpoint: 'https://assinatura-hml.e-notariado.org.br',
+// 	ecKey: {
+// 		x: 'jYRkRf9yEeSKa2vT6B3QlaxRj23quRaXw_FBbuzPEQw',
+// 		y: 'iT6_b8wVsCcBd4ulqXlIUWkvY_8QscmK7vJS1wpPHls'
+// 	}
+// };
+
 export const environment = {
-	production: false,
-	cnbEndpoint: 'https://assinatura-hml.e-notariado.org.br',
+	production: true,
+	cnbEndpoint: 'https://assinatura.e-notariado.org.br',
 	ecKey: {
-		x: 'jYRkRf9yEeSKa2vT6B3QlaxRj23quRaXw_FBbuzPEQw',
-		y: 'iT6_b8wVsCcBd4ulqXlIUWkvY_8QscmK7vJS1wpPHls'
+		x: 'Mq1pD1R4qu6xjpIvarG54zOnGrAqvMbsq9Fvo8kns4s',
+		y: '1c53A4cKVXCtFucnC7Z54uNPzEHrVxgu3tJVhQNv19U'
 	}
 };
 

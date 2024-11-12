@@ -6,19 +6,19 @@ import 'package:pointycastle/pointycastle.dart';
 class CryptoUtil {
   static ECDomainParameters _ecDomain = ECCurve_secp256r1();
 
-  // PRODUCTION
-  // static ECPublicKey _publicKeyV1 = ECPublicKey(
-  //     _ecDomain.curve.createPoint(
-  //         BigIntExt.fromBase64('Mq1pD1R4qu6xjpIvarG54zOnGrAqvMbsq9Fvo8kns4s='),
-  //         BigIntExt.fromBase64('1c53A4cKVXCtFucnC7Z54uNPzEHrVxgu3tJVhQNv19U=')),
-  //     _ecDomain);
-
-  // HOMOLOGATION
+  PRODUCTION
   static ECPublicKey _publicKeyV1 = ECPublicKey(
       _ecDomain.curve.createPoint(
-          BigIntExt.fromBase64('jYRkRf9yEeSKa2vT6B3QlaxRj23quRaXw/FBbuzPEQw='),
-          BigIntExt.fromBase64('iT6/b8wVsCcBd4ulqXlIUWkvY/8QscmK7vJS1wpPHls=')),
+          BigIntExt.fromBase64('Mq1pD1R4qu6xjpIvarG54zOnGrAqvMbsq9Fvo8kns4s='),
+          BigIntExt.fromBase64('1c53A4cKVXCtFucnC7Z54uNPzEHrVxgu3tJVhQNv19U=')),
       _ecDomain);
+
+//   // HOMOLOGATION
+//   static ECPublicKey _publicKeyV1 = ECPublicKey(
+//       _ecDomain.curve.createPoint(
+//           BigIntExt.fromBase64('jYRkRf9yEeSKa2vT6B3QlaxRj23quRaXw/FBbuzPEQw='),
+//           BigIntExt.fromBase64('iT6/b8wVsCcBd4ulqXlIUWkvY/8QscmK7vJS1wpPHls=')),
+//       _ecDomain);
 
   static bool verifySignature(Uint8List signature, Uint8List tbsData) {
     final verifier = Signer("SHA-256/ECDSA");
