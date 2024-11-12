@@ -98,12 +98,19 @@ export enum LegalGuardianTypes {
 	Mother = 'Mother',
 	Father = 'Father',
 	Tutor = 'Tutor',
-	Guardian = 'Guardian'
+	Guardian = 'Guardian',
+	ThirdPartyRelated = 'ThirdPartyRelated',
+	ThirdPartyNotRelated = 'ThirdPartyNotRelated',
 }
 
 export enum TravelPermitTypes {
-	International = "International",
-	Domestic = "Domestic"
+	International = 'International',
+	Domestic = 'Domestic'
+}
+
+export enum DestinationTypes {
+	AnyDestination = 'AnyDestination',
+	Specific = 'Specific'
 }
 
 export enum Uf {

@@ -2,15 +2,15 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { LegalGuardianTypes } from 'src/api/enums';
 
 @Pipe({
-  name: 'guardianship'
+	name: 'guardianship'
 })
 export class GuardianshipPipe implements PipeTransform {
 
-  transform(value: LegalGuardianTypes | string, ...args: unknown[]): unknown {
-    if (!value) {
-			return '';
+	transform(value: LegalGuardianTypes | string, ...args: unknown[]): unknown {
+		if (!value) {
+			return 'Sem parentesco';
 		}
-    switch(value) {
+		switch (value) {
 			case LegalGuardianTypes.Father:
 			case 'F':
 				return 'Pai';
@@ -23,9 +23,14 @@ export class GuardianshipPipe implements PipeTransform {
 			case LegalGuardianTypes.Tutor:
 			case 'T':
 				return 'Tutor';
-			default: 
+			case LegalGuardianTypes.ThirdPartyRelated:
+			case 'R':
+				return 'Terceiro com parentesco';
+			case LegalGuardianTypes.ThirdPartyNotRelated:
+			case 'S':
+				return 'Terceiro sem parentesco';
+			default:
 				return value;
 		}
-  }
-
+	}
 }

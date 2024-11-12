@@ -9,18 +9,31 @@ class ParticipantDetailsPage extends SummaryCard {
   const ParticipantDetailsPage({Key? key, required TypedParticipant typedParticipant}) : super(key: key, typedParticipant: typedParticipant);
 
   String get guardianshipDescription {
-    if (model is! GuardianModel) {
+    LegalGuardianTypes? guardianship = null;
+
+    if (model is GuardianModel) {
+      guardianship = (model as GuardianModel).guardianship;
+    } else if (model is EscortModel) {
+      guardianship = (model as EscortModel).guardianship;
+    }
+
+    if (guardianship == null) {
       return '';
     }
-    switch ((model as GuardianModel).guardianship) {
+
+    switch (guardianship) {
       case LegalGuardianTypes.father:
         return 'Pai';
       case LegalGuardianTypes.guardian:
-        return 'Responável';
+        return 'Responsável';
       case LegalGuardianTypes.mother:
         return 'Mãe';
       case LegalGuardianTypes.tutor:
         return 'Tutor';
+      case LegalGuardianTypes.thirdPartyRelated:
+        return 'Terceiro com parentesco';
+      case LegalGuardianTypes.thirdPartyNotRelated:
+        return 'Terceiro sem parentesco';
       default:
         return 'Indefinido';
     }
@@ -31,7 +44,7 @@ class ParticipantDetailsPage extends SummaryCard {
     List<Widget> details = [
       buildLabelText('Nome'),
       buildDetailsText(model.name),
-      buildPicture(),
+      if (!isJudge) buildPicture(),
       buildDivider(),
     ];
     if (!StringExt.isNullOrEmpty(model.identifier)) {
@@ -44,12 +57,21 @@ class ParticipantDetailsPage extends SummaryCard {
 
     details.addAll([
       buildLabelText(documentTypeDescription),
-      buildDetailsText('${model.documentNumber} (${model.documentIssuer})\nEmitido em ${model.issueDate?.toDateString()}'),
-      buildDivider(),
     ]);
+
+    if (!isJudge) {
+      details.addAll([
+        buildDetailsText('${model.documentNumber} (${model.documentIssuer})\nEmitido em ${model.issueDate?.toDateString()}'),
+        buildDivider(),
+      ]);
+    }
 
     if (model is GuardianModel) {
       details.addAll(buildGuardianDetails());
+    }
+
+    if (model is EscortModel) {
+      details.addAll(buildEscortDetails());
     }
 
     if (model is AdultModel) {
@@ -180,6 +202,14 @@ class ParticipantDetailsPage extends SummaryCard {
     }
 
     return details;
+  }
+
+  List<Widget> buildEscortDetails() {
+    return [
+      buildLabelText('Grau de parentesco'),
+      buildDetailsText(guardianshipDescription),
+      buildDivider(),
+    ];
   }
 
   List<Widget> buildUnderageDetails() {

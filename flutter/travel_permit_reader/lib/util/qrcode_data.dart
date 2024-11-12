@@ -24,12 +24,19 @@ class QRCodeData {
   final String? escortDocumentNumber;
   final String? escortDocumentIssuer;
   final String? escortDocumentType;
+  final String? escortGuardianship;
   final String? underageName;
   final String? underageDocumentNumber;
   final String? underageDocumentIssuer;
   final String? underageDocumentType;
   final String? underageBirthDate;
   final String? underageBioGender;
+  final String? judgeName;
+  final String? organizationName;
+  final String? destinationType;
+  final String? destinationCountry;
+  final String? destinationState;
+  final String? destinationCity;
   final Uint8List signature;
 
   List<String>? _segments;
@@ -54,18 +61,29 @@ class QRCodeData {
       this.escortDocumentNumber,
       this.escortDocumentIssuer,
       this.escortDocumentType,
+      this.escortGuardianship,
       this.underageName,
       this.underageDocumentNumber,
       this.underageDocumentIssuer,
       this.underageDocumentType,
       this.underageBirthDate,
       this.underageBioGender,
+      this.judgeName,
+      this.organizationName,
+      this.destinationType,
+      this.destinationCountry,
+      this.destinationState,
+      this.destinationCity,
       required this.signature});
 
   static const _magicPrefix = 'LTP';
-  static const _latestKnownVersion = 3;
+  static const _latestKnownVersion = 4;
   static const _segmentSeparator = '%';
   static const _spaceMarker = '+';
+
+  static const _version_2_segments = 26;
+  static const _version_3_segments = 27;
+  static const _version_4_segments = 34;
 
   factory QRCodeData.parse(String code) {
     try {
@@ -81,8 +99,9 @@ class QRCodeData {
             TPErrorCodes.qrCodeUnknownVersion);
       }
 
-      if ((version <= 2 && segments.length != 26) ||
-          (version == 3 && segments.length != 27)) {
+      if ((version <= 2 && segments.length != _version_2_segments) ||
+          (version == 3 && segments.length != _version_3_segments) ||
+          (version == 4 && segments.length != _version_4_segments)) {
         throw TPException(
             'QR code is inconsistent: $code', TPErrorCodes.qrCodeDecodeError);
       }
@@ -92,7 +111,7 @@ class QRCodeData {
       final data = QRCodeData._(
         version: version,
         documentKey: segments[index++],
-        startDate: version == 3 ? segments[index++] : null,
+        startDate: version >= 3 ? segments[index++] : null,
         expirationDate: segments[index++],
         travelPermitType: _decodeField(segments[index++]),
         requiredGuardianName: _decodeField(segments[index++]),
@@ -115,6 +134,15 @@ class QRCodeData {
         escortDocumentNumber: _decodeField(segments[index++]),
         escortDocumentIssuer: _decodeField(segments[index++]),
         escortDocumentType: _decodeField(segments[index++]),
+        escortGuardianship:
+            version >= 4 ? _decodeField(segments[index++]) : null,
+        judgeName: version >= 4 ? _decodeField(segments[index++]) : null,
+        organizationName: version >= 4 ? _decodeField(segments[index++]) : null,
+        destinationType: version >= 4 ? _decodeField(segments[index++]) : null,
+        destinationCountry:
+            version >= 4 ? _decodeField(segments[index++]) : null,
+        destinationState: version >= 4 ? _decodeField(segments[index++]) : null,
+        destinationCity: version >= 4 ? _decodeField(segments[index++]) : null,
         signature: Uint8List.fromList(hex.decode(segments[index++])),
       );
       data._segments = segments;
@@ -143,5 +171,9 @@ class QRCodeData {
 
   static String? _decodeField(String value) {
     return value == "" ? null : value.replaceAll(_spaceMarker, " ");
+  }
+
+  static bool _decodeBoolean(String value) {
+    return _decodeField(value) == "1";
   }
 }
