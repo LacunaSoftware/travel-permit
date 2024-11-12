@@ -7,11 +7,14 @@ import {
 } from 'src/api/constants';
 import { CryptoHelper } from 'src/api/crypto';
 import { BioDocumentType, BioGender, DestinationTypes, LegalGuardianTypes, TravelPermitTypes } from 'src/api/enums';
-import { JudiciaryTravelPermitModel, TravelPermitModel, TravelPermitOfflineModel } from 'src/api/travel-permit';
+import { JudiciaryTravelPermitModel, TravelPermitModel, TravelPermitOfflineModel, TravelPermitValidationModel } from 'src/api/travel-permit';
 import { DialogAlertComponent } from '../dialog-alert/dialog-alert.component';
 import { DialogReadCodeComponent } from '../dialog-read-code/dialog-read-code.component';
 import { DialogReadQrCodeComponent } from '../dialog-read-qr-code/dialog-read-qr-code.component';
 import { DocumentService } from '../services/document.service';
+import { ConfigurationService } from '../services/configuration.service';
+import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
 	selector: 'app-home',
@@ -33,7 +36,8 @@ export class HomeComponent implements OnInit {
 		private dialog: MatDialog,
 		private documentService: DocumentService,
 		private matIconRegistry: MatIconRegistry,
-		private domSanitizer: DomSanitizer
+		private domSanitizer: DomSanitizer,
+		private configurationService: ConfigurationService,
 	) {
 		this.matIconRegistry.addSvgIcon('whatsapp', this.domSanitizer.bypassSecurityTrustResourceUrl('assets/img/icons/whatsapp.svg'));
 	}
@@ -48,7 +52,6 @@ export class HomeComponent implements OnInit {
 		dialogRef.afterClosed().subscribe((r) => {
 			if (r) {
 				console.log('Read QR Code data', r);
-				this.loading = true;
 				this.travelPermit = null;
 				this.parseQrCodeData(r);
 			}
@@ -63,7 +66,6 @@ export class HomeComponent implements OnInit {
 		dialogRef.afterClosed().subscribe((r) => {
 			if (r) {
 				console.log('Read code', r);
-				this.loading = true;
 				this.travelPermit = null;
 				this.loadOnlineData(r);
 			}
@@ -180,20 +182,42 @@ export class HomeComponent implements OnInit {
 
 	private loadOnlineData(docKey: string) {
 		this.loading = true;
-		this.documentService.getTravelPermitInfo(docKey)
-			.subscribe((tp) => {
-				if (tp.judiciaryTravelPermit) {
-					this.travelPermit = tp.judiciaryTravelPermit;
-				}
-				else {
-					this.travelPermit = tp.travelPermit;
-				}
-				this.travelPermit.key = docKey;
-				this.loading = false;
-			}, () => {
+		const data = this.configurationService.configuration.value.apiVersion === 2
+			? this.loadValidationModel(docKey)
+			: this.loadTravelPermitInfo(docKey);
+
+		(data as Observable<any>).subscribe(
+			() => this.loading = false,
+			() => {
 				this.loading = false;
 				this.alert('Ocorreu um erro ao acessar o servidor para obter os dados completos da autorização de viagem. Você terá acesso somente aos dados contidos no QR Code.');
-			});
+			}
+		);
+	}
+
+	private loadValidationModel(key: string): Observable<TravelPermitValidationModel> {
+		return this.documentService.getValidationModel(key)
+			.pipe(
+				tap(tp => {
+					if (tp.judiciaryTravelPermit) {
+						this.travelPermit = tp.judiciaryTravelPermit;
+						this.judiciaryTravelPermit = tp.judiciaryTravelPermit;
+					} else {
+						this.travelPermit = tp.travelPermit;
+					}
+					this.travelPermit.key = key;
+				})
+			);
+	}
+
+	private loadTravelPermitInfo(key: string) {
+		return this.documentService.getTravelPermitInfo(key)
+			.pipe(
+				tap((tp => {
+					tp.key = key;
+					this.travelPermit = tp;
+				})
+			));
 	}
 
 	private alert(message: string, title?: string, useMessageAsHtml?: boolean, disableClose?: boolean): Promise<any> {
