@@ -8,6 +8,18 @@ class CnbClient {
   static final String _host = 'https://assinatura.e-notariado.org.br/'; // PRODUCTION
 //   static final String _host = 'https://assinatura-hml.e-notariado.org.br'; // HOMOLOGATION
 
+  static ConfigurationModel? configuration;
+
+  Future<void> init() async {
+    if (configuration == null) {
+      try {
+        configuration = await getConfiguration();
+      } catch (_) {
+        configuration = ConfigurationModel._(apiVersion: 1);
+      }
+    }
+  }
+
   Future<dynamic> tryCatchMethod(String documentKey, dynamic Function() toWrap) async {
     try {
       return await toWrap();
@@ -42,7 +54,7 @@ class CnbClient {
   }
 
   Future<TravelPermitValidationInfo> getTravelPermitInfo(String documentKey, { bool isEndpointV2 = true }) async {
-final endpointV2 = isEndpointV2 ? '/v2' : '';
+    final endpointV2 = isEndpointV2 && configuration?.apiVersion == 2 ? '/v2' : '';
     final response = await getFrom('api/documents$endpointV2/keys/$documentKey/travel-permit', documentKey);
     final getJson = () => TravelPermitValidationInfo.fromJson(documentKey, json.decode(response.body));
     return await tryCatchMethod(documentKey, getJson);
@@ -52,5 +64,20 @@ final endpointV2 = isEndpointV2 ? '/v2' : '';
     final ticketResponse = await getFrom('api/documents/keys/$documentKey/ticket?type=Signatures', documentKey);
     final downloadEndpoint = json.decode(ticketResponse.body)['location'].substring(1);
     return await getFrom(downloadEndpoint, documentKey);
+  }
+
+  Future<ConfigurationModel> getConfiguration() async {
+    final response = await getFrom('api/app-configuration/travel-permit', '');
+    return ConfigurationModel.fromJson(json.decode(response.body));
+  }
+}
+
+class ConfigurationModel {
+  final int apiVersion;
+  
+  ConfigurationModel._({required this.apiVersion});
+
+  factory ConfigurationModel.fromJson(Map<String, dynamic> json) {
+    return ConfigurationModel._(apiVersion: json['apiVersion']);
   }
 }
