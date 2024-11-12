@@ -41,9 +41,10 @@ class CnbClient {
     return await tryCatchMethod(documentKey, getResponse);
   }
 
-  Future<TravelPermitModel> getTravelPermitInfo(String documentKey) async {
-    final response = await getFrom('api/documents/keys/$documentKey/travel-permit', documentKey);
-    final getJson = () => TravelPermitModel.fromJson(documentKey, json.decode(response.body));
+  Future<TravelPermitValidationInfo> getTravelPermitInfo(String documentKey, { bool isEndpointV2 = true }) async {
+final endpointV2 = isEndpointV2 ? '/v2' : '';
+    final response = await getFrom('api/documents$endpointV2/keys/$documentKey/travel-permit', documentKey);
+    final getJson = () => TravelPermitValidationInfo.fromJson(documentKey, json.decode(response.body));
     return await tryCatchMethod(documentKey, getJson);
   }
 

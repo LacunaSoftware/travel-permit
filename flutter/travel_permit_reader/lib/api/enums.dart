@@ -57,7 +57,8 @@ enum LegalGuardianTypes {
   father,
   tutor,
   guardian,
-  unrelated,
+  thirdPartyRelated,
+  thirdPartyNotRelated,
 }
 
 extension LegalGuardianTypesExt on LegalGuardianTypes {
@@ -67,7 +68,8 @@ extension LegalGuardianTypesExt on LegalGuardianTypes {
       'f': LegalGuardianTypes.father,
       't': LegalGuardianTypes.tutor,
       'g': LegalGuardianTypes.guardian,
-      'u': LegalGuardianTypes.unrelated,
+      'r': LegalGuardianTypes.thirdPartyRelated,
+      's': LegalGuardianTypes.thirdPartyNotRelated,
     });
   }
 }
@@ -121,6 +123,7 @@ enum ParticipantTypes {
   guardian2,
   escort,
   underage,
+  judge,
 }
 
 //-------------------------------------------------------------------
@@ -130,8 +133,8 @@ class _EnumCommonParser {
     var type = null;
     try {
       type = parseMap.values.firstWhere(
-          (t) => t.toString().toLowerCase() == '$T.$value'.toLowerCase(),
-          orElse: () => defaultValue!,
+        (t) => t.toString().toLowerCase() == '$T.$value'.toLowerCase(),
+        orElse: () => defaultValue!,
       );
     } catch (_) {
       type = defaultValue;
@@ -142,3 +145,7 @@ class _EnumCommonParser {
     return parseMap[value?.toLowerCase()] ?? defaultValue;
   }
 }
+
+//-------------------------------------------------------------------
+
+enum DestinationTypes { specific, any }

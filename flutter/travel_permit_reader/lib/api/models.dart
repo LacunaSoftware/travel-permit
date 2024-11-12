@@ -14,7 +14,6 @@ class TravelPermitModel {
   final NotaryModel? notary;
   final bool isOffline;
   final String? qrcodeData;
-  final bool? isJudiciaryTravelPermit;
 
   TravelPermitModel._({
     required this.key,
@@ -28,34 +27,30 @@ class TravelPermitModel {
     this.notary,
     required this.isOffline,
     this.qrcodeData,
-    this.isJudiciaryTravelPermit,
   });
 
   factory TravelPermitModel.fromJson(String key, Map<String, dynamic> json) {
     return TravelPermitModel._(
-        isOffline: false,
-        key: key,
-        startDate: StringExt.isNullOrEmpty(json['startDate'])
+      isOffline: false,
+      key: key,
+      startDate: StringExt.isNullOrEmpty(json['startDate'])
           ? null
           : DateTime.parse(json['startDate']),
-        expirationDate: DateTime.parse(json['expirationDate']),
-        type: TravelPermitTypesExt.fromString(json['type']),
-        requiredGuardian: json['requiredGuardian'] == null
+      expirationDate: DateTime.parse(json['expirationDate']),
+      type: TravelPermitTypesExt.fromString(json['type']),
+      requiredGuardian: json['requiredGuardian'] == null
           ? null
           : GuardianModel.fromJson(json['requiredGuardian']),
-        optionalGuardian: json['optionalGuardian'] == null
+      optionalGuardian: json['optionalGuardian'] == null
           ? null
           : GuardianModel.fromJson(json['optionalGuardian']),
-        escort: json['escort'] == null
-          ? null
-          : EscortModel.fromJson(json['escort']),
-        underage: json['underage'] == null
+      escort:
+          json['escort'] == null ? null : EscortModel.fromJson(json['escort']),
+      underage: json['underage'] == null
           ? null
           : UnderageModel.fromJson(json['underage']),
-        notary: json['notary'] == null
-          ? null
-          : NotaryModel.fromJson(json['notary']),
-        isJudiciaryTravelPermit: json['isJudiciaryTravelPermit'],
+      notary:
+          json['notary'] == null ? null : NotaryModel.fromJson(json['notary']),
     );
   }
 
@@ -97,8 +92,10 @@ class TravelPermitModel {
               name: data.escortName,
               documentNumber: data.escortDocumentNumber,
               documentIssuer: data.escortDocumentIssuer,
-              documentType: IdDocumentTypesExt.fromString(data.escortDocumentType),
-              guardianship: LegalGuardianTypesExt.fromString(data.escortGuardianship),
+              documentType:
+                  IdDocumentTypesExt.fromString(data.escortDocumentType),
+              guardianship:
+                  LegalGuardianTypesExt.fromString(data.escortGuardianship),
             ),
       //-------------------------------------------------------------------
       underage: StringExt.isNullOrEmpty(data.underageName)
@@ -112,7 +109,6 @@ class TravelPermitModel {
               birthDate: DateTime.parse(data.underageBirthDate!),
               bioGender: BioGendersExt.fromString(data.underageBioGender)),
       qrcodeData: data.getQRCodeData(),
-      isJudiciaryTravelPermit: data.isJudiciaryTravelPermit,
     );
   }
 }
@@ -499,11 +495,12 @@ class TypedParticipant {
 
 class NotaryModel {
   final String name;
-  final String cns;
+  final String? cns;
   final String? ownerName;
   final String? phoneNumber;
 
-  NotaryModel._({required this.name, required this.cns, this.ownerName, this.phoneNumber});
+  NotaryModel._(
+      {required this.name, this.cns, this.ownerName, this.phoneNumber});
 
   factory NotaryModel.fromJson(Map<String, dynamic> json) {
     return NotaryModel._(
@@ -511,5 +508,140 @@ class NotaryModel {
         cns: json['cns'],
         ownerName: json['ownerName'],
         phoneNumber: json['phoneNumber']);
+  }
+}
+
+//-------------------------------------------------------------------
+
+class JudgeModel extends ParticipantModel {
+  JudgeModel._({
+    identifier,
+    required name,
+  }) : super._(
+          name: name,
+          identifier: identifier,
+        );
+
+  factory JudgeModel.fromJson(Map<String, dynamic> json) {
+    return JudgeModel._(
+      name: json['name'],
+      identifier: json['identifier'],
+    );
+  }
+}
+
+//-------------------------------------------------------------------
+
+class DestinationModel {
+  final DestinationTypes? type;
+  final String? country;
+  final String? state;
+  final String? city;
+
+  DestinationModel._({
+    this.type,
+    this.country,
+    this.state,
+    this.city,
+  });
+
+  factory DestinationModel.fromJson(Map<String, dynamic> json) {
+    return DestinationModel._(
+      type: json['type'] != null && json['type'] == "A"
+          ? DestinationTypes.any
+          : DestinationTypes.specific,
+      country: json['country'],
+      state: json['state'],
+      city: json['city'],
+    );
+  }
+}
+
+//-------------------------------------------------------------------
+
+class JudiciaryTravelPermitModel {
+  final JudgeModel? judge;
+  final NotaryModel? notary;
+  final DestinationModel? destination;
+
+  JudiciaryTravelPermitModel._({
+    this.judge,
+    this.notary,
+    this.destination,
+  });
+
+  factory JudiciaryTravelPermitModel.fromJson(Map<String, dynamic> json) {
+    return JudiciaryTravelPermitModel._(
+      judge: json['judge'] != null ? JudgeModel.fromJson(json['judge']) : null,
+      notary:
+          json['notary'] != null ? NotaryModel.fromJson(json['notary']) : null,
+      destination: json['destination'] != null
+          ? DestinationModel.fromJson(json['destination'])
+          : null,
+    );
+  }
+
+  factory JudiciaryTravelPermitModel.fromQRCode(QRCodeData data) {
+    return JudiciaryTravelPermitModel._(
+      judge: StringExt.isNullOrEmpty(data.judgeName)
+          ? null
+          : JudgeModel._(name: data.judgeName),
+      notary: StringExt.isNullOrEmpty(data.organizationName)
+          ? null
+          : NotaryModel._(name: data.organizationName!),
+      destination: StringExt.isNullOrEmpty(data.destinationType)
+          ? null
+          : DestinationModel._(
+              type: data.destinationType != null && data.destinationType == "A"
+                  ? DestinationTypes.any
+                  : DestinationTypes.specific,
+              country: data.destinationCountry,
+              state: data.destinationState,
+              city: data.destinationCity,
+            ),
+    );
+  }
+}
+
+//-------------------------------------------------------------------
+
+class TravelPermitValidationInfo {
+  final TravelPermitModel travelPermit;
+  final JudiciaryTravelPermitModel? judiciaryTravelPermit;
+
+  TravelPermitValidationInfo._({
+    required this.travelPermit,
+    this.judiciaryTravelPermit,
+  });
+
+  factory TravelPermitValidationInfo.fromJson(
+      String key, Map<String, dynamic> json) {
+    final judiciaryTravelPermit = json['judiciaryTravelPermit'] != null
+        ? JudiciaryTravelPermitModel.fromJson(json['judiciaryTravelPermit'])
+        : null;
+    var travelPermit = json['travelPermit'] != null
+        ? TravelPermitModel.fromJson(key, json['travelPermit'])
+        : null;
+
+    if (json['travelPermit'] == null && json['judiciaryTravelPermit'] == null) {
+      travelPermit =
+          TravelPermitModel.fromJson(key, json);
+    }
+    if (json['judiciaryTravelPermit'] != null) {
+      travelPermit =
+          TravelPermitModel.fromJson(key, json['judiciaryTravelPermit']);
+    }
+
+    return TravelPermitValidationInfo._(
+      travelPermit: travelPermit!,
+      judiciaryTravelPermit: judiciaryTravelPermit,
+    );
+  }
+
+  factory TravelPermitValidationInfo.fromQRCode(QRCodeData data) {
+    return TravelPermitValidationInfo._(
+      travelPermit: TravelPermitModel.fromQRCode(data),
+      judiciaryTravelPermit: JudiciaryTravelPermitModel.fromQRCode(data),
+    );
   }
 }

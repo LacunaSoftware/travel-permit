@@ -30,8 +30,10 @@ class ParticipantDetailsPage extends SummaryCard {
         return 'Mãe';
       case LegalGuardianTypes.tutor:
         return 'Tutor';
-      case LegalGuardianTypes.unrelated:
-        return 'Sem parentesco';
+      case LegalGuardianTypes.thirdPartyRelated:
+        return 'Terceiro com parentesco';
+      case LegalGuardianTypes.thirdPartyNotRelated:
+        return 'Terceiro sem parentesco';
       default:
         return 'Indefinido';
     }
@@ -42,7 +44,7 @@ class ParticipantDetailsPage extends SummaryCard {
     List<Widget> details = [
       buildLabelText('Nome'),
       buildDetailsText(model.name),
-      buildPicture(),
+      if (!isJudge) buildPicture(),
       buildDivider(),
     ];
     if (!StringExt.isNullOrEmpty(model.identifier)) {
@@ -55,9 +57,14 @@ class ParticipantDetailsPage extends SummaryCard {
 
     details.addAll([
       buildLabelText(documentTypeDescription),
-      buildDetailsText('${model.documentNumber} (${model.documentIssuer})\nEmitido em ${model.issueDate?.toDateString()}'),
-      buildDivider(),
     ]);
+
+    if (!isJudge) {
+      details.addAll([
+        buildDetailsText('${model.documentNumber} (${model.documentIssuer})\nEmitido em ${model.issueDate?.toDateString()}'),
+        buildDivider(),
+      ]);
+    }
 
     if (model is GuardianModel) {
       details.addAll(buildGuardianDetails());

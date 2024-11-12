@@ -40,17 +40,17 @@ class HomePage extends StatelessWidget {
         return;
       }
 
-      TravelPermitModel? travelPermitModel;
+      TravelPermitValidationInfo? travelPermitModel;
       dynamic requestException;
       try {
-        travelPermitModel = await CnbClient().getTravelPermitInfo(data.documentKey);
+        travelPermitModel = await CnbClient().getTravelPermitInfo(data.documentKey, isEndpointV2: data.version >= 4);
       } catch (ex) {
         requestException = ex;
       }
 
-      travelPermitModel = travelPermitModel ?? TravelPermitModel.fromQRCode(data);
+      travelPermitModel = travelPermitModel ?? TravelPermitValidationInfo.fromQRCode(data);
 
-      await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(travelPermitModel!, onlineRequestException: requestException)));
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(travelPermitModel!.travelPermit, travelPermitModel.judiciaryTravelPermit, onlineRequestException: requestException)));
 
       progress?.dismiss();
     } catch (ex) {
@@ -75,7 +75,7 @@ class HomePage extends StatelessWidget {
       progress?.show();
       final model = await CnbClient().getTravelPermitInfo(documentKey);
 
-      await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(model)));
+      await Navigator.push(context, MaterialPageRoute(builder: (context) => TravelPermitPage(model.travelPermit, model.judiciaryTravelPermit)));
       progress?.dismiss();
     } catch (ex) {
       progress?.dismiss();
