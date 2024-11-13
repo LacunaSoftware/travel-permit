@@ -3,8 +3,7 @@
   "version": "1.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --configuration=homolog",
-	"start:dev": "ng serve --configuration=dev",
+    "start": "ng serve",
 	"build:prod": "ng build --prod",
 	"build:hml": "ng build --configuration=homolog",
     "test": "ng test",
