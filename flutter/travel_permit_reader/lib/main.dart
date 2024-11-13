@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
+import 'package:travel_permit_reader/api/cnb_client.dart';
 import 'package:travel_permit_reader/pages/home_page.dart';
 import 'package:travel_permit_reader/util/page_util.dart';
 
 import 'api/notification_api.dart';
 
-void main() {
+void main() async {
+  await initConfiguration();
   runApp(MyApp());
+}
+
+Future<void> initConfiguration() async {
+  await CnbClient().init();
 }
 
 //-------------------------------------------------------------------
