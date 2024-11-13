@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit {
 			if (r) {
 				console.log('Read QR Code data', r);
 				this.travelPermit = null;
+				this.loading = true;
 				this.parseQrCodeData(r);
 			}
 		});
