@@ -85,14 +85,16 @@
 				</div>
 			</div>
 
-			<a *ngIf="isOnline" class="col-12 col-md-6 px-md-5 pt-4 pt-md-0 pointer" (click)="download()">
-				<div class="card-link py-2 px-3">
-					<mat-icon color="accent" class="button-icon mt-2">cloud_download</mat-icon>
-					<h4>
-						Baixar documento assinado
-					</h4>
-				</div>
-			</a>
+			<div *ngIf="isOnline" class="d-flex col-12 col-md-6 px-md-5 pt-4 pt-md-0 pointer">
+				<a (click)="download()" class="download-button">
+					<div class="card-link py-2 px-3">
+						<mat-icon color="accent" class="button-icon mt-2">cloud_download</mat-icon>
+						<h4>
+							Baixar documento assinado
+						</h4>
+					</div>
+				</a>
+			</div>
 		</div>
 
 		<div class="row pt-0 pt-md-4">

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -30,6 +30,7 @@ import { SystemInfoComponent } from './system-version/system-info.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 import { DocumentService } from './services/document.service';
+import { ConfigurationService } from './services/configuration.service';
 
 
 @NgModule({
@@ -68,6 +69,13 @@ import { DocumentService } from './services/document.service';
 	],
 	providers: [
 		DocumentService,
+		ConfigurationService,
+		{
+			provide: APP_INITIALIZER,
+			useFactory: (c: ConfigurationService) => () => c.init(),
+			deps: [ConfigurationService],
+			multi: true
+		},
 	],
 	bootstrap: [AppComponent]
 })
