@@ -1,31 +1,43 @@
-# TravelpermitWeb
+# TravelPermitWeb
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.2.
+Este web app desenvolvido pela Lacuna atende as demandas dos agentes que precisam verificar as informações de documentos de Autorização Eletrônica de Viagem.
 
-## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Preparando o ambiente
 
-## Code scaffolding
+#### Dependências
+O TravelPermiteWeb utiliza o Angular v11.  
+Para baixa-lo, é necessário instalar o Node. Para isso, recomenda-se utilizar alguma ferramenta para gerenciamento das versões como o Nvm-Windows e seguir os seguintes passos:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Baixe e instale o `NVM for Windows` em em: [Releases · coreybutler/nvm-windows ](https://github.com/coreybutler/nvm-windows/releases)  
 
-## Build
+- Agora, no terminal, instale a versão `12.11.1` do Node: `nvm install 12.11.1`
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+- Ative o Node instalado no seu terminal: `nvm use 12.11.1`
 
-## Running unit tests
+### Projeto
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- Clone o repositório na sua máquina: `git clone git@bitbucket.org:Lacunas/travel-permit.git `
 
-## Running end-to-end tests
+- Vá para a pasta do projeto : `cd travel-permit`
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+- Instale as dependências: `npm install`
 
-## Further help
+- Inicie o projeto do front-end: `npm run start`
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 
-## QrCodeTesting
+### Utilização do Sistema
 
-To test QrCodes without scanning via browser, read them via mobile device and pass the string as a parameter to parseQrCodeData(string) method
+Para verificar as informações de um documento de AEV(Autorização eletrônica de viagem) é preciso informar um código de validação ou ler um QR Code.
+
+![Validation Options](readme-assets/validation_options.png)
+
+No caso de validações feitas a partir de um código de validação, é feita uma chamada ao back-end para carregar os dados do documento.
+
+![Code Validation](readme-assets/validation_code.png)
+
+Já no caso de validações a partir do QR Code, é feita uma chamada ao servidor para carregar informações adicionais, porém é possível validar os dados contidos no QR Code de forma offline
+
+![QRCode Validation](readme-assets/validation_qrcode.png)
+
+Para testar QRCodes sem scan via browser, é necessário ler com dispositivo mobile e passar a string como parâmetro ao método parseQrCodeData(string)
