@@ -46,3 +46,13 @@ Para testar QRCodes sem scan via browser, é necessário ler com dispositivo mob
 ### Versionamento
 
 Neste projeto a branch develop não é utilizada para deploys para homologação. Deve se criar as branches de desenvolvimento a partidr da `master` e direcionar pull-requests também a ela
+
+### Deploy
+
+O deploy desta aplicação é feito via ftp para os servidores na Azure.
+
+- O processo se inicia executando o comando `npm run build:hml`.
+
+- Os arquivos estarão disponíveis em `dist/travelpermit-web`
+
+- É necessário agora que um colaborador com as autorizações necessárias transfira os arquivos gerados ao serviço da Azure
