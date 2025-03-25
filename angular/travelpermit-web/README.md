@@ -23,7 +23,7 @@ Para baixa-lo, é necessário instalar o Node. Para isso, recomenda-se utilizar 
 
 - Instale as dependências: `npm install`
 
-- Inicie o projeto do front-end: `npm run start`
+- Inicie o projeto do front-end: `npm run start`. O projeto estará disponível em http://localhost:4200/
 
 
 ### Utilização do Sistema
@@ -41,3 +41,8 @@ Já no caso de validações a partir do QR Code, é feita uma chamada ao servido
 ![QRCode Validation](readme-assets/validation_qrcode.png)
 
 Para testar QRCodes sem scan via browser, é necessário ler com dispositivo mobile e passar a string como parâmetro ao método parseQrCodeData(string)
+
+
+### Versionamento
+
+Neste projeto a branch develop não é utilizada para deploys para homologação. Deve se criar as branches de desenvolvimento a partidr da `master` e direcionar pull-requests também a ela
