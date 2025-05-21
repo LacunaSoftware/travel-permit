@@ -51,7 +51,7 @@ Neste projeto a branch develop não é utilizada para deploys para homologação
 
 O deploy desta aplicação é feito via ftp para os servidores na Azure.
 
-- O processo se inicia executando o comando `npm run build:hml`.
+- O processo se inicia executando o comando `npm run build:hml` ou `npm run build:prd`.
 
 - Os arquivos estarão disponíveis em `dist/travelpermit-web`
 
