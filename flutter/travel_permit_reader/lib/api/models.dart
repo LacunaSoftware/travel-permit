@@ -624,8 +624,7 @@ class TravelPermitValidationInfo {
         : null;
 
     if (json['travelPermit'] == null && json['judiciaryTravelPermit'] == null) {
-      travelPermit =
-          TravelPermitModel.fromJson(key, json);
+      travelPermit = TravelPermitModel.fromJson(key, json);
     }
     if (json['judiciaryTravelPermit'] != null) {
       travelPermit =
@@ -642,6 +641,61 @@ class TravelPermitValidationInfo {
     return TravelPermitValidationInfo._(
       travelPermit: TravelPermitModel.fromQRCode(data),
       judiciaryTravelPermit: JudiciaryTravelPermitModel.fromQRCode(data),
+    );
+  }
+}
+
+//-------------------------------------------------------------------
+
+class TravelPermitSignatureInfo {
+  final bool isFile;
+  final DateTime? docConcludedDate;
+  final bool isFlowConcluded;
+  final String key;
+  final String id;
+  final String? name;
+  final String? mne;
+  final String? filename;
+  final int? fileSize;
+  final String? mimeType;
+  final bool hasSignature;
+  final bool isConcluded;
+  final bool isCanceled;
+
+  TravelPermitSignatureInfo._({
+    required this.isFile,
+    this.docConcludedDate,
+    required this.isFlowConcluded,
+    required this.key,
+    required this.id,
+    this.name,
+    this.mne,
+    this.filename,
+    this.fileSize,
+    this.mimeType,
+    required this.hasSignature,
+    required this.isConcluded,
+    required this.isCanceled,
+  });
+
+  factory TravelPermitSignatureInfo.fromJson(Map<String, dynamic> json) {
+    final signaturesInfo = json['signaturesInfo'];
+    return TravelPermitSignatureInfo._(
+      isFile: signaturesInfo['isFile'] ?? false,
+      docConcludedDate: signaturesInfo['docConcludedDate'] != null
+          ? DateTime.tryParse(signaturesInfo['docConcludedDate'])
+          : null,
+      isFlowConcluded: signaturesInfo['isFlowConcluded'] ?? false,
+      key: signaturesInfo['key'] ?? '',
+      id: signaturesInfo['id'] ?? '',
+      name: signaturesInfo['name'],
+      mne: signaturesInfo['mne'],
+      filename: signaturesInfo['filename'],
+      fileSize: signaturesInfo['fileSize'],
+      mimeType: signaturesInfo['mimeType'],
+      hasSignature: signaturesInfo['hasSignature'] ?? false,
+      isConcluded: signaturesInfo['isConcluded'] ?? false,
+      isCanceled: signaturesInfo['isCanceled'] ?? false,
     );
   }
 }
