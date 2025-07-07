@@ -6,7 +6,7 @@ import 'package:pointycastle/pointycastle.dart';
 class CryptoUtil {
   static ECDomainParameters _ecDomain = ECCurve_secp256r1();
 
-  //  PRODUCTION
+  // PRODUCTION
   static ECPublicKey _publicKeyV1 = ECPublicKey(
       _ecDomain.curve.createPoint(
           BigIntExt.fromBase64('Mq1pD1R4qu6xjpIvarG54zOnGrAqvMbsq9Fvo8kns4s='),
